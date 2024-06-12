@@ -27,7 +27,7 @@ dist-ssr
 .sass-cache/
 
 # Tailwind CSS output files
-output.css
-output.css.map
-final.css
-final.css.map
+src/output.css
+src/output.css.map
+src/final.css
+src/final.css.map

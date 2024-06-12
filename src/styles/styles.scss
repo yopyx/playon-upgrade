@@ -6,5 +6,6 @@
   background-color: $col;
 }
 .head {
-  @apply text-gray-800 bg-blue-500;
+  @apply text-gray-800 bg-red-500;
+  font-weight: bold;
 }
