@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@mixin h($col: yellow) {
+  background-color: $col;
+}
+.head {
+  @apply text-gray-800 bg-blue-500;
+}
