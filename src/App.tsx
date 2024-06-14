@@ -3,6 +3,8 @@ import Body from "./components/Body";
 import MainContainer from "./components/MainContainer";
 import SearchResultsContainer from "./components/SearchResultsContainer";
 import WatchContainer from "./components/WatchContainer";
+import { Provider } from "react-redux";
+import appStore from "./redux/store";
 
 const appRouter = createBrowserRouter([
   {
@@ -29,7 +31,11 @@ const appRouter = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={appRouter} />;
+  return (
+    <Provider store={appStore}>
+      <RouterProvider router={appRouter} />
+    </Provider>
+  );
 }
 
 export default App;
