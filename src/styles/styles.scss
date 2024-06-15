@@ -2,10 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-@mixin h($col: yellow) {
-  background-color: $col;
+//header
+.rounded-icon {
+  @apply hover:bg-stone-300 w-9 h-9 rounded-full p-2 cursor-pointer;
 }
-.head {
-  @apply text-gray-800 bg-red-500;
-  font-weight: bold;
+//sidebar
+.collapsed-sidebar-nav-btn {
+  @apply flex flex-wrap justify-center rounded-lg cursor-pointer h-16 p-3 mx-auto mr-0 hover:bg-stone-100;
+  img {
+    @apply h-5 w-5;
+  }
+  p {
+    // @apply inline-block mx-auto ml-1;
+  }
+}
+
+.sidebar-nav-btn {
+  @apply flex space-x-8 rounded-lg cursor-pointer h-10 p-2 hover:bg-stone-100;
+  img {
+    @apply w-5 h-5;
+  }
+}
+
+.container-ver {
+  @apply flex flex-col;
 }
