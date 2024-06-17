@@ -27,3 +27,11 @@
 .container-ver {
   @apply flex flex-col;
 }
+
+//footer
+.info-container {
+  @apply flex flex-wrap space-x-2 font-semibold text-xs;
+  p {
+    @apply inline-block ml-2 cursor-pointer;
+  }
+}
