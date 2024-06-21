@@ -1,14 +1,26 @@
 import { useLocation } from "react-router-dom";
 import { LEFT_ARROW, RIGHT_ARROW } from "../utils/constants";
 import Button from "./Button";
+import { useQuery } from "@tanstack/react-query";
+import getCategories from "../utils/custom hooks/getCategories";
 
 const SuggestionsButtons = () => {
   const { pathname } = useLocation();
+  const { data, error, isLoading, isError } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(),
+  });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>{JSON.stringify(error)}</div>;
+  }
   return (
     <div
       className={
         (pathname === "/watch" ? "" : "sticky top-14 ") +
-        "w-full overflow-x-hidden z-20 bg-black"
+        "w-[80vw] flex overflow-x-hidden z-30"
       }
     >
       <div className="w-full flex justify-between absolute">
@@ -24,8 +36,11 @@ const SuggestionsButtons = () => {
         }
       </div>
       <div className="flex space-x-2 px-10">
-        <Button category={"All"} />
-        <Button category={"Live Stream"} />
+        <Button key={"All"} category={"All"} />
+        <Button key={"Live Stream"} category={"Live Stream"} />
+        {data?.map((c) => (
+          <Button key={c.etag} category={c.snippet.title} />
+        ))}
       </div>
     </div>
   );
