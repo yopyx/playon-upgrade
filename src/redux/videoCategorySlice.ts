@@ -3,13 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 const videoCategory = createSlice({
   name: "category",
   initialState: {
-    category: "All",
+    categoryDetails: { id: "0" },
   },
   reducers: {
-    addCategory: (state, action) => {
-      state.category = action.payload;
+    addCategoryDetails: (state, action) => {
+      state.categoryDetails = action.payload;
     },
   },
 });
-export const { addCategory } = videoCategory.actions;
+export const { addCategoryDetails } = videoCategory.actions;
 export default videoCategory.reducer;
