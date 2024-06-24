@@ -1,10 +1,10 @@
 //apis urls
 export const CORS = "https://corsproxy.io/?";
 const apiKey = import.meta.env.VITE_APP_YT_KEY;
-export const YT_API = [
-  `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=48&`,
-  `regionCode=US&key=${apiKey}`,
-];
+export const YT_API = (vidCategoryId = "0", nextToken = "") =>
+  `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=12${
+    nextToken ? "&pageToken=" + nextToken : ""
+  }&regionCode=US&videoCategoryId=${vidCategoryId}=&key=${apiKey}`;
 export const YT_VIDEOS_ID_LIST_API = [
   `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=`,
   `&key=${apiKey}`,
@@ -98,9 +98,9 @@ export const DOWNLOAD_ICON =
 export const DOTS_ICON =
   "https://static-00.iconduck.com/assets.00/dots-3-icon-144x31-3ynrjmrx.png";
 
-export const RIGHT_ARROW =
-  "https://static-00.iconduck.com/assets.00/chevron-right-arrow-icon-80x144-10jbr5jb.png";
 export const LEFT_ARROW =
+  "https://static-00.iconduck.com/assets.00/chevron-right-arrow-icon-80x144-10jbr5jb.png";
+export const RIGHT_ARROW =
   "https://static-00.iconduck.com/assets.00/nav-arrow-left-icon-79x144-dclck9vi.png";
 export const SEND_ICON =
   "https://static-00.iconduck.com/assets.00/share-icon-144x144-4mvw7c20.png";
