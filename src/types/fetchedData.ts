@@ -11,7 +11,7 @@ export type Category = {
   snippet: Snippet;
 };
 
-type VideoDetails = {
+export type VideoDetails = {
   kind: string;
   etag: string;
   id: string;
@@ -39,8 +39,33 @@ type VideoDetails = {
     projection: string;
   };
   statistics: ObjectStr;
+  liveStreamingDetails: ObjectStr;
 };
-
+export type ChannelDetails = {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: {
+    title: string;
+    description: string;
+    customUrl: string;
+    publishedAt: string;
+    thumbnails: ThumbnailSize;
+    localized: ObjectStr;
+  };
+  contentDetails: {
+    relatedPlaylists: {
+      likes: string;
+      uploads: string;
+    };
+  };
+  statistics: {
+    viewCount: string;
+    subscriberCount: string;
+    hiddenSubscriberCount: boolean;
+    videoCount: string;
+  };
+};
 type ThumbnailDetails = {
   url: string;
   width: number;
@@ -48,10 +73,10 @@ type ThumbnailDetails = {
 };
 
 type ThumbnailSize = {
-  (size: string): ThumbnailDetails;
+  [size: string]: ThumbnailDetails;
 };
-type ObjectStr = {
-  (name: string): string;
+export type ObjectStr = {
+  [name: string]: string;
 };
 export type VideosListData = {
   kind: string;
