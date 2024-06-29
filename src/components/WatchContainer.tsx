@@ -1,6 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
-import getVideoData from "../utils/custom hooks/getVideoData";
 import { useState } from "react";
 import {
   BLACK_UNLIKE,
@@ -12,22 +10,17 @@ import {
   UNLIKE_ICON,
   timeDiff,
 } from "../utils/constants";
+import { useAppSelector } from "../types/reduxHooks";
 
 const WatchContainer = () => {
   const { search } = useLocation();
   const videoId = search.slice(3);
+  const videoInfo = useAppSelector((store) => store.videosData.videos[videoId]);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [expandView, setExpandView] = useState(false);
-  const { data, status, error } = useQuery({
-    queryKey: ["videoData", videoId],
-    queryFn: () => getVideoData(videoId),
-  });
-  if (status === "pending") {
+  if (!videoInfo) {
     return <div>Loading...</div>;
-  }
-  if (status === "error") {
-    return <div>{JSON.stringify(error)}</div>;
   }
   const {
     channelTitle,
@@ -36,8 +29,9 @@ const WatchContainer = () => {
     description,
     liveBroadcastContent,
     tags,
-  } = data.snippet;
-  const { viewCount, likeCount, commentCount } = data.statistics;
+    channelId,
+  } = videoInfo.snippet;
+  const { viewCount, likeCount, commentCount } = videoInfo.statistics;
   return (
     <div className="flex justify-center space-x-7">
       <div className="mt-20 ml-20 flex flex-col space-y-3">
