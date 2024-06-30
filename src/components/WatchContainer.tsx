@@ -16,6 +16,9 @@ const WatchContainer = () => {
   const { search } = useLocation();
   const videoId = search.slice(3);
   const videoInfo = useAppSelector((store) => store.videosData.videos[videoId]);
+  const channelInfo = useAppSelector(
+    (store) => store.channelsData.channels[videoInfo.snippet.channelId]
+  );
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [expandView, setExpandView] = useState(false);
@@ -32,6 +35,8 @@ const WatchContainer = () => {
     channelId,
   } = videoInfo.snippet;
   const { viewCount, likeCount, commentCount } = videoInfo.statistics;
+  const profileUrl = channelInfo?.snippet?.thumbnails?.default?.url;
+  const subs = channelInfo?.statistics?.subscriberCount;
   return (
     <div className="flex justify-center space-x-7">
       <div className="mt-20 ml-20 flex flex-col space-y-3">
@@ -48,13 +53,21 @@ const WatchContainer = () => {
         <h2 className="font-bold text-lg w-[900px]">{title}</h2>
         <div className="flex justify-between">
           <div className="flex space-x-3">
-            <div className="rounded-full w-10 h-10 bg-black"></div>
+            {profileUrl ? (
+              <img
+                alt={title}
+                src={profileUrl}
+                className="rounded-full h-10"
+              ></img>
+            ) : (
+              <div className="rounded-full w-10 h-10 bg-black"></div>
+            )}
 
             <div className="pr-5">
               <h4 className="font-semibold text-sm cursor-pointer">
                 {channelTitle}
               </h4>
-              <h5 className="text-slate-600 text-xs">{"n" + " subscribers"}</h5>
+              <h5 className="text-slate-600 text-xs">{`${(+subs).toLocaleString()} subscribers`}</h5>
             </div>
             <button className="font-semibold text-sm text-white bg-black rounded-3xl px-4 h-9 hover:opacity-80">
               Subscribe
