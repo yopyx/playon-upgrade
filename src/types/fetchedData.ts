@@ -66,6 +66,77 @@ export type ChannelDetails = {
     videoCount: string;
   };
 };
+export type NestedCommentDetails = {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: {
+    channelId: string;
+    videoId: string;
+    textDisplay: string;
+    textOriginal: string;
+    parentId: string;
+    authorDisplayName: string;
+    authorProfileImageUrl: string;
+    authorChannelUrl: string;
+    authorChannelId: {
+      value: string;
+    };
+    canRate: boolean;
+    viewerRating: string;
+    likeCount: number;
+    publishedAt: string;
+    updatedAt: string;
+  };
+};
+export type CommentDetails = {
+  kind: string;
+  etag: string;
+  id: string;
+  replies: {
+    comments: NestedCommentDetails[];
+  };
+  snippet: {
+    channelId: string;
+    videoId: string;
+    topLevelComment: {
+      kind: string;
+      etag: string;
+      id: string;
+      snippet: {
+        channelId: string;
+        videoId: string;
+        textDisplay: string;
+        textOriginal: string;
+        authorDisplayName: string;
+        authorProfileImageUrl: string;
+        authorChannelUrl: string;
+        authorChannelId: {
+          value: string;
+        };
+        canRate: boolean;
+        viewerRating: string;
+        likeCount: number;
+        publishedAt: string;
+        updatedAt: string;
+      };
+    };
+    canReply: boolean;
+    totalReplyCount: number;
+    isPublic: boolean;
+  };
+};
+export type CommentsListData = {
+  kind: string;
+  etag: string;
+  nextPageToken: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+  items: CommentDetails[];
+};
+
 type ThumbnailDetails = {
   url: string;
   width: number;
