@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { addVideo } from "../redux/videosDataSlice";
 import getChannelData from "../utils/custom hooks/getChannelData";
 import { useMemo } from "react";
+import { addChannel } from "../redux/channelsDataSlice";
 
 const PopularVideosContainer = ({
   collapsedSideBar,
@@ -59,7 +60,17 @@ const PopularVideosContainer = ({
         <Link
           to={`/watch?v=${e.id}`}
           key={e.etag}
-          onClick={() => dispatch(addVideo(e))}
+          onClick={() => {
+            dispatch(addVideo(e));
+            channelsData?.data &&
+              dispatch(
+                addChannel(
+                  channelsData?.data?.find?.(
+                    (c) => e?.snippet?.channelId === c?.id
+                  )
+                )
+              );
+          }}
         >
           <VideoCard
             info={e}
