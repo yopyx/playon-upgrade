@@ -2,7 +2,7 @@ import { VideoCardProps } from "../types/props";
 import { useAppSelector } from "../types/reduxHooks";
 import { LIVE_ICON, handleViewsCount, timeDiff } from "../utils/constants";
 
-const VideoCard = ({ info }: VideoCardProps) => {
+const VideoCard = ({ info, imgUrl }: VideoCardProps) => {
   const sidebarCollapsed = useAppSelector(
     (store) => store.responsiveSideBar.collapseSidebar
   );
@@ -33,13 +33,21 @@ const VideoCard = ({ info }: VideoCardProps) => {
           } object-cover rounded-xl hover:rounded-none`}
         />
         {duration && (
-          <div className="bg-black text-white text-xs font-semibold rounded-md w-max px-1 py-0.5 -mt-6 mx-auto mr-1 relative z-10">
+          <div className="bg-black text-white text-xs font-semibold rounded-md w-max px-1 py-0.5 -mt-6 mx-auto mr-1 relative">
             {(duration?.length === 2 ? "00:" : "") + duration}
           </div>
         )}
       </div>
       <div className="flex mt-3 space-x-3">
-        {<div className="rounded-full w-10 h-10 bg-black"></div>}
+        {imgUrl ? (
+          <img
+            alt={title}
+            src={imgUrl}
+            className="rounded-full h-10 w-10"
+          ></img>
+        ) : (
+          <div className="rounded-full w-10 h-10 bg-black"></div>
+        )}
         <div className="flex-col space-y-1">
           <h4 className="font-semibold w-[280px]">{title}</h4>
           <h5 className="text-slate-600 text-xs">{channelTitle}</h5>
