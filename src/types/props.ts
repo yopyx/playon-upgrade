@@ -1,4 +1,4 @@
-import { Category, VideoDetails } from "./fetchedData";
+import { Category, NestedCommentDetails, VideoDetails } from "./fetchedData";
 
 export type ButtonProps = {
   categoryData: Category;
@@ -7,3 +7,7 @@ export type ButtonProps = {
 };
 
 export type VideoCardProps = { info: VideoDetails; imgUrl: string | undefined };
+export type CommentsListProps = {
+  vidId: string;
+  list: NestedCommentDetails[] | undefined;
+};
