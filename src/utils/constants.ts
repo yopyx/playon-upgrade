@@ -4,8 +4,8 @@ const apiKey = import.meta.env.VITE_APP_YT_KEY;
 export const YT_API = (vidCategoryId = "0", nextToken = "") =>
   `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=12${
     nextToken ? "&pageToken=" + nextToken : ""
-  }&regionCode=US&videoCategoryId=${vidCategoryId}=&key=${apiKey}`;
-export const YT_VIDEOS_ID_LIST_API = [
+  }&regionCode=US&videoCategoryId=${vidCategoryId}&key=${apiKey}`;
+export const YT_VIDEO_BY_ID_API = [
   `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=`,
   `&key=${apiKey}`,
 ];
@@ -14,15 +14,15 @@ export const YT_LIVE_CHAT_API = [
   `&part=snippet%2CauthorDetails&key=${apiKey}`,
 ];
 export const YT_API_Channels = [
-  `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&`,
+  `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=`,
   `&key=${apiKey}`,
 ];
 export const YT_SEARCH_API =
   "http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=";
-export const YT_COMMENTS_API = [
-  "https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&maxResults=100&videoId=",
-  "&key=" + apiKey,
-];
+export const YT_COMMENTS_API = (vidId: string, nextToken = "") =>
+  `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies${
+    nextToken ? "&pageToken=" + nextToken : ""
+  }&videoId=${vidId}&key=${apiKey}`;
 export const YT_VID_CATEG_API = `https://youtube.googleapis.com/youtube/v3/videoCategories?part=snippet&regionCode=US&key=${apiKey}`;
 export const YT_SEARCH_RESULTS_API = [
   `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=24`,
