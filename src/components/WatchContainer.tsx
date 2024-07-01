@@ -11,6 +11,7 @@ import {
   timeDiff,
 } from "../utils/constants";
 import { useAppSelector } from "../types/reduxHooks";
+import CommentsList from "./CommentsList";
 
 const WatchContainer = () => {
   const { search } = useLocation();
@@ -144,6 +145,7 @@ const WatchContainer = () => {
         <h3 className="text-xl font-bold">
           {(+commentCount).toLocaleString() + " Comments"}
         </h3>
+        <CommentsList vidId={videoId} list={undefined} />
       </div>
     </div>
   );
