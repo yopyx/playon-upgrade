@@ -9,6 +9,7 @@ import { addVideo } from "../redux/videosDataSlice";
 import getChannelData from "../utils/custom hooks/getChannelData";
 import { useMemo } from "react";
 import { addChannel } from "../redux/channelsDataSlice";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const PopularVideosContainer = ({
   collapsedSideBar,
@@ -37,21 +38,39 @@ const PopularVideosContainer = ({
   const channelsData = useQuery({
     queryKey: ["channels", vidCategoryData.id],
     queryFn: () =>
-      getChannelData(data!.pages?.[0].items.map((v) => v.snippet.channelId)),
-    enabled: data?.pages?.[0].items !== null,
+      getChannelData(
+        data!.pages.flatMap((page) =>
+          page.items.map((v) => v.snippet.channelId)
+        )
+      ),
+    enabled: Boolean(data?.pages?.length),
   });
   const videoList = useMemo(() => {
-    return data?.pages?.[0].items;
+    return data?.pages.flatMap((page) => page.items);
   }, [data]);
   if (status === "pending") {
-    return <VideoCardsShimmer len={6} />;
+    return (
+      <VideoCardsShimmer
+        len={collapsedSideBar ? 8 : 6}
+        collapsedSideBar={collapsedSideBar}
+      />
+    );
   }
   if (status === "error") {
     return <div>{JSON.stringify(error)}</div>;
   }
 
   return (
-    <div
+    <InfiniteScroll
+      dataLength={videoList?.length || 0}
+      next={fetchNextPage}
+      hasMore={hasNextPage}
+      loader={
+        <VideoCardsShimmer
+          len={collapsedSideBar ? 8 : 6}
+          collapsedSideBar={collapsedSideBar}
+        />
+      }
       className={`${
         collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
       } flex flex-wrap gap-4`}
@@ -84,8 +103,7 @@ const PopularVideosContainer = ({
           />
         </Link>
       ))}
-      {isFetchingNextPage ? <VideoCardsShimmer len={6} /> : null}
-    </div>
+    </InfiniteScroll>
   );
 };
 
