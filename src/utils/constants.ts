@@ -17,19 +17,18 @@ export const YT_API_Channels = [
   `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=`,
   `&key=${apiKey}`,
 ];
-export const YT_SEARCH_API =
-  "http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=";
+
+export const YT_SEARCH_API = (searchText = "") =>
+  `http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${searchText}`;
 export const YT_COMMENTS_API = (vidId: string, nextToken = "") =>
   `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies${
     nextToken ? "&pageToken=" + nextToken : ""
   }&videoId=${vidId}&key=${apiKey}`;
 export const YT_VID_CATEG_API = `https://youtube.googleapis.com/youtube/v3/videoCategories?part=snippet&regionCode=US&key=${apiKey}`;
-export const YT_SEARCH_RESULTS_API = [
-  `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=24`,
-  `&pageToken=`,
-  `&q=`,
-  `&key=${apiKey}`,
-];
+export const YT_SEARCH_RESULTS_API = (searchText = "", nextToken = "") =>
+  `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25${
+    nextToken ? "&pageToken=" + nextToken : ""
+  }&q=${searchText}&key=${apiKey}`;
 
 //icons urls
 export const HAMBURGER_ICON =
