@@ -70,6 +70,9 @@ export type NestedCommentDetails = {
   kind: string;
   etag: string;
   id: string;
+  replies?: {
+    comments: NestedCommentDetails[];
+  };
   snippet: {
     channelId: string;
     videoId: string;
@@ -87,15 +90,13 @@ export type NestedCommentDetails = {
     likeCount: number;
     publishedAt: string;
     updatedAt: string;
+    totalReplyCount?: undefined;
   };
 };
 export type CommentDetails = {
   kind: string;
   etag: string;
   id: string;
-  replies: {
-    comments: NestedCommentDetails[];
-  };
   snippet: {
     channelId: string;
     videoId: string;
@@ -125,7 +126,11 @@ export type CommentDetails = {
     totalReplyCount: number;
     isPublic: boolean;
   };
+  replies?: {
+    comments: NestedCommentDetails[];
+  };
 };
+
 export type CommentsListData = {
   kind: string;
   etag: string;
@@ -158,4 +163,55 @@ export type VideosListData = {
     totalResults: number;
     resultsPerPage: number;
   };
+};
+
+export type FetchedVideoCardData = {
+  videosData: VideosListData;
+  channelsData: ChannelDetails[];
+};
+
+export type SearchResultedVideo = {
+  kind: string;
+  etag: string;
+  id: {
+    kind: string;
+    videoId: string;
+  };
+  snippet: {
+    publishedAt: string;
+    channelId: string;
+    title: string;
+    description: string;
+    thumbnails: {
+      default: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      medium: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      high: {
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+    channelTitle: string;
+    liveBroadcastContent: string;
+    publishTime: string;
+  };
+};
+export type FetchedSearchResults = {
+  kind: string;
+  etag: string;
+  nextPageToken: string;
+  regionCode: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+  items: SearchResultedVideo[];
 };

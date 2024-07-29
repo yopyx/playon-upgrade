@@ -15,7 +15,8 @@ export type VideoCardProps = { info: VideoDetails; imgUrl: string | undefined };
 export type CommentsListProps = {
   vidId: string;
   list?: NestedCommentDetails[];
+  query: boolean;
 };
 export type CommentProps = {
-  info: CommentDetails | NestedCommentDetails;
+  info?: CommentDetails | NestedCommentDetails;
 };
