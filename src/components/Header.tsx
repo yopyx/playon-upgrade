@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   CREATE_VIDEO,
   HAMBURGER_ICON,
@@ -6,36 +6,69 @@ import {
   USER_LOGO,
   YOUTUBE_LOGO,
 } from "../utils/constants";
+import { useAppDispatch } from "../types/reduxHooks";
+import { toggleSidebarView } from "../redux/ui_slices/sideBarResponsiveSlice";
+import { useRef, useState } from "react";
 
 const Header = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   return (
-    <div className="w-screen grid grid-flow-col p-3 m-2 mt-0 shadow-xl bg-white fixed z-30">
+    <div className="w-[98vw] grid grid-flow-col p-3 m-2 mt-0 shadow-lg bg-white fixed z-30">
       <div className="flex space-x-6 col-span-2">
         <div
-          className="hover:bg-stone-300 rounded-full p-2 mb-2 ml-4 cursor-pointer"
-          onClick={() => {}}
+          className="rounded-icon"
+          onClick={() => dispatch(toggleSidebarView())}
         >
           <img alt="menu icon" src={HAMBURGER_ICON} className="h-5" />
         </div>
         <Link to="/">
-          <img
-            alt="logo"
-            src={YOUTUBE_LOGO}
-            className="h-6 mt-2 cursor-pointer"
-          />
+          <img alt="logo" src={YOUTUBE_LOGO} className="h-6 mt-2" />
         </Link>
       </div>
       <div className="flex col-span-8 place-content-center mr-32 h-[41px]">
         <div className="flex flex-col w-[70%]">
           <input
             type="text"
-            value={""}
+            ref={searchRef}
             placeholder="Search"
             className="pl-5 border py-2 border-stone-400 rounded-l-full"
             onChange={() => {}}
             onKeyDown={() => {}}
             onClick={() => {}}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setShowSuggestions(false)}
           />
+          {showSuggestions && (
+            <ul
+              className={
+                "bg-white py-1.5 font-semibold shadow-2xl rounded-xl border-stone-200 duration-500"
+              }
+            >
+              {[]?.map((s) => (
+                <li
+                  key={s}
+                  className="px-2 py-1.5  hover:cursor-default hover:bg-stone-100"
+                  onClick={() => {
+                    //dispatch(addSuggestionInput("All"));
+                    setShowSuggestions(false);
+                    searchRef.current?.value &&
+                      navigate(
+                        "/results?search_query=" +
+                          searchRef.current?.value.replace(/ /g, "+")
+                      );
+                  }}
+                >
+                  <span className="text-xl font-thin text-gray-500 scale-x-[-1] px-2">
+                    ⌕‍{" "}
+                  </span>
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <button
           className="bg-stone-100 text-3xl text-stone-400 scale-x-[-1] border border-stone-400 px-5 rounded-l-full hover:bg-stone-200"
@@ -44,18 +77,14 @@ const Header = () => {
           ⌕‍
         </button>
       </div>
-      <div className="flex col-span-2 space-x-5 -mr-24 -m-1">
-        <div className="px-3 py-4 mb-1 hover:bg-stone-300 rounded-full cursor-pointer">
-          <img alt="start video" src={CREATE_VIDEO} className="h-3.5" />
+      <div className="flex col-span-2 space-x-7 -mr-24">
+        <div className="rounded-icon">
+          <img alt="start video" src={CREATE_VIDEO} className="mt-1" />
         </div>
-        <div className="p-3 mb-2 hover:bg-stone-300 rounded-full cursor-pointer">
-          <img alt="notification" src={NOTIFY_BELL} className="h-5" />
+        <div className="rounded-icon">
+          <img alt="notification" src={NOTIFY_BELL} />
         </div>
-        <img
-          alt="profile"
-          src={USER_LOGO}
-          className="h-8 mt-1 cursor-pointer"
-        />
+        <img alt="profile" src={USER_LOGO} className="h-8 cursor-pointer" />
       </div>
     </div>
   );
