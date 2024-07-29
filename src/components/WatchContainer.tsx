@@ -145,7 +145,7 @@ const WatchContainer = () => {
         <h3 className="text-xl font-bold">
           {(+commentCount).toLocaleString() + " Comments"}
         </h3>
-        <CommentsList vidId={videoId} list={undefined} />
+        <CommentsList vidId={videoId} query={true} />
       </div>
     </div>
   );
