@@ -1,15 +1,13 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import getPopularVideos from "../utils/custom hooks/getPopularVideos";
-import { VideosListData } from "../types/fetchedData";
+import { FetchedVideoCardData } from "../types/fetchedData";
 import VideoCard from "./VideoCard";
 import VideoCardsShimmer from "./shimmer/VideoCardsShimmer";
 import { Link } from "react-router-dom";
 import { addVideo } from "../redux/videosDataSlice";
-import getChannelData from "../utils/custom hooks/getChannelData";
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { addChannel } from "../redux/channelsDataSlice";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const PopularVideosContainer = ({
   collapsedSideBar,
@@ -20,6 +18,7 @@ const PopularVideosContainer = ({
     (store) => store.videoCategory.categoryDetails
   );
   const dispatch = useAppDispatch();
+  const observer = useRef<IntersectionObserver>();
   const {
     data,
     status,
@@ -32,21 +31,28 @@ const PopularVideosContainer = ({
   } = useInfiniteQuery({
     queryKey: ["popular videos", vidCategoryData.id],
     initialPageParam: "",
-    getNextPageParam: (prevData: VideosListData) => prevData.nextPageToken,
+    getNextPageParam: (prevData: FetchedVideoCardData) =>
+      prevData.videosData.nextPageToken,
     queryFn: ({ pageParam }) => getPopularVideos(vidCategoryData.id, pageParam),
   });
-  const channelsData = useQuery({
-    queryKey: ["channels", vidCategoryData.id],
-    queryFn: () =>
-      getChannelData(
-        data!.pages.flatMap((page) =>
-          page.items.map((v) => v.snippet.channelId)
-        )
-      ),
-    enabled: Boolean(data?.pages?.length),
-  });
+  const lastElement = useCallback(
+    (node: HTMLAnchorElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !isFetching && hasNextPage) {
+          fetchNextPage();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [fetchNextPage, hasNextPage, isFetching, isLoading]
+  );
   const videoList = useMemo(() => {
-    return data?.pages.flatMap((page) => page.items);
+    return data?.pages.flatMap((page) => page.videosData.items);
+  }, [data]);
+  const channelList = useMemo(() => {
+    return data?.pages.flatMap((page) => page.channelsData);
   }, [data]);
   if (status === "pending") {
     return (
@@ -59,51 +65,44 @@ const PopularVideosContainer = ({
   if (status === "error") {
     return <div>{JSON.stringify(error)}</div>;
   }
-
+  //console.log(videoList);
   return (
-    <InfiniteScroll
-      dataLength={videoList?.length || 0}
-      next={fetchNextPage}
-      hasMore={hasNextPage}
-      loader={
-        <VideoCardsShimmer
-          len={collapsedSideBar ? 8 : 6}
-          collapsedSideBar={collapsedSideBar}
-        />
-      }
+    <div
       className={`${
         collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
       } flex flex-wrap gap-4`}
     >
       {videoList!.map((e) => (
         <Link
+          ref={lastElement}
           to={`/watch?v=${e.id}`}
           key={e.etag}
           onClick={() => {
             dispatch(addVideo(e));
-            channelsData?.data &&
-              dispatch(
-                addChannel(
-                  channelsData?.data?.find?.(
-                    (c) => e?.snippet?.channelId === c?.id
-                  )
-                )
-              );
+
+            dispatch(
+              addChannel(
+                channelList?.find?.((c) => e?.snippet?.channelId === c?.id)
+              )
+            );
           }}
         >
           <VideoCard
             info={e}
             imgUrl={
-              channelsData.isError
-                ? ""
-                : channelsData?.data?.find?.(
-                    (c) => e?.snippet?.channelId === c?.id
-                  )?.snippet?.thumbnails?.default?.url
+              channelList?.find?.((c) => e?.snippet?.channelId === c?.id)
+                ?.snippet?.thumbnails?.default?.url
             }
           />
         </Link>
       ))}
-    </InfiniteScroll>
+      {isFetchingNextPage && (
+        <VideoCardsShimmer
+          len={collapsedSideBar ? 8 : 6}
+          collapsedSideBar={collapsedSideBar}
+        />
+      )}
+    </div>
   );
 };
 
