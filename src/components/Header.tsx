@@ -6,15 +6,33 @@ import {
   USER_LOGO,
   YOUTUBE_LOGO,
 } from "../utils/constants";
-import { useAppDispatch } from "../types/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import { toggleSidebarView } from "../redux/ui_slices/sideBarResponsiveSlice";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import getSearchSuggestions from "../utils/custom hooks/getSearchSuggestions";
+import {
+  addSuggestions,
+  SearchSuggestionsState,
+} from "../redux/autoCompleteSearchSuggestionsSlice";
 
 const Header = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const searchState: SearchSuggestionsState = useAppSelector(
+    (store) => store.searchSuggestions
+  );
   const searchRef = useRef<HTMLInputElement>(null);
+  const [text, setText] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const { data, status, error } = useQuery({
+    queryKey: [text],
+    queryFn: () => getSearchSuggestions(searchRef.current?.value || ""),
+    enabled: searchState[text] === undefined,
+  });
+  const list = useMemo(() => {
+    return data?.suggestions || searchState[text];
+  }, [searchState, data, text]);
   return (
     <div className="w-[98vw] grid grid-flow-col p-3 m-2 mt-0 shadow-lg bg-white fixed z-30">
       <div className="flex space-x-6 col-span-2">
@@ -35,7 +53,10 @@ const Header = () => {
             ref={searchRef}
             placeholder="Search"
             className="pl-5 border py-2 border-stone-400 rounded-l-full"
-            onChange={() => {}}
+            onChange={() => {
+              setText(searchRef.current?.value || "");
+              dispatch(addSuggestions(data));
+            }}
             onKeyDown={() => {}}
             onClick={() => {}}
             onFocus={() => setShowSuggestions(true)}
@@ -47,18 +68,13 @@ const Header = () => {
                 "bg-white py-1.5 font-semibold shadow-2xl rounded-xl border-stone-200 duration-500"
               }
             >
-              {[]?.map((s) => (
+              {list?.map((s) => (
                 <li
                   key={s}
                   className="px-2 py-1.5  hover:cursor-default hover:bg-stone-100"
                   onClick={() => {
-                    //dispatch(addSuggestionInput("All"));
                     setShowSuggestions(false);
-                    searchRef.current?.value &&
-                      navigate(
-                        "/results?search_query=" +
-                          searchRef.current?.value.replace(/ /g, "+")
-                      );
+                    navigate("/results?search_query=" + s.replace(/ /g, "+"));
                   }}
                 >
                   <span className="text-xl font-thin text-gray-500 scale-x-[-1] px-2">
