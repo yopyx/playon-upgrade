@@ -1,6 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import DetailedVideoCard from "./DetailedVideoCard";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import getSearchResultedVideos from "../utils/custom hooks/getSearchResultedVideos";
+import { useMemo } from "react";
 import { addVideo } from "../redux/videosDataSlice";
 import { addChannel } from "../redux/channelsDataSlice";
 
@@ -12,6 +15,32 @@ const VideosResultsContainer = ({
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
   const searchText = useAppSelector((store) => store.searchText.search);
+  const {
+    data,
+    status,
+    error,
+    isFetching,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: [searchText],
+    queryFn: ({ pageParam }) => getSearchResultedVideos(searchText, pageParam),
+    initialPageParam: "",
+    getNextPageParam: (prevData) => prevData.videosData.nextPageToken,
+  });
+  const list = useMemo(() => {
+    return data?.pages.flatMap((page) => page.videosData.items);
+  }, [data]);
+  const channelsData = useMemo(() => {
+    return data?.pages.flatMap((page) => page.channelsData);
+  }, [data]);
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+  if (status === "error") {
+    return <div>{JSON.stringify(error)}</div>;
+  }
   return (
     <div
       className={`${
@@ -30,14 +59,16 @@ const VideosResultsContainer = ({
             " flex flex-col space-y-4 my-4"
           }
         >
-          {[]?.map((v) => (
+          {list?.map((v) => (
             <Link
               to={"/watch?v=" + v?.id}
               key={v.etag}
               onClick={() => {
                 dispatch(addVideo(v));
                 dispatch(
-                  addChannel([]?.find?.((c) => v?.snippet?.channelId === c?.id))
+                  addChannel(
+                    channelsData?.find?.((c) => v?.snippet?.channelId === c?.id)
+                  )
                 );
               }}
             >
