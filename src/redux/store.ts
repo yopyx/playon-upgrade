@@ -4,6 +4,7 @@ import categoryReducer from "./videoCategorySlice";
 import videosDataReducer from "./videosDataSlice";
 import channelsDataReducer from "./channelsDataSlice";
 import searchSuggestionsReducer from "./autoCompleteSearchSuggestionsSlice";
+import searchTextReducer from "./searchTextSlice";
 const appStore = configureStore({
   reducer: {
     responsiveSideBar: sideBarReducer,
@@ -11,6 +12,7 @@ const appStore = configureStore({
     videosData: videosDataReducer,
     channelsData: channelsDataReducer,
     searchSuggestions: searchSuggestionsReducer,
+    searchText: searchTextReducer,
   },
 });
 
