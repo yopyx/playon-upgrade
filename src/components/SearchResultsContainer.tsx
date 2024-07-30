@@ -1,24 +1,15 @@
-import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../types/reduxHooks";
+import SuggestionsButtons from "./SuggestionsButtons";
+import VideosResultsContainer from "./VideosResultsContainer";
 
 const SearchResultsContainer = () => {
-  const { pathname } = useLocation();
+  const collapsedSideBar = useAppSelector(
+    (store) => store.responsiveSideBar.collapseSidebar
+  );
   return (
-    <div className="flex flex-wrap w-screen space-x-4 space-y-10">
-      <div
-        className={
-          (pathname === "/watch" ? "w-[400px]" : "w-[1320px]") +
-          " flex justify-center"
-        }
-      >
-        <div
-          className={
-            (pathname === "/watch" ? "w-[450px]" : "w-[1000px]") +
-            " flex flex-col space-y-4 my-4"
-          }
-        >
-          {[]}
-        </div>
-      </div>
+    <div className={`container-ver gap-y-16`}>
+      <SuggestionsButtons collapsedSideBar={collapsedSideBar} />
+      <VideosResultsContainer collapsedSideBar={collapsedSideBar} />
     </div>
   );
 };
