@@ -1,5 +1,6 @@
 import {
   Category,
+  ChannelDetails,
   CommentDetails,
   NestedCommentDetails,
   VideoDetails,
@@ -18,5 +19,10 @@ export type CommentsListProps = {
   query: boolean;
 };
 export type CommentProps = {
-  info?: CommentDetails | NestedCommentDetails;
+  info: CommentDetails | NestedCommentDetails;
+};
+
+export type DetailedVideoCardProps = {
+  info: VideoDetails;
+  channelData: ChannelDetails | undefined;
 };
