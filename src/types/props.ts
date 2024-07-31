@@ -7,7 +7,8 @@ import {
 } from "./fetchedData";
 
 export type ButtonProps = {
-  categoryData: Category;
+  categoryData?: Category;
+  title: string;
   clicked: boolean;
   setClicked: (state: string) => void;
 };
