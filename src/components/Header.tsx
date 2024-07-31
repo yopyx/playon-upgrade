@@ -11,10 +11,9 @@ import { toggleSidebarView } from "../redux/ui_slices/sideBarResponsiveSlice";
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import getSearchSuggestions from "../utils/custom hooks/getSearchSuggestions";
-import {
-  addSuggestions,
-  SearchSuggestionsState,
-} from "../redux/autoCompleteSearchSuggestionsSlice";
+import { addSuggestions } from "../redux/autoCompleteSearchSuggestionsSlice";
+import { addSearchText } from "../redux/searchTextSlice";
+import { SearchSuggestionsState } from "../types/slicesState";
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -47,7 +46,11 @@ const Header = () => {
         </Link>
       </div>
       <div className="flex col-span-8 place-content-center mr-32 h-[41px]">
-        <div className="flex flex-col w-[70%]">
+        <div
+          className="flex flex-col w-[70%]"
+          onFocus={() => setShowSuggestions(true)}
+          //onBlur={() => setShowSuggestions(false)}
+        >
           <input
             type="text"
             ref={searchRef}
@@ -58,9 +61,6 @@ const Header = () => {
               dispatch(addSuggestions(data));
             }}
             onKeyDown={() => {}}
-            onClick={() => {}}
-            onFocus={() => setShowSuggestions(true)}
-            onBlur={() => setShowSuggestions(false)}
           />
           {showSuggestions && (
             <ul
@@ -74,6 +74,7 @@ const Header = () => {
                   className="px-2 py-1.5  hover:cursor-default hover:bg-stone-100"
                   onClick={() => {
                     setShowSuggestions(false);
+                    dispatch(addSearchText(s));
                     navigate("/results?search_query=" + s.replace(/ /g, "+"));
                   }}
                 >
