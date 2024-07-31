@@ -3,14 +3,21 @@ import { LEFT_ARROW, RIGHT_ARROW } from "../utils/constants";
 import Button from "./Button";
 import { useQuery } from "@tanstack/react-query";
 import getCategories from "../utils/custom hooks/getCategories";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useAppSelector } from "../types/reduxHooks";
+import getSearchResultedVideos from "../utils/custom hooks/getSearchResultedVideos";
 
-const SuggestionsButtons = () => {
+const SuggestionsButtons = ({
+  collapsedSideBar,
+}: {
+  collapsedSideBar: boolean;
+}) => {
   const { pathname } = useLocation();
   const [clickedBtn, setClickedBtn] = useState("All");
   const [translateValue, setTranslateValue] = useState(0);
   const [maxTranslation, setMaxTranslation] = useState(false);
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
+  const searchText = useAppSelector((store) => store.searchText.search);
   const leftScroll = () => {
     if (categoriesScrollRef.current) {
       categoriesScrollRef.current.scrollBy({
@@ -41,39 +48,60 @@ const SuggestionsButtons = () => {
       }
     }
   };
-  console.log(translateValue);
-  const { data, error, isLoading, isError } = useQuery({
+
+  const popularSuggestionsQuery = useQuery({
     queryKey: ["categories"],
     queryFn: () => getCategories(),
+    enabled: pathname === "/",
   });
-  if (isLoading) {
+  const searchSuggestionsQuery = useQuery({
+    queryKey: ["suggestion buttons", searchText],
+    queryFn: () => getSearchResultedVideos(searchText, ""),
+    enabled: pathname !== "/",
+  });
+  const popularList = useMemo(() => {
+    return popularSuggestionsQuery.data;
+  }, [popularSuggestionsQuery]);
+  const recommendedList = useMemo(() => {
+    return (
+      searchSuggestionsQuery.data?.videosData?.items.find((v) => v.snippet.tags)
+        ?.snippet.tags || []
+    );
+  }, [searchSuggestionsQuery.data?.videosData?.items]);
+
+  if (popularSuggestionsQuery.isLoading || searchSuggestionsQuery.isLoading) {
     return <div>Loading...</div>;
   }
-  if (isError) {
-    return <div>{JSON.stringify(error)}</div>;
+  if (popularSuggestionsQuery.isError || searchSuggestionsQuery.isError) {
+    return (
+      <div>
+        {JSON.stringify(
+          popularSuggestionsQuery.isError
+            ? popularSuggestionsQuery.error
+            : searchSuggestionsQuery.error
+        )}
+      </div>
+    );
   }
   return (
     <div
-      className={
-        (pathname === "/watch" ? "" : "sticky top-14 ") + "w-[80vw] flex"
-      }
+      className={`${pathname.startsWith("/watch") ? "" : "sticky top-16 "}${
+        collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
+      } py-5 bg-white`}
     >
-      <div
-        className={`w-full flex absolute ${
-          translateValue ? "justify-between" : "justify-end"
-        }`}
-      >
-        {translateValue ? (
-          <button
-            className="bg-white bg-opacity-80 p-3 px-3.5 rounded-full z-20 hover:bg-stone-100"
-            onClick={leftScroll}
-          >
-            <img alt="RIGHT_ARROW" src={RIGHT_ARROW} className="w-1.5" />
-          </button>
-        ) : null}
+      <div className={`w-full flex absolute justify-between`}>
+        <button
+          className={`bg-white bg-opacity-80 opacity-${
+            translateValue > 0 ? "opacity-100" : "opacity-0"
+          } p-3 px-3.5 rounded-full z-30 hover:bg-stone-100`}
+          onClick={leftScroll}
+        >
+          <img alt="RIGHT_ARROW" src={RIGHT_ARROW} className="w-1.5" />
+        </button>
+
         {maxTranslation ? null : (
           <button
-            className="bg-white bg-opacity-80 p-3 px-3.5 rounded-full z-20 hover:bg-stone-100"
+            className="bg-white bg-opacity-80 p-3 px-3.5 rounded-full z-30 hover:bg-stone-100"
             onClick={rightScroll}
           >
             <img alt="LEFT_ARROW" src={LEFT_ARROW} className="w-1.5" />
@@ -81,30 +109,41 @@ const SuggestionsButtons = () => {
         )}
       </div>
       <div
-        className="flex space-x-2 px-5 overflow-x-hidden z-10"
+        className="w-full flex gap-x-2 overflow-x-hidden"
         ref={categoriesScrollRef}
         onScroll={handleScroll}
       >
         <Button
           key={"All"}
-          category={"All"}
+          categoryData={{ id: "0", snippet: { title: "All" } }}
+          title={"All"}
           clicked={clickedBtn === "All"}
           setClicked={setClickedBtn}
         />
-        <Button
-          key={"Live Stream"}
-          category={"Live Stream"}
-          clicked={clickedBtn === "Live Stream"}
+        {/* <Button
+          key={"Live Streaming"}
+          categoryData={{ id: "22", snippet: { title: "Live Streaming" } }}
+          clicked={clickedBtn === "Live Streaming"}
           setClicked={setClickedBtn}
-        />
-        {data?.map((c) => (
-          <Button
-            key={c.etag}
-            category={c.snippet.title}
-            clicked={clickedBtn === c.snippet.title}
-            setClicked={setClickedBtn}
-          />
-        ))}
+        /> */}
+        {pathname === "/"
+          ? popularList!.map((c) => (
+              <Button
+                key={c.etag}
+                categoryData={c}
+                title={c.snippet.title}
+                clicked={clickedBtn === c.snippet.title}
+                setClicked={setClickedBtn}
+              />
+            ))
+          : recommendedList!.map((c, i) => (
+              <Button
+                key={c + i}
+                title={c}
+                clicked={clickedBtn === c}
+                setClicked={setClickedBtn}
+              />
+            ))}
       </div>
     </div>
   );
