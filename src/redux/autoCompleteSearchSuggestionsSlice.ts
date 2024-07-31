@@ -1,13 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { SearchSuggestionsState } from "../types/slicesState";
 
-type SearchSuggestionsState = {
-  [text: string]: string[];
-};
 const autoCompleteSearchSuggestionsSlice = createSlice({
   name: "search suggestions",
-  initialState: {},
+  initialState: {} as SearchSuggestionsState,
   reducers: {
-    addSuggestions: (state: SearchSuggestionsState, action) => {
+    addSuggestions: (state, action) => {
       const { text, suggestions } = action.payload;
       state[text] = suggestions;
     },

@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { SearchSliceState } from "../types/slicesState";
 
 const searchTextSlice = createSlice({
   name: "text",
   initialState: {
     search: "",
     suggestion: "All",
-  },
+  } as SearchSliceState,
   reducers: {
     addSearchText: (state, action) => {
       state.search = action.payload;

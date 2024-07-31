@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ChannelDetails } from "../types/fetchedData";
-type ChannelState = {
-  channels: { [id: string]: ChannelDetails };
-};
+import { ChannelState } from "../types/slicesState";
+
 const initialState: ChannelState = {
   channels: {},
 };
