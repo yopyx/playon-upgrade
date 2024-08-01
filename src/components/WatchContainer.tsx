@@ -12,6 +12,8 @@ import {
 } from "../utils/constants";
 import { useAppSelector } from "../types/reduxHooks";
 import CommentsList from "./CommentsList";
+import VideosResultsContainer from "./VideosResultsContainer";
+import LiveChat from "./LiveChat";
 
 const WatchContainer = () => {
   const { search } = useLocation();
@@ -146,6 +148,14 @@ const WatchContainer = () => {
           {(+commentCount).toLocaleString() + " Comments"}
         </h3>
         <CommentsList vidId={videoId} query={true} />
+      </div>
+      <div className="flex flex-col">
+        {liveBroadcastContent !== "none" && (
+          <LiveChat
+            chatId={videoInfo?.liveStreamingDetails?.activeLiveChatId}
+          />
+        )}
+        <VideosResultsContainer collapsedSideBar={true} />
       </div>
     </div>
   );
