@@ -215,3 +215,40 @@ export type FetchedSearchResults = {
   };
   items: SearchResultedVideo[];
 };
+export type LiveChatComment = {
+  kind: string;
+  etag: string;
+  id: string;
+  snippet: {
+    type: string;
+    liveChatId: string;
+    authorChannelId: string;
+    publishedAt: string;
+    hasDisplayContent: boolean;
+    displayMessage: string;
+    textMessageDetails: {
+      messageText: string;
+    };
+  };
+  authorDetails: {
+    channelId: string;
+    channelUrl: string;
+    displayName: string;
+    profileImageUrl: string;
+    isVerified: boolean;
+    isChatOwner: boolean;
+    isChatSponsor: boolean;
+    isChatModerator: boolean;
+  };
+};
+export type LiveChatData = {
+  kind: string;
+  etag: string;
+  pollingIntervalMillis: number;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+  nextPageToken: string;
+  items: LiveChatComment[];
+};
