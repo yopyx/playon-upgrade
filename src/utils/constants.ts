@@ -9,10 +9,8 @@ export const YT_VIDEO_BY_ID_API = (idArray: string[]) =>
   `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=${idArray.join(
     "%2C"
   )}&key=${apiKey}`;
-export const YT_LIVE_CHAT_API = [
-  `https://youtube.googleapis.com/youtube/v3/liveChat/messages?liveChatId=`,
-  `&part=snippet%2CauthorDetails&key=${apiKey}`,
-];
+export const YT_LIVE_CHAT_API = (chatId: string) =>
+  `https://youtube.googleapis.com/youtube/v3/liveChat/messages?liveChatId=${chatId}&part=snippet%2CauthorDetails&key=${apiKey}`;
 export const YT_API_Channels = [
   `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=`,
   `&key=${apiKey}`,
