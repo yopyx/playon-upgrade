@@ -2,6 +2,7 @@ import {
   Category,
   ChannelDetails,
   CommentDetails,
+  LiveChatComment,
   NestedCommentDetails,
   VideoDetails,
 } from "./fetchedData";
@@ -27,3 +28,5 @@ export type DetailedVideoCardProps = {
   info: VideoDetails;
   channelData: ChannelDetails | undefined;
 };
+export type LiveChatProps = { chatId: string };
+export type LiveCommentProps = { info: LiveChatComment };
