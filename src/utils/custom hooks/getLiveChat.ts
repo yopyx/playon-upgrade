@@ -1,8 +1,8 @@
 import { LiveChatData } from "../../types/fetchedData";
 import { CORS, YT_LIVE_CHAT_API } from "../constants";
 
-const getLiveChat = async (chatId: string) => {
-  const url = CORS + encodeURIComponent(YT_LIVE_CHAT_API(chatId));
+const getLiveChat = async (chatId: string, nextToken: string) => {
+  const url = CORS + encodeURIComponent(YT_LIVE_CHAT_API(chatId, nextToken));
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("HTTP Error!");
