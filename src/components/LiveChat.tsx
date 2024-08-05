@@ -1,11 +1,28 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SEND_ICON } from "../utils/constants";
 import LiveComment from "./LiveComment";
-import { useAppDispatch } from "../types/reduxHooks";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import getLiveChat from "../utils/custom hooks/getLiveChat";
+import { LiveChatProps } from "../types/props";
 
-const LiveChat = ({ chatId }: { chatId: string }) => {
+const LiveChat = ({ chatId }: LiveChatProps) => {
   const [chatView, setChatView] = useState(true);
-  const dispatch = useAppDispatch();
+  const { data, status, isFetching, hasNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ["live", chatId],
+      initialPageParam: "",
+      queryFn: ({ pageParam }) => getLiveChat(chatId, pageParam),
+      getNextPageParam: (prevData) => prevData.nextPageToken,
+    });
+  const list = useMemo(() => {
+    return data?.pages.flatMap((e) => e.items).slice(-100);
+  }, [data]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (hasNextPage && !isFetching) fetchNextPage();
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [hasNextPage, fetchNextPage, isFetching]);
   return (
     <div>
       {chatView && (
@@ -13,7 +30,7 @@ const LiveChat = ({ chatId }: { chatId: string }) => {
           <h4 className="font-semibold py-3 px-5">Top chat</h4>
           <div className="flex flex-col-reverse overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-200 space-y-2 border-t-2 border-b-2 h-[430px] px-5 py-1.5">
             <div className="">
-              {[]?.map((m) => (
+              {list?.map((m) => (
                 <LiveComment info={m} key={m?.etag} />
               ))}
             </div>
