@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { addVideo } from "../redux/videosDataSlice";
 import { useCallback, useMemo, useRef } from "react";
 import { addChannel } from "../redux/channelsDataSlice";
+import NotFound from "./errorCatcher/NotFound";
 
 const PopularVideosContainer = ({
   collapsedSideBar,
@@ -22,7 +23,6 @@ const PopularVideosContainer = ({
   const {
     data,
     status,
-    error,
     isFetching,
     isLoading,
     fetchNextPage,
@@ -63,7 +63,7 @@ const PopularVideosContainer = ({
     );
   }
   if (status === "error") {
-    return <div>{JSON.stringify(error)}</div>;
+    return <NotFound />;
   }
   //console.log(videoList);
   return (
