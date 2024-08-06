@@ -6,6 +6,8 @@ import getSearchResultedVideos from "../utils/custom hooks/getSearchResultedVide
 import { useMemo } from "react";
 import { addVideo } from "../redux/videosDataSlice";
 import { addChannel } from "../redux/channelsDataSlice";
+import NotFound from "./errorCatcher/NotFound";
+import DetailedVideoCardsShimmer from "./shimmer/DetailedVideoCardsShimmer";
 
 const VideosResultsContainer = ({
   collapsedSideBar,
@@ -24,7 +26,7 @@ const VideosResultsContainer = ({
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: [searchText],
+    queryKey: ["search resulted videos", searchText],
     queryFn: ({ pageParam }) => getSearchResultedVideos(searchText, pageParam),
     initialPageParam: "",
     getNextPageParam: (prevData) => prevData.videosData.nextPageToken,
@@ -36,10 +38,10 @@ const VideosResultsContainer = ({
     return data?.pages.flatMap((page) => page.channelsData);
   }, [data]);
   if (status === "pending") {
-    return <div>Loading...</div>;
+    return <DetailedVideoCardsShimmer len={6} />;
   }
   if (status === "error") {
-    return <div>{JSON.stringify(error)}</div>;
+    return <NotFound />;
   }
   return (
     <div
