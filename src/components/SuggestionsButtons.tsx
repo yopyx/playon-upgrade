@@ -6,6 +6,7 @@ import getCategories from "../utils/custom hooks/getCategories";
 import { useMemo, useRef, useState } from "react";
 import { useAppSelector } from "../types/reduxHooks";
 import getSearchResultedVideos from "../utils/custom hooks/getSearchResultedVideos";
+import SuggestionButtonsShimmer from "./shimmer/SuggestionButtonsShimmer";
 
 const SuggestionsButtons = ({
   collapsedSideBar,
@@ -70,7 +71,7 @@ const SuggestionsButtons = ({
   }, [searchSuggestionsQuery.data?.videosData?.items]);
 
   if (popularSuggestionsQuery.isLoading || searchSuggestionsQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <SuggestionButtonsShimmer />;
   }
   if (popularSuggestionsQuery.isError || searchSuggestionsQuery.isError) {
     return (
@@ -87,7 +88,7 @@ const SuggestionsButtons = ({
     <div
       className={`${pathname.startsWith("/watch") ? "" : "sticky top-16 "}${
         collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
-      } py-5 bg-white`}
+      } py-5 bg-white z-10`}
     >
       <div className={`w-full flex absolute justify-between`}>
         <button
