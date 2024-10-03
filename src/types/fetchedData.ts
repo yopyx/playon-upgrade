@@ -216,29 +216,29 @@ export type FetchedSearchResults = {
   items: SearchResultedVideo[];
 };
 export type LiveChatComment = {
-  kind: string;
+  kind?: string;
   etag: string;
-  id: string;
+  id?: string;
   snippet: {
-    type: string;
-    liveChatId: string;
-    authorChannelId: string;
-    publishedAt: string;
-    hasDisplayContent: boolean;
+    type?: string;
+    liveChatId?: string;
+    authorChannelId?: string;
+    publishedAt?: string;
+    hasDisplayContent?: boolean;
     displayMessage: string;
-    textMessageDetails: {
+    textMessageDetails?: {
       messageText: string;
     };
   };
   authorDetails: {
-    channelId: string;
-    channelUrl: string;
+    channelId?: string;
+    channelUrl?: string;
     displayName: string;
     profileImageUrl: string;
-    isVerified: boolean;
-    isChatOwner: boolean;
-    isChatSponsor: boolean;
-    isChatModerator: boolean;
+    isVerified?: boolean;
+    isChatOwner?: boolean;
+    isChatSponsor?: boolean;
+    isChatModerator?: boolean;
   };
 };
 export type LiveChatData = {
@@ -251,4 +251,8 @@ export type LiveChatData = {
   };
   nextPageToken: string;
   items: LiveChatComment[];
+};
+export type CommentPostVersion = {
+  id: string;
+  text: string;
 };
