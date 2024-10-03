@@ -4,15 +4,15 @@ import { SearchSliceState } from "../types/slicesState";
 const searchTextSlice = createSlice({
   name: "text",
   initialState: {
-    search: "",
-    suggestion: "All",
+    searchTextStored: "",
+    suggestionCategory: "All",
   } as SearchSliceState,
   reducers: {
     addSearchText: (state, action) => {
-      state.search = action.payload;
+      state.searchTextStored = action.payload as string;
     },
     addSuggestedCategory: (state, action) => {
-      state.suggestion = action.payload;
+      state.suggestionCategory = action.payload as string;
     },
   },
 });
