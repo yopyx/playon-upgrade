@@ -4,7 +4,8 @@ import MainContainer from "./components/MainContainer";
 import SearchResultsContainer from "./components/SearchResultsContainer";
 import WatchContainer from "./components/WatchContainer";
 import { Provider } from "react-redux";
-import appStore from "./redux/store";
+import { appStore, persistor } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 const appRouter = createBrowserRouter([
   {
@@ -33,7 +34,9 @@ const appRouter = createBrowserRouter([
 function App() {
   return (
     <Provider store={appStore}>
-      <RouterProvider router={appRouter} />
+      <PersistGate loading={null} persistor={persistor}>
+        <RouterProvider router={appRouter} />
+      </PersistGate>
     </Provider>
   );
 }
