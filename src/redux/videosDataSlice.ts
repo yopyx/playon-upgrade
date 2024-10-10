@@ -1,17 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { VideoDetails } from "../types/fetchedData";
-type VideoState = {
-  videos: { [id: string]: VideoDetails };
-};
-const initialState: VideoState = {
-  videos: {},
-};
+import { VideoState } from "../types/slicesState";
+
 const videosDataSlice = createSlice({
   name: "Videos data",
-  initialState,
+  initialState: {} as VideoState,
   reducers: {
-    addVideo: (state, action) => {
-      state.videos[action.payload.id] = action.payload;
+    addVideo: (state: VideoState, action) => {
+      state[action.payload.id] = action.payload;
     },
   },
 });
