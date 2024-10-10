@@ -1,14 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ChannelState } from "../types/slicesState";
 
-const initialState: ChannelState = {
-  channels: {},
-};
 const channelsDataSlice = createSlice({
   name: "Videos data",
-  initialState,
+  initialState: {
+    channels: {},
+  } as ChannelState,
   reducers: {
-    addChannel: (state, action) => {
+    addChannel: (state: ChannelState, action) => {
       state.channels[action.payload.id] = action.payload;
     },
   },

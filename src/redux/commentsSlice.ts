@@ -1,16 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CommentPostState } from "../types/slicesState";
-import { CommentPostVersion } from "../types/fetchedData";
 
 const commentsSlice = createSlice({
   name: "comments",
-  initialState: {} as CommentPostState,
+  initialState: {},
   reducers: {
-    addComment: (state, action) => {
-      const { id, comment } = action.payload as {
-        id: string;
-        comment: CommentPostVersion;
-      };
+    addComment: (state: CommentPostState, action) => {
+      const { id, comment } = action.payload;
       state[id] ? state[id].push(comment) : (state[id] = [comment]);
     },
   },
