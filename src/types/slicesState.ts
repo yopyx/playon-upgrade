@@ -29,3 +29,5 @@ export type LiveChatState = {
 export type VideoState = {
   [id: string]: VideoDetails;
 };
+
+export type sideBarSliceState = { collapseSidebar: boolean };
