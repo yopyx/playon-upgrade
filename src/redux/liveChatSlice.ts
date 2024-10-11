@@ -13,7 +13,7 @@ const liveChatSlice = createSlice({
     },
     addNewMessage: (state: LiveChatState, action) => {
       const [chatId, etag, msg] = action.payload;
-      state.messages[chatId] = { [etag]: msg };
+      state.messages[chatId] = { ...state.messages[chatId], [etag]: msg };
     },
   },
 });
