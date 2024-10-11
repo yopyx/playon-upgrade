@@ -135,12 +135,12 @@ export const timeDiff = (ms = 0) => {
   }
 };
 
-export const handleViewsCount = (views: string) => {
+export const handleViewsCount = (views = "") => {
   return views.length > 9
-    ? (+views / 1000000000 + "").slice(0, -8).replace(/\.0|\.$/, "") + "B"
+    ? (+views / 1000000000).toFixed(1) + "B"
     : views.length > 6
-    ? (+views / 1000000 + "").slice(0, -5).replace(/\.0|\.$/, "") + "M"
+    ? (+views / 1000000).toFixed(1) + "M"
     : views.length > 3
-    ? (+views / 1000 + "").slice(0, -2).replace(/\.0|\.$/, "") + "K"
+    ? (+views / 1000).toFixed(0) + "K"
     : views;
 };
