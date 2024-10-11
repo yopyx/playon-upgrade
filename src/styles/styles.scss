@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.dynamic-width-collapsed {
+  max-width: 1250px;
+}
+.dynamic-width {
+  max-width: 1380px;
+}
 //header
 .rounded-icon {
   @apply hover:bg-stone-300 w-9 h-9 rounded-full p-2 cursor-pointer;
@@ -11,9 +17,6 @@
   @apply flex flex-wrap justify-center rounded-lg cursor-pointer h-16 p-3 mx-auto mr-0 hover:bg-stone-100;
   img {
     @apply h-5 w-5;
-  }
-  p {
-    // @apply inline-block mx-auto ml-1;
   }
 }
 
@@ -30,7 +33,7 @@
 
 //footer
 .info-container {
-  @apply flex flex-wrap space-x-2 font-semibold text-xs;
+  @apply flex flex-wrap gap-x-2 font-semibold text-xs;
   p {
     @apply inline-block ml-2 cursor-pointer;
   }
