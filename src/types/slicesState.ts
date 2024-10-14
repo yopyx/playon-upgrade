@@ -30,4 +30,6 @@ export type VideoState = {
   [id: string]: VideoDetails;
 };
 
-export type sideBarSliceState = { collapseSidebar: boolean };
+export type SideBarSliceState = { collapseSidebar: boolean };
+
+export type QuotaSliceState = { quota: number; currentIndex: number };
