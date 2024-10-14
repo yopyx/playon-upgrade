@@ -1,31 +1,41 @@
 //apis urls
 export const CORS = "https://corsproxy.io/?";
-const apiKey = import.meta.env.VITE_APP_YT_KEY;
-export const YT_API = (vidCategoryId = "0", nextToken = "") =>
+export const YT_API = (vidCategoryId = "0", nextToken = "", apiKey: string) =>
   `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=12${
     nextToken ? "&pageToken=" + nextToken : ""
   }&regionCode=US&videoCategoryId=${vidCategoryId}&key=${apiKey}`;
-export const YT_VIDEO_BY_ID_API = (idArray: string[]) =>
+export const YT_VIDEO_BY_ID_API = (idArray: string[], apiKey: string) =>
   `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=${idArray.join(
     "%2C"
   )}&key=${apiKey}`;
-export const YT_LIVE_CHAT_API = (chatId: string, nextToken = "") =>
+export const YT_LIVE_CHAT_API = (
+  chatId: string,
+  nextToken = "",
+  apiKey: string
+) =>
   `https://youtube.googleapis.com/youtube/v3/liveChat/messages?liveChatId=${chatId}${
     nextToken ? "&pageToken=" + nextToken : ""
   }&part=snippet%2CauthorDetails&key=${apiKey}`;
-export const YT_API_Channels = [
-  `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=`,
-  `&key=${apiKey}`,
-];
+export const YT_API_Channels = (ids: string, apiKey: string) =>
+  `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${ids}&key=${apiKey}`;
 
 export const YT_SEARCH_API = (searchText = "") =>
   `http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${searchText}`;
-export const YT_COMMENTS_API = (vidId: string, nextToken = "") =>
+export const YT_COMMENTS_API = (
+  vidId: string,
+  nextToken = "",
+  apiKey: string
+) =>
   `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies${
     nextToken ? "&pageToken=" + nextToken : ""
   }&videoId=${vidId}&key=${apiKey}`;
-export const YT_VID_CATEG_API = `https://youtube.googleapis.com/youtube/v3/videoCategories?part=snippet&regionCode=US&key=${apiKey}`;
-export const YT_SEARCH_RESULTS_API = (searchText = "", nextToken = "") =>
+export const YT_VID_CATEG_API = (apiKey: string) =>
+  `https://youtube.googleapis.com/youtube/v3/videoCategories?part=snippet&regionCode=US&key=${apiKey}`;
+export const YT_SEARCH_RESULTS_API = (
+  searchText = "",
+  nextToken = "",
+  apiKey: string
+) =>
   `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25${
     nextToken ? "&pageToken=" + nextToken : ""
   }&q=${searchText}&key=${apiKey}`;
