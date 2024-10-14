@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Category } from "../types/fetchedData";
 
 const videoCategory = createSlice({
   name: "category",
@@ -7,7 +8,7 @@ const videoCategory = createSlice({
   },
   reducers: {
     addCategoryDetails: (state, action) => {
-      state.categoryDetails = action.payload;
+      state.categoryDetails = action.payload as Category;
     },
   },
 });

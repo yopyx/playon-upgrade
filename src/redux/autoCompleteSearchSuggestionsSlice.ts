@@ -5,7 +5,7 @@ const autoCompleteSearchSuggestionsSlice = createSlice({
   name: "search suggestions",
   initialState: {} as SearchSuggestionsState,
   reducers: {
-    addSuggestions: (state, action) => {
+    addSuggestions: (state: SearchSuggestionsState, action) => {
       const { text, suggestions } = action.payload;
       state[text] = suggestions;
     },

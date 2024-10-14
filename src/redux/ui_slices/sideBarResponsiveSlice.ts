@@ -1,16 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { sideBarSliceState } from "../../types/slicesState";
+import { SideBarSliceState } from "../../types/slicesState";
 
 const sideBarResponsiveSlice = createSlice({
   name: "responsive slice",
   initialState: {
     collapseSidebar: false,
-  } as sideBarSliceState,
+  } as SideBarSliceState,
   reducers: {
-    toggleSidebarView: (state: sideBarSliceState) => {
+    toggleSidebarView: (state: SideBarSliceState) => {
       state.collapseSidebar = !state.collapseSidebar;
     },
-    openCloseSidebar: (state: sideBarSliceState, action) => {
+    openCloseSidebar: (state: SideBarSliceState, action) => {
       state.collapseSidebar = action.payload;
     },
   },
