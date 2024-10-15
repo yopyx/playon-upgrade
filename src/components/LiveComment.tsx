@@ -8,6 +8,7 @@ const LiveComment = ({ info }: LiveCommentProps) => {
     <div className="flex space-x-2 text-xs mt-2">
       <img
         alt={displayName}
+        referrerPolicy="no-referrer"
         src={CORS + encodeURIComponent(profileImageUrl)}
         className="h-6 w-6 rounded-full bg-black"
       />
