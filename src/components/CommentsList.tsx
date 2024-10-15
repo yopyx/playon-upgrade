@@ -1,10 +1,16 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { CommentsListProps } from "../types/props";
 import Comment from "./Comment";
-import getComments from "../utils/custom hooks/getComments";
+import getComments from "../utils/functions/getComments";
 import { useCallback, useRef } from "react";
+import { CommentsListPostVer } from "./CommentsListPostVer";
+import { useAppDispatch } from "../types/reduxHooks";
+import { updateQuota } from "../redux/ui_slices/quotaSlice";
+import { useKey } from "./Body";
 
 const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
+  const dispatch = useAppDispatch();
+  const apiKey = useKey();
   const observer = useRef<IntersectionObserver>();
   const {
     data,
@@ -18,7 +24,10 @@ const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
   } = useInfiniteQuery({
     queryKey: ["comments", vidId],
     initialPageParam: "",
-    queryFn: ({ pageParam }) => getComments(vidId, pageParam),
+    queryFn: ({ pageParam }) => {
+      dispatch(updateQuota(5));
+      return getComments(vidId, pageParam, apiKey);
+    },
     getNextPageParam: (prevData) => prevData.nextPageToken,
     enabled: query,
   });
@@ -60,6 +69,9 @@ const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
               />
             </div>
           ) : null}
+          <div className="pl-10">
+            <CommentsListPostVer id={c.etag} />
+          </div>
         </div>
       ))}
       {query && isFetchingNextPage && <div>Loading...</div>}
