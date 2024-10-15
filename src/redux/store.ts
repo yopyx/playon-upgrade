@@ -10,25 +10,32 @@ import liveChatReducer from "./liveChatSlice";
 import quotaReducer from "./ui_slices/quotaSlice";
 import storageSession from "redux-persist/lib/storage/session";
 import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
-const rootReducer = combineReducers({
-  responsiveSideBar: sideBarReducer,
-  videoCategory: categoryReducer,
-  videosData: videosDataReducer,
-  channelsData: channelsDataReducer,
-  searchSuggestions: searchSuggestionsReducer,
-  searchText: searchTextReducer,
-  comments: commentsReducer,
-  liveChat: liveChatReducer,
-  quota: quotaReducer,
-});
-const persistConfig = {
-  key: "root",
+const sessionPersistConfig = {
+  key: "session-root",
   storage: storageSession,
 };
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const localPersistConfig = {
+  key: "local-root",
+  storage: storage,
+};
+const rootReducer = combineReducers({
+  responsiveSideBar: persistReducer(sessionPersistConfig, sideBarReducer),
+  videoCategory: persistReducer(sessionPersistConfig, categoryReducer),
+  videosData: persistReducer(sessionPersistConfig, videosDataReducer),
+  channelsData: persistReducer(sessionPersistConfig, channelsDataReducer),
+  searchSuggestions: persistReducer(
+    sessionPersistConfig,
+    searchSuggestionsReducer
+  ),
+  searchText: persistReducer(sessionPersistConfig, searchTextReducer),
+  comments: persistReducer(sessionPersistConfig, commentsReducer),
+  liveChat: persistReducer(sessionPersistConfig, liveChatReducer),
+  quota: persistReducer(localPersistConfig, quotaReducer),
+});
 const appStore = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
