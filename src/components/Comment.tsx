@@ -1,18 +1,24 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CommentProps } from "../types/props";
 import {
   BLACK_UNLIKE,
   BLUE_LIKE,
+  CORS,
   LIKE_ICON,
   UNLIKE_ICON,
   timeDiff,
 } from "../utils/constants";
+import { Link } from "react-router-dom";
+import { useAppDispatch } from "../types/reduxHooks";
+import { addComment } from "../redux/commentsSlice";
+import { v4 as uuidv4 } from "uuid";
 
 const Comment = ({ info }: CommentProps) => {
-  const [reply, setReply] = useState(false);
+  const [replySection, setReplySection] = useState(false);
+  const replyInput = useRef<HTMLInputElement>(null);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
-  if (!info) return;
+  const dispatch = useAppDispatch();
   const {
     textOriginal,
     authorDisplayName,
@@ -27,13 +33,14 @@ const Comment = ({ info }: CommentProps) => {
   return (
     <div className="flex space-x-3">
       {authorProfileImageUrl ? (
-        <a href={authorChannelUrl}>
+        <Link to={authorChannelUrl}>
           <img
             alt={authorDisplayName}
-            src={authorProfileImageUrl}
-            className="rounded-full h-8 w-8 object-cover"
+            referrerPolicy="no-referrer"
+            src={CORS + encodeURIComponent(authorProfileImageUrl)}
+            className="rounded-full h-8 w-8 object-cover bg-stone-200"
           ></img>
-        </a>
+        </Link>
       ) : (
         <div className="rounded-full w-8 h-8 bg-black"></div>
       )}
@@ -77,16 +84,17 @@ const Comment = ({ info }: CommentProps) => {
           </button>
           <button
             className="text-slate-600 font-semibold rounded-full p-2 hover:bg-stone-200"
-            onClick={() => setReply(true)}
+            onClick={() => setReplySection(true)}
           >
             Reply
           </button>
         </div>
-        {reply && (
+        {replySection && (
           <div className="flex flex-col">
             <div className="flex space-x-2">
               <div className="rounded-full w-5 h-5 bg-black"></div>
               <input
+                ref={replyInput}
                 type="text"
                 placeholder="Add a reply..."
                 className="text-sm text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
@@ -95,11 +103,26 @@ const Comment = ({ info }: CommentProps) => {
             <div className="flex space-x-3 justify-end mt-2">
               <button
                 className="font-semibold text-sm py-2 px-3  rounded-full hover:bg-stone-200"
-                onClick={() => setReply(false)}
+                onClick={() => setReplySection(false)}
               >
                 Cancel
               </button>
-              <button className="font-semibold text-sm text-white py-2 px-3 bg-blue-700 rounded-full hover:bg-blue-800">
+              <button
+                className="font-semibold text-sm text-white py-2 px-3 bg-blue-700 rounded-full hover:bg-blue-800"
+                onClick={() => {
+                  replyInput.current?.value &&
+                    dispatch(
+                      addComment({
+                        id: info.etag,
+                        comment: {
+                          id: uuidv4(),
+                          text: replyInput.current.value,
+                        },
+                      })
+                    );
+                  setReplySection(false);
+                }}
+              >
                 Reply
               </button>
             </div>
