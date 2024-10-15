@@ -32,4 +32,4 @@ export type VideoState = {
 
 export type SideBarSliceState = { collapseSidebar: boolean };
 
-export type QuotaSliceState = { quota: number; currentIndex: number };
+export type QuotaSliceState = { quota: number; keys: string[] };
