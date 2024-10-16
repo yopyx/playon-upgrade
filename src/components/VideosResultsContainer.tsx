@@ -2,88 +2,138 @@ import { Link, useLocation } from "react-router-dom";
 import DetailedVideoCard from "./DetailedVideoCard";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import getSearchResultedVideos from "../utils/custom hooks/getSearchResultedVideos";
-import { useMemo } from "react";
+import getSearchResultedVideos from "../utils/functions/getSearchResultedVideos";
+import { useCallback, useMemo, useRef } from "react";
 import { addVideo } from "../redux/videosDataSlice";
 import { addChannel } from "../redux/channelsDataSlice";
 import NotFound from "./errorCatcher/NotFound";
 import DetailedVideoCardsShimmer from "./shimmer/DetailedVideoCardsShimmer";
+import { addSearchTag, addSuggestedCategory } from "../redux/searchTextSlice";
+import { SearchSliceState } from "../types/slicesState";
+import { openCloseSidebar } from "../redux/ui_slices/sideBarResponsiveSlice";
+import { updateQuota } from "../redux/ui_slices/quotaSlice";
+import { useKey } from "./Body";
 
 const VideosResultsContainer = ({
   collapsedSideBar,
 }: {
   collapsedSideBar: boolean;
 }) => {
+  const apiKey = useKey();
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
-  const searchText = useAppSelector((store) => store.searchText.search);
+  const { searchTextStored, searchTag, suggestionCategory } = useAppSelector(
+    (store) => store.searchText
+  ) as SearchSliceState;
+  const observer = useRef<IntersectionObserver>();
   const {
     data,
     status,
-    error,
+    isFetchingNextPage,
     isFetching,
     isLoading,
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["search resulted videos", searchText],
-    queryFn: ({ pageParam }) => getSearchResultedVideos(searchText, pageParam),
+    queryKey: [
+      "search resulted videos",
+      (pathname === "/watch" ? "/watch" + searchTag : searchTextStored) +
+        suggestionCategory,
+    ],
+    queryFn: ({ pageParam }) => {
+      dispatch(updateQuota(10));
+      return getSearchResultedVideos(
+        suggestionCategory === "All"
+          ? pathname === "/watch"
+            ? searchTag
+            : searchTextStored
+          : suggestionCategory,
+        pageParam,
+        apiKey
+      );
+    },
     initialPageParam: "",
-    getNextPageParam: (prevData) => prevData.videosData.nextPageToken,
+    getNextPageParam: (prevData) => prevData.nextToken,
   });
+  const lastElementRef = useCallback(
+    (node: HTMLAnchorElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !isFetching && hasNextPage) {
+          fetchNextPage();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, isFetching, hasNextPage, fetchNextPage]
+  );
   const list = useMemo(() => {
-    return data?.pages.flatMap((page) => page.videosData.items);
+    return data?.pages.flatMap((page) => page.data.videosData.items);
   }, [data]);
   const channelsData = useMemo(() => {
-    return data?.pages.flatMap((page) => page.channelsData);
+    return data?.pages.flatMap((page) => page.data.channelsData);
   }, [data]);
   if (status === "pending") {
-    return <DetailedVideoCardsShimmer len={6} />;
+    return (
+      <div
+        className={`${
+          collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
+        } ${
+          pathname === "/watch" ? "my-4" : "my-10 ml-24"
+        } flex flex-col gap-y-4 mx-auto`}
+      >
+        <DetailedVideoCardsShimmer len={6} />
+      </div>
+    );
   }
   if (status === "error") {
-    return <NotFound />;
+    return (
+      <div
+        className={`${
+          collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
+        } ${
+          pathname === "/watch" ? "my-4" : "my-10 ml-44"
+        } flex flex-col gap-y-4 mx-auto`}
+      >
+        <NotFound />
+      </div>
+    );
   }
   return (
     <div
       className={`${
         collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
-      } flex flex-wrap space-x-4 space-y-10`}
+      } ${
+        pathname === "/watch" ? "my-4" : "my-10 ml-24"
+      } flex flex-col gap-y-4 mx-auto`}
     >
-      <div
-        className={
-          (pathname === "/watch" ? "w-[400px]" : "w-[1320px]") +
-          " flex justify-center"
-        }
-      >
-        <div
-          className={
-            (pathname === "/watch" ? "w-[450px]" : "w-[1000px]") +
-            " flex flex-col space-y-4 my-4"
-          }
+      {(list || []).map((v, i) => (
+        <Link
+          to={"/watch?v=" + v?.id}
+          ref={lastElementRef}
+          key={v.etag + i}
+          onClick={() => {
+            dispatch(openCloseSidebar(true));
+            dispatch(addVideo(v));
+            dispatch(
+              addChannel(
+                channelsData?.find?.((c) => v?.snippet?.channelId === c?.id)
+              )
+            );
+            dispatch(addSearchTag(v.snippet?.tags?.[1] || v.snippet.title));
+            dispatch(addSuggestedCategory("All"));
+          }}
         >
-          {list?.map((v) => (
-            <Link
-              to={"/watch?v=" + v?.id}
-              key={v.etag}
-              onClick={() => {
-                dispatch(addVideo(v));
-                dispatch(
-                  addChannel(
-                    channelsData?.find?.((c) => v?.snippet?.channelId === c?.id)
-                  )
-                );
-              }}
-            >
-              <DetailedVideoCard
-                info={v}
-                channelData={channelsData?.find(
-                  (c) => v.snippet.channelId === c.id
-                )}
-              />
-            </Link>
-          ))}
-        </div>
-      </div>
+          <DetailedVideoCard
+            info={v}
+            channelData={channelsData?.find(
+              (c) => v.snippet.channelId === c.id
+            )}
+          />
+        </Link>
+      ))}
+      {isFetchingNextPage && <DetailedVideoCardsShimmer len={6} />}
     </div>
   );
 };
