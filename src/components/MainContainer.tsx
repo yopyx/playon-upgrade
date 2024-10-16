@@ -7,13 +7,9 @@ const MainContainer = () => {
     (store) => store.responsiveSideBar.collapseSidebar
   );
   return (
-    <div
-      className={`w-[${
-        collapsedSideBar ? "90vw" : "80vw"
-      }] container-ver gap-y-16`}
-    >
-      <SuggestionsButtons />
-      <PopularVideosContainer />
+    <div className={`container-ver gap-y-16`}>
+      <SuggestionsButtons collapsedSideBar={collapsedSideBar} />
+      <PopularVideosContainer collapsedSideBar={collapsedSideBar} />
     </div>
   );
 };
