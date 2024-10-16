@@ -5,23 +5,23 @@ import { DetailedVideoCardProps } from "../types/props";
 const DetailedVideoCard = ({ info, channelData }: DetailedVideoCardProps) => {
   const { publishedAt, title, description, thumbnails, channelTitle } =
     info!.snippet;
-  const { viewCount } = info!.statistics;
+  const { viewCount } = info.statistics;
   const profileUrl = channelData?.snippet?.thumbnails?.default?.url;
   const { pathname } = useLocation();
   const duration =
-    info?.contentDetails?.duration === "P0D"
+    info.contentDetails.duration === "P0D"
       ? ""
-      : info?.contentDetails?.duration
-          ?.slice(2, -1)
-          ?.replace("DT", "24H")
-          ?.split(/[HMS]/g)
+      : info.contentDetails.duration
+          .slice(2, -1)
+          .replace("DT", "24H")
+          .split(/[HMS]/g)
           .map((e) => e.padStart(2, "0"))
           .join(":");
   const concurrentViewers = info?.liveStreamingDetails?.concurrentViewers;
   return (
     <div
       className={
-        (pathname === "/watch" ? "-space-x-4" : "space-x-4") + " flex mx-auto"
+        (pathname === "/watch" ? "-gap-x-4" : "gap-x-4") + " flex mx-auto"
       }
     >
       <div
@@ -30,8 +30,8 @@ const DetailedVideoCard = ({ info, channelData }: DetailedVideoCardProps) => {
         }
       >
         <img
-          src={thumbnails?.high.url}
-          alt={thumbnails?.high.url}
+          src={thumbnails.high.url}
+          alt={thumbnails.high.url}
           className={
             (pathname === "/watch"
               ? "h-[115px] w-[205px]"
@@ -39,29 +39,29 @@ const DetailedVideoCard = ({ info, channelData }: DetailedVideoCardProps) => {
             " object-cover duration-200 rounded-xl hover:rounded-none"
           }
         />
-        {duration && info?.snippet?.liveBroadcastContent !== "live" && (
-          <div className="bg-black text-white text-xs font-semibold rounded-md w-max h-max px-1 py-0.5 relative -mt-6 mx-auto mr-1 z-10">
-            {(duration?.length === 2 ? "00:" : "") + duration}
+        {duration && info.snippet.liveBroadcastContent !== "live" && (
+          <div className="bg-black text-white text-xs font-semibold rounded-md w-max h-max px-1 py-0.5 relative -mt-6 mx-auto mr-1">
+            {(duration.length === 2 ? "00:" : "") + duration}
           </div>
         )}
       </div>
       <div
         className={
           (pathname === "/watch" ? "w-[250px] scale-[80%] -m-5" : "w-[650px]") +
-          " flex flex-col space-y-2.5"
+          " flex flex-col gap-y-2.5"
         }
       >
         <h2 className="text-lg">
           {pathname === "/watch" ? title.slice(0, 45) + "..." : title}
         </h2>
-        {info?.snippet?.liveBroadcastContent === "live" && concurrentViewers ? (
+        {info.snippet.liveBroadcastContent === "live" && concurrentViewers ? (
           <>
             <h5 className="text-slate-600 text-xs">
               {handleViewsCount(concurrentViewers) + " watching"}
             </h5>
-            <div className="flex space-x-2 bg-red-600 text-white text-xs font-semibold rounded-md w-max px-1 py-0.5">
+            <div className="w-max flex gap-x-2 bg-red-600 text-white text-xs font-semibold rounded-md px-1 py-0.5">
               <img
-                alt="home"
+                alt="live"
                 src={LIVE_ICON}
                 className="h-3 mt-0.5 bg-slate-300 mix-blend-plus-lighter rounded-sm"
               />
@@ -75,7 +75,7 @@ const DetailedVideoCard = ({ info, channelData }: DetailedVideoCardProps) => {
               timeDiff(new Date().getTime() - new Date(publishedAt).getTime())}
           </h5>
         )}
-        <div className="flex space-x-1">
+        <div className="flex gap-x-1">
           {pathname !== "/watch" ? (
             profileUrl ? (
               <img
