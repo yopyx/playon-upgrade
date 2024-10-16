@@ -4,11 +4,11 @@ import { Category } from "../types/fetchedData";
 const videoCategory = createSlice({
   name: "category",
   initialState: {
-    categoryDetails: { id: "0" },
+    categoryDetails: {} as Category,
   },
   reducers: {
     addCategoryDetails: (state, action) => {
-      state.categoryDetails = action.payload as Category;
+      state.categoryDetails = action.payload;
     },
   },
 });
