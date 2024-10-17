@@ -4,25 +4,39 @@ import LiveComment from "./LiveComment";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import getLiveChat from "../utils/custom hooks/getLiveChat";
 import { LiveChatProps } from "../types/props";
+import { addLiveChatToken, addNewMessage } from "../redux/liveChatSlice";
 
 const LiveChat = ({ chatId }: LiveChatProps) => {
+  const apiKey = useKey();
   const [chatView, setChatView] = useState(true);
-  const { data, status, isFetching, hasNextPage, fetchNextPage } =
-    useInfiniteQuery({
+  const dispatch = useAppDispatch();
       queryKey: ["live", chatId],
-      initialPageParam: "",
-      queryFn: ({ pageParam }) => getLiveChat(chatId, pageParam),
+    initialPageParam: token[chatId] || "",
+    queryFn: ({ pageParam }) => {
+      dispatch(updateQuota(5));
+      return getLiveChat(chatId, pageParam, apiKey);
+    },
       getNextPageParam: (prevData) => prevData.nextPageToken,
     });
   const list = useMemo(() => {
-    return data?.pages.flatMap((e) => e.items).slice(-100);
+    return data?.pages.flatMap((e) => e.items).slice(-200);
   }, [data]);
   useEffect(() => {
     const interval = setInterval(() => {
-      if (hasNextPage && !isFetching) fetchNextPage();
+      if (hasNextPage && !isFetching) {
+        fetchNextPage();
+      }
     }, 2500);
-    return () => clearInterval(interval);
-  }, [hasNextPage, fetchNextPage, isFetching]);
+    return () => {
+      clearInterval(interval);
+      dispatch(
+        addLiveChatToken([
+          chatId,
+          data?.pages.flatMap((e) => e.nextPageToken)[0],
+        ])
+      );
+    };
+  }, [hasNextPage, fetchNextPage, isFetching, dispatch, data, chatId]);
   return (
     <div>
       {chatView && (
