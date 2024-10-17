@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   CREATE_VIDEO,
   HAMBURGER_ICON,
@@ -10,10 +10,11 @@ import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import { toggleSidebarView } from "../redux/ui_slices/sideBarResponsiveSlice";
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import getSearchSuggestions from "../utils/custom hooks/getSearchSuggestions";
+import getSearchSuggestions from "../utils/functions/getSearchSuggestions";
 import { addSuggestions } from "../redux/autoCompleteSearchSuggestionsSlice";
-import { addSearchText } from "../redux/searchTextSlice";
+import { addSearchText, addSuggestedCategory } from "../redux/searchTextSlice";
 import { SearchSuggestionsState } from "../types/slicesState";
+import { updateQuota } from "../redux/ui_slices/quotaSlice";
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -21,13 +22,20 @@ const Header = () => {
   const searchState: SearchSuggestionsState = useAppSelector(
     (store) => store.searchSuggestions
   );
+  const searchText = useAppSelector(
+    (store) => store.searchText.searchTextStored
+  );
   const searchRef = useRef<HTMLInputElement>(null);
-  const [text, setText] = useState("");
+  const [text, setText] = useState(searchText);
+  const [index, setIndex] = useState(-1);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const { data, status, error } = useQuery({
+  const { data } = useQuery({
     queryKey: [text],
-    queryFn: () => getSearchSuggestions(searchRef.current?.value || ""),
-    enabled: searchState[text] === undefined,
+    queryFn: () => {
+      dispatch(updateQuota(5));
+      return getSearchSuggestions(text || "");
+    },
+    enabled: text !== "",
   });
   const list = useMemo(() => {
     return data?.suggestions || searchState[text];
