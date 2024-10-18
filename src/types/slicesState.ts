@@ -19,7 +19,8 @@ export type ChannelState = {
 };
 
 export type CommentPostState = {
-  [id: string]: CommentPostVersion[];
+  comments: { [id: string]: CommentPostVersion[] };
+  newComments: { id: string; text: string }[];
 };
 export type LiveChatState = {
   chat: LiveChatComment[];
