@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BLACK_UNLIKE,
   BLUE_LIKE,
@@ -8,23 +8,34 @@ import {
   LIKE_ICON,
   SHARE_ICON,
   UNLIKE_ICON,
+  handleViewsCount,
   timeDiff,
 } from "../utils/constants";
-import { useAppSelector } from "../types/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import CommentsList from "./CommentsList";
-import VideosResultsContainer from "./VideosResultsContainer";
 import LiveChat from "./LiveChat";
+import SearchResultsContainer from "./SearchResultsContainer";
+import { ChannelDetails, VideoDetails } from "../types/fetchedData";
+import { addSuggestedCategory } from "../redux/searchTextSlice";
 
 const WatchContainer = () => {
   const { search } = useLocation();
+  const dispatch = useAppDispatch();
   const videoId = search.slice(3);
-  const videoInfo = useAppSelector((store) => store.videosData.videos[videoId]);
-  const channelInfo = useAppSelector(
+  const videoInfo = useAppSelector(
+    (store) => store.videosData[videoId]
+  ) as VideoDetails;
+  const channelInfo: ChannelDetails = useAppSelector(
     (store) => store.channelsData.channels[videoInfo.snippet.channelId]
   );
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [expandView, setExpandView] = useState(false);
+  useEffect(() => {
+    return () => {
+      dispatch(addSuggestedCategory("All"));
+    };
+  }, [dispatch]);
   if (!videoInfo) {
     return <div>Loading...</div>;
   }
@@ -34,8 +45,6 @@ const WatchContainer = () => {
     publishedAt,
     description,
     liveBroadcastContent,
-    tags,
-    channelId,
   } = videoInfo.snippet;
   const { viewCount, likeCount, commentCount } = videoInfo.statistics;
   const profileUrl = channelInfo?.snippet?.thumbnails?.default?.url;
@@ -70,7 +79,9 @@ const WatchContainer = () => {
               <h4 className="font-semibold text-sm cursor-pointer">
                 {channelTitle}
               </h4>
-              <h5 className="text-slate-600 text-xs">{`${(+subs).toLocaleString()} subscribers`}</h5>
+              <h5 className="text-slate-600 text-xs">
+                {+subs ? `${handleViewsCount(subs)} subscribers` : ""}
+              </h5>
             </div>
             <button className="font-semibold text-sm text-white bg-black rounded-3xl px-4 h-9 hover:opacity-80">
               Subscribe
@@ -144,18 +155,23 @@ const WatchContainer = () => {
             {expandView ? "Show less" : "...more"}
           </span>
         </div>
-        <h3 className="text-xl font-bold">
-          {(+commentCount).toLocaleString() + " Comments"}
-        </h3>
-        <CommentsList vidId={videoId} query={true} />
+
+        {liveBroadcastContent === "none" && Boolean(+commentCount) && (
+          <>
+            <h3 className="text-xl font-bold">
+              {(+commentCount).toLocaleString() + " Comments"}
+            </h3>
+            <CommentsList vidId={videoId} query={true} />
+          </>
+        )}
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col -space-y-7">
         {liveBroadcastContent !== "none" && (
           <LiveChat
             chatId={videoInfo?.liveStreamingDetails?.activeLiveChatId}
           />
         )}
-        <VideosResultsContainer collapsedSideBar={true} />
+        <SearchResultsContainer />
       </div>
     </div>
   );
