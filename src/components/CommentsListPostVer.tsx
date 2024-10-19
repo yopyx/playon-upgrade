@@ -1,14 +1,14 @@
-import { CommentPostVersion } from "../types/fetchedData";
 import { useAppSelector } from "../types/reduxHooks";
+import { CommentPostState } from "../types/slicesState";
 import CommentPostVer from "./CommentPostVer";
 
 export const CommentsListPostVer = ({ id }: { id: string }) => {
-  const comments: CommentPostVersion[] = useAppSelector(
-    (store) => store.comments[id]
-  );
+  const { comments } = useAppSelector(
+    (store) => store.comments
+  ) as CommentPostState;
   return (
     <div>
-      {comments?.map((c) => (
+      {comments[id]?.map((c) => (
         <div key={c.id}>
           <CommentPostVer id={c.id} text={c.text} />
         </div>
