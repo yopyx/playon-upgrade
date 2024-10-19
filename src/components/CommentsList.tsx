@@ -7,11 +7,13 @@ import { CommentsListPostVer } from "./CommentsListPostVer";
 import { useAppDispatch } from "../types/reduxHooks";
 import { updateQuota } from "../redux/ui_slices/quotaSlice";
 import { useKey } from "./Body";
+import NewComment from "./NewComment";
 
 const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
   const dispatch = useAppDispatch();
   const apiKey = useKey();
   const observer = useRef<IntersectionObserver>();
+
   const {
     data,
     status,
@@ -55,6 +57,7 @@ const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
   }
   return (
     <>
+      <NewComment />
       {dataList?.map((c, i) => (
         <div key={c?.id}>
           <div ref={i === dataList.length - 1 && query ? lastElementRef : null}>
