@@ -20,7 +20,7 @@ const VideosResultsContainer = ({
   collapsedSideBar: boolean;
 }) => {
   const apiKey = useKey();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const dispatch = useAppDispatch();
   const { searchTextStored, searchTag, suggestionCategory } = useAppSelector(
     (store) => store.searchText
@@ -37,16 +37,18 @@ const VideosResultsContainer = ({
   } = useInfiniteQuery({
     queryKey: [
       "search resulted videos",
-      (pathname === "/watch" ? "/watch" + searchTag : searchTextStored) +
+      (pathname === "/watch"
+        ? "/watch" + searchTag
+        : search.split("=")[1].replace(/\+/g, " ") || searchTextStored) +
         suggestionCategory,
     ],
     queryFn: ({ pageParam }) => {
-      dispatch(updateQuota(10));
+      dispatch(updateQuota(200));
       return getSearchResultedVideos(
         suggestionCategory === "All"
           ? pathname === "/watch"
             ? searchTag
-            : searchTextStored
+            : search.split("=")[1].replace(/\+/g, " ") || searchTextStored
           : suggestionCategory,
         pageParam,
         apiKey
@@ -100,6 +102,7 @@ const VideosResultsContainer = ({
       </div>
     );
   }
+
   return (
     <div
       className={`${
@@ -114,14 +117,15 @@ const VideosResultsContainer = ({
           ref={lastElementRef}
           key={v.etag + i}
           onClick={() => {
+            console.log(v.snippet?.tags);
             dispatch(openCloseSidebar(true));
             dispatch(addVideo(v));
             dispatch(
               addChannel(
-                channelsData?.find?.((c) => v?.snippet?.channelId === c?.id)
+                (channelsData || []).find?.((c) => v.snippet.channelId === c.id)
               )
             );
-            dispatch(addSearchTag(v.snippet?.tags?.[1] || v.snippet.title));
+            dispatch(addSearchTag(v.snippet?.tags?.[0] || v.snippet.title));
             dispatch(addSuggestedCategory("All"));
           }}
         >
