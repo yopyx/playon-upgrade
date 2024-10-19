@@ -27,7 +27,7 @@ const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
     queryKey: ["comments", vidId],
     initialPageParam: "",
     queryFn: ({ pageParam }) => {
-      dispatch(updateQuota(5));
+      dispatch(updateQuota(100));
       return getComments(vidId, pageParam, apiKey);
     },
     getNextPageParam: (prevData) => prevData.nextPageToken,

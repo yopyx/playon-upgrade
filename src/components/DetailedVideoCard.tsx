@@ -11,7 +11,7 @@ const DetailedVideoCard = ({ info, channelData }: DetailedVideoCardProps) => {
   const duration =
     info.contentDetails.duration === "P0D"
       ? ""
-      : info.contentDetails.duration
+      : (info.contentDetails.duration || "")
           .slice(2, -1)
           .replace("DT", "24H")
           .split(/[HMS]/g)

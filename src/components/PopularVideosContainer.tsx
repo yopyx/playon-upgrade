@@ -5,7 +5,6 @@ import { FetchedVideoCardData } from "../types/fetchedData";
 import VideoCard from "./VideoCard";
 import VideoCardsShimmer from "./shimmer/VideoCardsShimmer";
 import { Link } from "react-router-dom";
-import { addVideo } from "../redux/videosDataSlice";
 import { useCallback, useMemo, useRef } from "react";
 import { addChannel } from "../redux/channelsDataSlice";
 import NotFound from "./errorCatcher/NotFound";
@@ -17,6 +16,7 @@ import {
 import { openCloseSidebar } from "../redux/ui_slices/sideBarResponsiveSlice";
 import { updateQuota } from "../redux/ui_slices/quotaSlice";
 import { useKey } from "./Body";
+import { addVideo } from "../redux/videosDataSlice";
 
 const PopularVideosContainer = ({
   collapsedSideBar,
@@ -43,7 +43,7 @@ const PopularVideosContainer = ({
     getNextPageParam: (prevData: FetchedVideoCardData) =>
       prevData.videosData.nextPageToken,
     queryFn: ({ pageParam }) => {
-      dispatch(updateQuota(5));
+      dispatch(updateQuota(100));
       return getPopularVideos(vidCategoryData.id, pageParam, apiKey);
     },
   });
@@ -78,7 +78,6 @@ const PopularVideosContainer = ({
   if (status === "error") {
     return <NotFound />;
   }
-  //console.log(videoList);
   return (
     <div
       className={`${

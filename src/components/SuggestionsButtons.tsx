@@ -64,7 +64,7 @@ const SuggestionsButtons = ({
   const popularSuggestionsQuery = useQuery({
     queryKey: ["categories"],
     queryFn: () => {
-      dispatch(updateQuota(5));
+      dispatch(updateQuota(100));
       return getCategories(apiKey);
     },
     enabled: pathname === "/",
@@ -75,7 +75,7 @@ const SuggestionsButtons = ({
       pathname === "/watch" ? searchTag : searchTextStored,
     ],
     queryFn: () => {
-      dispatch(updateQuota(5));
+      dispatch(updateQuota(100));
       return getSearchResultedVideos(
         pathname === "/watch" ? searchTag : searchTextStored,
         "",

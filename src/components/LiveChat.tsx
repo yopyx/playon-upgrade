@@ -31,7 +31,7 @@ const LiveChat = ({ chatId }: LiveChatProps) => {
     queryKey: ["live", chatId],
     initialPageParam: token[chatId] || "",
     queryFn: ({ pageParam }) => {
-      dispatch(updateQuota(5));
+      dispatch(updateQuota(100));
       return getLiveChat(chatId, pageParam, apiKey);
     },
     getNextPageParam: (prevData) => prevData.nextPageToken,
