@@ -7,6 +7,7 @@ import { CommentsListPostVer } from "./CommentsListPostVer";
 import { useAppDispatch } from "../types/reduxHooks";
 import { updateQuota } from "../redux/ui_slices/quotaSlice";
 import { useKey } from "./Body";
+import CommentsShimmer from "./shimmer/CommentsShimmer";
 
 const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
   const dispatch = useAppDispatch();
@@ -48,7 +49,7 @@ const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
   const dataList = query ? data?.pages.flatMap((page) => page.items) : list;
   if (query) {
     if (status === "pending") {
-      return <div>Loading...</div>;
+      return <CommentsShimmer />;
     }
     if (status === "error") {
       return <div>{JSON.stringify(error)}</div>;
@@ -75,7 +76,7 @@ const CommentsList = ({ vidId, list, query }: CommentsListProps) => {
           </div>
         </div>
       ))}
-      {query && isFetchingNextPage && <div>Loading...</div>}
+      {query && isFetchingNextPage && <CommentsShimmer />}
     </>
   );
 };
