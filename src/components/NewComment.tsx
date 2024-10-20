@@ -22,6 +22,7 @@ const NewComment = () => {
           <input
             ref={replyInputRef}
             type="text"
+            value={replyInput || ""}
             placeholder="Add a comment..."
             className="text-sm text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
             onFocus={() => setReplySection(true)}
@@ -32,7 +33,10 @@ const NewComment = () => {
           <div className="flex space-x-3 justify-end mt-2">
             <button
               className="font-semibold text-sm py-2 px-3  rounded-full hover:bg-stone-200"
-              onClick={() => setReplySection(false)}
+              onClick={() => {
+                setReplySection(false);
+                setReplyInput("");
+              }}
             >
               Cancel
             </button>
@@ -48,6 +52,7 @@ const NewComment = () => {
                     })
                   );
                 setReplySection(false);
+                setReplyInput("");
               }}
             >
               Comment
