@@ -17,6 +17,7 @@ import LiveChat from "./LiveChat";
 import SearchResultsContainer from "./SearchResultsContainer";
 import { ChannelDetails, VideoDetails } from "../types/fetchedData";
 import { addSuggestedCategory } from "../redux/searchTextSlice";
+import NewComment from "./NewComment";
 
 const WatchContainer = () => {
   const { search } = useLocation();
@@ -161,6 +162,7 @@ const WatchContainer = () => {
             <h3 className="text-xl font-bold">
               {(+commentCount).toLocaleString() + " Comments"}
             </h3>
+            <NewComment />
             <CommentsList vidId={videoId} query={true} />
           </>
         )}
