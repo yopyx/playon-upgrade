@@ -13,7 +13,8 @@ import { CommentPostVersion } from "../types/fetchedData";
 import { CommentsListPostVer } from "./CommentsListPostVer";
 const CommentPostVer = ({ id, text }: CommentPostVersion) => {
   const [replySection, setReplySection] = useState(false);
-  const replyInput = useRef<HTMLInputElement>(null);
+  const replyInputRef = useRef<HTMLInputElement>(null);
+  const [replyInput, setReplyInput] = useState("");
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const dispatch = useAppDispatch();
@@ -70,10 +71,12 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
             <div className="flex space-x-2">
               <div className="rounded-full w-5 h-5 bg-black"></div>
               <input
-                ref={replyInput}
+                ref={replyInputRef}
                 type="text"
+                value={replyInput || ""}
                 placeholder="Add a reply..."
                 className="text-sm text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
+                onChange={(e) => setReplyInput(e.currentTarget.value)}
               />
             </div>
             <div className="flex space-x-3 justify-end mt-2">
@@ -84,14 +87,15 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
                 Cancel
               </button>
               <button
-                className="font-semibold text-sm text-white py-2 px-3 bg-blue-700 rounded-full hover:bg-blue-800"
+                disabled={!replyInput}
+                className="font-semibold text-sm text-white py-2 px-3 bg-blue-700 rounded-full hover:bg-blue-800 disabled:bg-stone-400 disabled:text-stone-200"
                 onClick={() => {
                   const key = uuidv4();
-                  replyInput.current?.value &&
+                  replyInputRef.current?.value &&
                     dispatch(
                       addComment({
                         id: id,
-                        comment: { id: key, text: replyInput.current.value },
+                        comment: { id: key, text: replyInputRef.current.value },
                       })
                     );
                   setReplySection(false);
