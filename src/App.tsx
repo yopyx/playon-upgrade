@@ -1,11 +1,16 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Body from "./components/Body";
-import MainContainer from "./components/MainContainer";
-import SearchResultsContainer from "./components/SearchResultsContainer";
-import WatchContainer from "./components/WatchContainer";
 import { Provider } from "react-redux";
 import { appStore, persistor } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
+import { lazy, Suspense } from "react";
+import CommentsShimmer from "./components/shimmer/CommentsShimmer";
+
+const MainContainer = lazy(() => import("./components/MainContainer"));
+const SearchResultsContainer = lazy(
+  () => import("./components/SearchResultsContainer")
+);
+const WatchContainer = lazy(() => import("./components/WatchContainer"));
 
 const appRouter = createBrowserRouter([
   {
@@ -14,17 +19,29 @@ const appRouter = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <MainContainer />,
+        element: (
+          <Suspense fallback={<CommentsShimmer />}>
+            <MainContainer />
+          </Suspense>
+        ),
         children: [],
       },
       {
         path: "/results",
-        element: <SearchResultsContainer />,
+        element: (
+          <Suspense fallback={<CommentsShimmer />}>
+            <SearchResultsContainer />
+          </Suspense>
+        ),
         children: [],
       },
       {
         path: "/watch",
-        element: <WatchContainer />,
+        element: (
+          <Suspense fallback={<CommentsShimmer />}>
+            <WatchContainer />
+          </Suspense>
+        ),
         children: [],
       },
     ],
