@@ -7,6 +7,7 @@ import searchSuggestionsReducer from "./autoCompleteSearchSuggestionsSlice";
 import searchTextReducer from "./searchTextSlice";
 import commentsReducer from "./commentsSlice";
 import liveChatReducer from "./liveChatSlice";
+import themeReducer from "./ui_slices/themeSlice";
 import quotaReducer from "./ui_slices/quotaSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
@@ -24,6 +25,7 @@ const sessionPersistConfig = {
     "searchText",
     "comments",
     "liveChat",
+    "theme",
   ],
 };
 const localPersistConfig = {
@@ -39,6 +41,7 @@ const rootReducer = combineReducers({
   searchText: searchTextReducer,
   comments: commentsReducer,
   liveChat: liveChatReducer,
+  theme: themeReducer,
   quota: persistReducer(localPersistConfig, quotaReducer),
 });
 const persistedReducer = persistReducer(sessionPersistConfig, rootReducer);
