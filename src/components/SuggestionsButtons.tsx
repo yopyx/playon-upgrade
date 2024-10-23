@@ -117,29 +117,29 @@ const SuggestionsButtons = ({
           : collapsedSideBar
           ? "dynamic-width"
           : "dynamic-width-collapsed"
-      } top-16 py-5 bg-white z-10`}
+      } top-16 py-5 z-10`}
     >
       <div className={`w-full flex absolute justify-between`}>
         <button
           className={`bg-stone-100 ${
             translateValue > 0 ? "opacity-100" : "opacity-0"
-          } p-3 px-3.5 -ml-8 rounded-full z-30 hover:bg-stone-400`}
+          } p-3 px-3.5 rounded-full z-30 hover:bg-stone-400`}
           onClick={leftScroll}
         >
           <img alt="RIGHT_ARROW" src={RIGHT_ARROW} className="w-1.5" />
         </button>
 
-        {maxTranslation ? null : (
-          <button
-            className="bg-stone-100 p-3 px-3.5 rounded-full z-30 hover:bg-stone-400"
-            onClick={rightScroll}
-          >
-            <img alt="LEFT_ARROW" src={LEFT_ARROW} className="w-1.5" />
-          </button>
-        )}
+        <button
+          className={`bg-stone-100 ${
+            maxTranslation ? "opacity-0" : "opacity-100"
+          } p-3 px-3.5 rounded-full z-30 hover:bg-stone-400`}
+          onClick={rightScroll}
+        >
+          <img alt="LEFT_ARROW" src={LEFT_ARROW} className="w-1.5" />
+        </button>
       </div>
       <div
-        className="w-full flex gap-x-2 overflow-x-hidden"
+        className="w-[95%] mx-auto flex gap-x-2 overflow-x-hidden"
         ref={categoriesScrollRef}
         onScroll={handleScroll}
       >
