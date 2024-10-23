@@ -36,7 +36,7 @@ const DetailedVideoCard = ({ info, channelData }: DetailedVideoCardProps) => {
             (pathname === "/watch"
               ? "h-[115px] w-[205px]"
               : "h-[210px] w-[375px]") +
-            " object-cover duration-200 rounded-xl hover:rounded-none"
+            " object-cover duration-200 rounded-xl hover:rounded-none border-2 border-yellow-600/75"
           }
         />
         {duration && info.snippet.liveBroadcastContent !== "live" && (
@@ -47,8 +47,9 @@ const DetailedVideoCard = ({ info, channelData }: DetailedVideoCardProps) => {
       </div>
       <div
         className={
-          (pathname === "/watch" ? "w-[250px] scale-[80%] -m-5" : "w-[650px]") +
-          " flex flex-col gap-y-2.5"
+          (pathname === "/watch"
+            ? "w-[250px] h-[145px] scale-[80%] -m-5"
+            : "w-[650px]") + " flex flex-col gap-y-2.5 bg-stone-200/30 pl-2"
         }
       >
         <h2 className="text-lg">
