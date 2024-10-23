@@ -16,10 +16,6 @@ import {
   YOUR_CHANNEL,
   YOUR_CLIPS,
   YOUR_VIDEO,
-  YT_CIRCLE_ICON,
-  YT_ICON,
-  YT_KIDS_ICON,
-  YT_POLY_ICON,
 } from "../utils/constants";
 import Footer from "./Footer";
 import { Link, useLocation } from "react-router-dom";
@@ -35,7 +31,7 @@ const Sidebar = () => {
   return (
     <>
       {collapseSidebar && pathname !== "/watch" ? (
-        <div className="w-20 h-72 sticky top-24 shadow-lg text-xs p-3 m-3 gap-y-5">
+        <div className="w-20 h-72 sticky top-24 bg-stone-200 shadow-md shadow-yellow-800 text-xs p-3 m-3 gap-y-5">
           <ul className="container-ver">
             <Link to={"/"}>
               <li className="collapsed-sidebar-nav-btn">
@@ -44,7 +40,11 @@ const Sidebar = () => {
               </li>
             </Link>
             <li className="collapsed-sidebar-nav-btn">
-              <img alt="Shorts" src={SHORTS_ICON} />
+              <img
+                alt="Shorts"
+                src={SHORTS_ICON}
+                className="mix-blend-darken"
+              />
               <p>Shorts</p>
             </li>
             <li className="collapsed-sidebar-nav-btn">
@@ -65,7 +65,7 @@ const Sidebar = () => {
                 ? "fixed top-12 z-20 h-[640px] duration-500 ease-in-out" +
                   (collapseSidebar ? " -translate-x-60" : "")
                 : "sticky top-24 h-[610px]"
-            } w-56 bg-white overflow-y-scroll scrollbar-thin scrollbar-thumb-zinc-200 hover:scrollbar-thumb-zinc-300 scrollbar-thumb-rounded-lg shadow-lg text-sm p-3 m-2 mt-3 space-y-5`}
+            } w-56 bg-stone-200 overflow-y-scroll shadow-md shadow-yellow-800 scrollbar-thin scrollbar-thumb-zinc-200 hover:scrollbar-thumb-zinc-300 scrollbar-thumb-rounded-lg text-sm p-3 m-2 mt-3 space-y-5`}
           >
             <ul className="container-ver">
               <Link to={"/"}>
@@ -75,14 +75,18 @@ const Sidebar = () => {
                 </li>
               </Link>
               <li className="sidebar-nav-btn">
-                <img alt="Shorts" src={SHORTS_ICON} />
+                <img
+                  alt="Shorts"
+                  src={SHORTS_ICON}
+                  className="mix-blend-darken"
+                />
                 <p>Shorts</p>
               </li>
               <li className="sidebar-nav-btn">
                 <img alt="Subscriptions" src={SUBSCRIBE_ICON} />
                 <p>Subscriptions</p>
               </li>
-              <li className="border-b-2 pb-6"></li>
+              <li className="border-b-2 pb-6 border-yellow-600/75"></li>
             </ul>
             <ul className="container-ver">
               <li className="sidebar-nav-btn font-semibold">{"You >"}</li>
@@ -106,12 +110,12 @@ const Sidebar = () => {
                 <img alt="home" src={YOUR_CLIPS} />
                 <p>Your clips</p>
               </li>
-              <li className="border-b-2 pb-6"></li>
+              <li className="border-b-2 pb-6 border-yellow-600/75"></li>
             </ul>
             <ul className="container-ver">
               <li className="font-semibold text-[16px] mb-3">Subscriptions</li>
               <li className="">No subscriptions yet</li>
-              <li className="border-b-2 pb-6"></li>
+              <li className="border-b-2 pb-6 border-yellow-600/75"></li>
             </ul>
             <ul className="container-ver">
               <li className="font-semibold text-[16px] mb-3">Explore</li>
@@ -128,32 +132,20 @@ const Sidebar = () => {
                 <p>Live</p>
               </li>
               <li className="sidebar-nav-btn">
-                <img alt="home" src={GAMING_ICON} />
+                <img
+                  alt="home"
+                  src={GAMING_ICON}
+                  className="mix-blend-darken"
+                />
                 <p>Gaming</p>
               </li>
               <li className="sidebar-nav-btn">
-                <img alt="home" src={SPORT_ICON} />
+                <img alt="home" src={SPORT_ICON} className="mix-blend-darken" />
                 <p>Sport</p>
               </li>
-              <li className="border-b-2 pb-6"></li>
+              <li className="border-b-2 pb-6 border-yellow-600/75"></li>
             </ul>
-            <ul className="container-ver">
-              <li className="font-semibold text-[16px] mb-3">
-                More from YouTube
-              </li>
-              {[
-                ["YouTube Prem..", YT_ICON],
-                ["YouTube Studio", YT_POLY_ICON],
-                ["YouTube Music", YT_CIRCLE_ICON],
-                ["YouTube Kids", YT_KIDS_ICON],
-              ].map((e) => (
-                <li className="sidebar-nav-btn" key={e[0]}>
-                  <img alt="YouTube Premium" src={e[1]} />
-                  <p>{e[0]}</p>
-                </li>
-              ))}
-              <li className="border-b-2 pb-6"></li>
-            </ul>
+
             <ul className="container-ver">
               {[
                 ["Settings", SETTINGS_ICON],
@@ -162,11 +154,11 @@ const Sidebar = () => {
                 ["Send feedback", FEEDBACK_ICON],
               ].map((e) => (
                 <li className="sidebar-nav-btn" key={e[0]}>
-                  <img alt="Settings" src={e[1]} />
+                  <img alt="Settings" src={e[1]} className="mix-blend-darken" />
                   <p>{e[0]}</p>
                 </li>
               ))}
-              <li className="border-b-2 pb-6"></li>
+              <li className="border-b-2 pb-6 border-yellow-600/75"></li>
             </ul>
             <Footer />
           </div>
