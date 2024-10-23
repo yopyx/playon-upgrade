@@ -4,7 +4,6 @@ import {
   HAMBURGER_ICON,
   NOTIFY_BELL,
   USER_LOGO,
-  YOUTUBE_LOGO,
 } from "../utils/constants";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import { toggleSidebarView } from "../redux/ui_slices/sideBarResponsiveSlice";
@@ -15,6 +14,7 @@ import { addSuggestions } from "../redux/autoCompleteSearchSuggestionsSlice";
 import { addSearchText, addSuggestedCategory } from "../redux/searchTextSlice";
 import { SearchSuggestionsState } from "../types/slicesState";
 import { updateQuota } from "../redux/ui_slices/quotaSlice";
+import { toggleTheme } from "../redux/ui_slices/themeSlice";
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -26,6 +26,7 @@ const Header = () => {
   const searchText = useAppSelector(
     (store) => store.searchText.searchTextStored
   );
+  const { light } = useAppSelector((store) => store.theme);
   const searchRef = useRef<HTMLInputElement>(null);
   const [text, setText] = useState(pathname === "/watch" ? "" : searchText);
   const [index, setIndex] = useState(-1);
@@ -42,7 +43,7 @@ const Header = () => {
     return data?.suggestions || searchState[text];
   }, [searchState, data, text]);
   return (
-    <div className="w-[98vw] grid grid-flow-col p-3 m-2 mt-0 shadow-lg bg-white fixed z-30">
+    <div className="w-[98vw] grid grid-flow-col p-3 m-2 mt-0 shadow-lg bg-stone-200 fixed z-30">
       <div className="flex space-x-6 col-span-2">
         <div
           className="rounded-icon"
@@ -57,7 +58,7 @@ const Header = () => {
             dispatch(addSearchText(""));
           }}
         >
-          <img alt="logo" src={YOUTUBE_LOGO} className="h-6 mt-2" />
+          <img alt="logo" src={"/play-on.png"} className="h-6 mt-2" />
         </a>
       </div>
       <div className="flex col-span-8 place-content-center mr-32 h-[41px]">
@@ -101,7 +102,7 @@ const Header = () => {
             <>
               <ul
                 className={
-                  "bg-white py-1.5 font-semibold shadow-2xl rounded-xl border-stone-200 duration-500"
+                  "bg-stone-200 py-1.5 font-semibold shadow-2xl rounded-xl border-stone-200 duration-500"
                 }
               >
                 {list?.map((s, i) => (
@@ -163,8 +164,16 @@ const Header = () => {
         <div className="rounded-icon">
           <img alt="notification" src={NOTIFY_BELL} />
         </div>
-        <img alt="profile" src={USER_LOGO} className="h-8 cursor-pointer" />
+        <div className="rounded-icon" onClick={() => dispatch(toggleTheme())}>
+          <img alt="theme" src={light ? "./moon.svg" : "./sun.svg"} />
+        </div>
+        <img
+          alt="profile"
+          src={USER_LOGO}
+          className="h-7 mt-1 cursor-pointer"
+        />
       </div>
+
       {showSuggestions && (
         <div
           className="absolute w-screen h-screen -z-10"
