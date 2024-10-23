@@ -99,7 +99,7 @@ const Comment = ({ info }: CommentProps) => {
                 type="text"
                 value={replyInput || ""}
                 placeholder="Add a reply..."
-                className="text-sm text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
+                className="text-sm bg-stone-200 text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
                 onChange={(e) => setReplyInput(e.currentTarget.value)}
               />
             </div>

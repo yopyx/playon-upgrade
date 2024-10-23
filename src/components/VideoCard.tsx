@@ -30,7 +30,7 @@ const VideoCard = ({ info, imgUrl }: VideoCardProps) => {
           src={thumbnails?.maxres?.url || thumbnails?.high?.url}
           className={`${
             sidebarCollapsed ? "w-[330px] h-[200px]" : "w-[394px] h-[222px]"
-          } object-cover rounded-xl hover:rounded-none`}
+          } object-cover rounded-xl hover:rounded-none border-2 border-yellow-600/75`}
         />
         {duration && (
           <div className="bg-black text-white text-xs font-semibold rounded-md w-max px-1 py-0.5 -mt-6 mx-auto mr-1 relative">
@@ -50,10 +50,10 @@ const VideoCard = ({ info, imgUrl }: VideoCardProps) => {
         )}
         <div className="flex-col space-y-1">
           <h4 className="font-semibold w-[280px]">{title}</h4>
-          <h5 className="text-slate-600 text-xs">{channelTitle}</h5>
+          <h5 className="text-xs">{channelTitle}</h5>
           {concurrentViewers ? (
             <>
-              <h5 className="text-slate-600 text-xs">
+              <h5 className="text-xs">
                 {handleViewsCount(concurrentViewers) + " watching"}
               </h5>
               <div className="flex space-x-2 bg-red-600 text-white text-xs font-semibold rounded-md w-max px-1 py-0.5">
@@ -66,7 +66,7 @@ const VideoCard = ({ info, imgUrl }: VideoCardProps) => {
               </div>
             </>
           ) : (
-            <h5 className="text-slate-600 text-xs">
+            <h5 className="text-xs">
               {handleViewsCount(viewCount) +
                 " Views • " +
                 timeDiff(

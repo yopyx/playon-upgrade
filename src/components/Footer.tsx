@@ -19,7 +19,7 @@ const Footer = () => {
           "Terms",
           "Privacy",
           "Policy & Safety",
-          "How YouTube works",
+          "How PLAY ON works",
           "Test new features",
         ].map((e) => (
           <p key={e}>{e}</p>

@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 const SuggestionButtonsShimmer = () => {
   const { pathname } = useLocation();
   return (
-    <div className="flex gap-x-3 sticky top-20 mb-10 bg-white">
+    <div className="flex gap-x-3 sticky top-20 mb-10">
       {[...Array(pathname === "/watch" ? 4 : 11)].map((_, i) => (
         <div
           key={i}

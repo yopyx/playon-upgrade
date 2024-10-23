@@ -24,7 +24,7 @@ const NewComment = () => {
             type="text"
             value={replyInput || ""}
             placeholder="Add a comment..."
-            className="text-sm text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
+            className="text-sm bg-stone-200 text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
             onFocus={() => setReplySection(true)}
             onChange={(e) => setReplyInput(e.currentTarget.value)}
           />

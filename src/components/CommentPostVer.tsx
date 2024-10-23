@@ -75,7 +75,7 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
                 type="text"
                 value={replyInput || ""}
                 placeholder="Add a reply..."
-                className="text-sm text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
+                className="text-sm bg-stone-200 text-slate-600 w-full border-b-2 outline-none focus:duration-300 focus:border-black"
                 onChange={(e) => setReplyInput(e.currentTarget.value)}
               />
             </div>
@@ -88,7 +88,7 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
               </button>
               <button
                 disabled={!replyInput}
-                className="font-semibold text-sm text-white py-2 px-3 bg-blue-700 rounded-full hover:bg-blue-800 disabled:bg-stone-400 disabled:text-stone-200"
+                className="font-semibold text-sm text-white py-1 px-3 bg-blue-700 rounded-full hover:bg-blue-800 disabled:bg-stone-400 disabled:text-stone-200"
                 onClick={() => {
                   const key = uuidv4();
                   replyInputRef.current?.value &&

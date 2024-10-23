@@ -11,7 +11,7 @@ const Button = ({ categoryData, title, clicked, setClicked }: ButtonProps) => {
     <div
       className={`${
         clicked ? "bg-black text-white" : "bg-stone-200 hover:bg-stone-300"
-      } px-3 py-2 font-semibold text-sm text-nowrap cursor-pointer rounded-lg z-20`}
+      } px-3 py-2 font-semibold text-sm text-nowrap cursor-pointer rounded-lg z-20 border-2 border-yellow-600/75`}
       onClick={() => {
         setClicked(title);
         pathname === "/"

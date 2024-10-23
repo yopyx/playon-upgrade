@@ -122,21 +122,21 @@ const WatchContainer = () => {
                 />
               )}
             </div>
-            <div className="flex bg-stone-100 rounded-3xl px-4 py-2.5 space-x-2 cursor-pointer hover:bg-stone-200">
+            <div className="flex bg-stone-200 rounded-3xl px-4 py-2.5 space-x-2 cursor-pointer hover:bg-stone-300">
               <img alt="share" src={SHARE_ICON} className="h-4" />
               <button className="font-semibold text-sm">Share</button>
             </div>
-            <div className="flex bg-stone-100 rounded-3xl px-4 py-2.5 space-x-2 cursor-pointer hover:bg-stone-200">
+            <div className="flex bg-stone-200 rounded-3xl px-4 py-2.5 space-x-2 cursor-pointer hover:bg-stone-300">
               <img alt="share" src={DOWNLOAD_ICON} className="h-4" />
               <button className="font-semibold text-sm">Download</button>
             </div>
-            <div className="flex bg-stone-100 rounded-full py-3 px-3 hover:bg-stone-200">
+            <div className="flex bg-stone-200 rounded-full py-3 px-3 hover:bg-stone-300">
               <img alt="share" src={DOTS_ICON} className="h-1 mt-1.5" />
             </div>
           </div>
         </div>
         <div
-          className="flex flex-col rounded-xl text-sm bg-stone-100 hover:bg-stone-200 p-4 space-y-2 cursor-pointer"
+          className="flex flex-col rounded-xl text-sm bg-stone-200 hover:bg-stone-300 p-4 space-y-2 cursor-pointer"
           onClick={() => setExpandView(!expandView)}
         >
           <div className="flex space-x-3 font-semibold">
@@ -163,7 +163,9 @@ const WatchContainer = () => {
               {(+commentCount).toLocaleString() + " Comments"}
             </h3>
             <NewComment />
-            <CommentsList vidId={videoId} query={true} />
+            <div className="bg-stone-200/30 p-1 rounded-lg">
+              <CommentsList vidId={videoId} query={true} />
+            </div>
           </>
         )}
       </div>
