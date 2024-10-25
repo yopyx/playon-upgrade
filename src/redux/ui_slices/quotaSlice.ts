@@ -12,6 +12,8 @@ const quotaSlice = createSlice({
       import.meta.env.VITE_APP_YT_KEY4,
       import.meta.env.VITE_APP_YT_KEY5,
       import.meta.env.VITE_APP_YT_KEY6,
+      import.meta.env.VITE_APP_YT_KEY7,
+      import.meta.env.VITE_APP_YT_KEY8,
     ],
   },
   reducers: {
