@@ -10,7 +10,7 @@ const Body = () => {
   const apiKey = useQuota();
   return (
     <div
-      className={`flex flex-col ${light ? "bg-[#d5c8bd]" : "bg-[#2a2928]/55"}`}
+      className={`flex flex-col ${light ? "bg-[#d5c8bd]" : "bg-[#342d3d]/70"}`}
     >
       <ScrollToTop />
       <Header />
