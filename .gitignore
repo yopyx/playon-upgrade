@@ -26,10 +26,7 @@ dist-ssr
 # Sass cache files
 .sass-cache/
 
-# Tailwind CSS output files
-/src/final.css
-/src/final.css.map
-/src/output.css
-/src/output.css.map
+
+
 
 .env
