@@ -60,7 +60,7 @@ const LiveChat = ({ chatId }: LiveChatProps) => {
       {chatView && (
         <div className="flex flex-col mt-20 w-[400px] h-[580px] border-stone-200 border-2 rounded-xl">
           <h4 className="font-semibold py-3 px-5">Top chat</h4>
-          <div className="flex flex-col-reverse overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-200 space-y-2 border-t-2 border-b-2 h-[430px] px-5 py-1.5">
+          <div className="flex flex-col-reverse bg-stone-200/30 overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-200 space-y-2 border-t-2 border-b-2 h-[430px] px-5 py-1.5">
             <>
               {(list || []).reverse().map((m) => (
                 <div
