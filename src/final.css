@@ -1255,9 +1255,8 @@ video {
   border-color: rgb(202 138 4 / 0.75);
 }
 
-.bg-\[\#343236\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(52 50 54 / var(--tw-bg-opacity));
+.bg-\[\#342d3d\]\/70 {
+  background-color: rgb(52 45 61 / 0.7);
 }
 
 .bg-\[\#d5c8bd\] {
@@ -1302,52 +1301,6 @@ video {
 .bg-stone-300 {
   --tw-bg-opacity: 1;
   background-color: rgb(214 211 209 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#d5c8bd\]\/60 {
-  background-color: rgb(213 200 189 / 0.6);
-}
-
-.bg-\[\#343236\]\/60 {
-  background-color: rgb(52 50 54 / 0.6);
-}
-
-.bg-\[\#343236\]\/45 {
-  background-color: rgb(52 50 54 / 0.45);
-}
-
-.bg-\[\#343039\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(52 48 57 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#343039\]\/60 {
-  background-color: rgb(52 48 57 / 0.6);
-}
-
-.bg-\[\#343039\]\/30 {
-  background-color: rgb(52 48 57 / 0.3);
-}
-
-.bg-\[\#343039\]\/90 {
-  background-color: rgb(52 48 57 / 0.9);
-}
-
-.bg-\[\#342d3d\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(52 45 61 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#342d3d\]\/50 {
-  background-color: rgb(52 45 61 / 0.5);
-}
-
-.bg-\[\#342d3d\]\/80 {
-  background-color: rgb(52 45 61 / 0.8);
-}
-
-.bg-\[\#342d3d\]\/70 {
-  background-color: rgb(52 45 61 / 0.7);
 }
 
 .object-cover {
