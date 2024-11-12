@@ -2,11 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+// Light Theme
+.light-theme {
+  background: #d5c8bd;
+}
+
+// Dark Theme
+.dark-theme {
+  background: #261c2a;
+}
+//bg-[#666367]
+//#6b656e
+.dark-highlight-color {
+  background: linear-gradient(to right, #957845 1%, #4a3d4f 20%, #261c2a);
+}
 .dynamic-width-collapsed {
-  max-width: 1250px;
+  max-width: 78.125rem;
 }
 .dynamic-width {
-  max-width: 1380px;
+  max-width: 86.25rem;
 }
 //header
 .rounded-icon {

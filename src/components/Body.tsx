@@ -10,12 +10,16 @@ const Body = () => {
   const apiKey = useQuota();
   return (
     <div
-      className={`flex flex-col ${light ? "bg-[#d5c8bd]" : "bg-[#342d3d]/70"}`}
+      className={`flex flex-col mobile:body-mobile tablet-s:body-tablet-s tablet:body-tablet laptop-l:body-laptop-l 4k-3:body-4k-3 4k-2:body-4k-2 4k:body-4k 8k-3:body-8k-3 8k-2:body-8k-2 8k:body-8k ${
+        light ? "light-theme" : "dark-theme"
+      }`}
     >
       <ScrollToTop />
-      <Header />
-      <div className="flex gap-x-5">
-        <SideBar />
+      <div>
+        <Header lightTheme={light} />
+      </div>
+      <div className="flex">
+        <SideBar lightTheme={light} />
         <Outlet context={apiKey} />
       </div>
     </div>
