@@ -42,3 +42,36 @@
 .spin {
   @apply inline-block animate-spin rounded-full border-2 border-gray-400 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite] bg-transparent bg-opacity-60;
 }
+
+//media screens
+@layer utilities {
+  //body
+  .body-mobile {
+    max-width: 100rem;
+    width: 100vw;
+    height: 100%;
+  }
+  .body-tablet-s {
+    max-width: 80rem;
+  }
+  .body-tablet {
+    max-width: 80rem;
+  }
+  .body-laptop-l {
+    max-width: 100rem;
+  }
+  .body-4k-3 {
+    max-width: 140rem;
+  }
+  .body-4k-2 {
+    max-width: 160rem;
+  }
+  .body-4k {
+    max-width: 180rem;
+  }
+  .body-8k-2 {
+    max-width: 220rem;
+  }
+  .body-8k {
+    max-width: 250rem;
+  }
