@@ -2,17 +2,16 @@ import {
   FetchedSearchResults,
   FetchedVideoCardData,
 } from "../../types/fetchedData";
-import { CORS, YT_SEARCH_RESULTS_API } from "../constants";
 import getVideosListById from "./getVideosListById";
-
 const getSearchResultedVideos = async (
   searchText: string,
   pageToken: string,
   apiKey: string
 ) => {
   const url =
-    CORS +
-    encodeURIComponent(YT_SEARCH_RESULTS_API(searchText, pageToken, apiKey));
+    import.meta.env.VITE_ENVIRONMENT === "production"
+      ? `https://play0n.vercel.app/api/search-results?searchText=${searchText}&nextToken=${pageToken}&apiKey=${apiKey}`
+      : `http://localhost:3000/search-results?searchText=${searchText}&nextToken=${pageToken}&apiKey=${apiKey}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("HTTP Error!");

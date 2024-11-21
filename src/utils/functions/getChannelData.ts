@@ -1,9 +1,13 @@
 import { ChannelDetails } from "../../types/fetchedData";
-import { CORS, YT_API_Channels } from "../constants";
-
 const getChannelData = async (channelIds: string[], apiKey: string) => {
   const url =
-    CORS + encodeURIComponent(YT_API_Channels(channelIds.join("%2C"), apiKey));
+    import.meta.env.VITE_ENVIRONMENT === "production"
+      ? `https://play0n.vercel.app/api/channels?channelIds=${channelIds.join(
+          "%2C"
+        )}&apiKey=${apiKey}`
+      : `http://localhost:3000/channels?channelIds=${channelIds.join(
+          "%2C"
+        )}&apiKey=${apiKey}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("HTTP Error!");

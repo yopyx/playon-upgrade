@@ -1,9 +1,14 @@
 import { FetchedVideoCardData, VideosListData } from "../../types/fetchedData";
-import { CORS, YT_VIDEO_BY_ID_API } from "../constants";
 import getChannelData from "./getChannelData";
-
 const getVideosListById = async (ids: string[], apiKey: string) => {
-  const url = CORS + encodeURIComponent(YT_VIDEO_BY_ID_API(ids, apiKey));
+  const url =
+    import.meta.env.VITE_ENVIRONMENT === "production"
+      ? `https://play0n.vercel.app/api/video-list?ids=${ids.join(
+          "%2C"
+        )}&apiKey=${apiKey}`
+      : `http://localhost:3000/video-list?ids=${ids.join(
+          "%2C"
+        )}&apiKey=${apiKey}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("HTTP Error!");

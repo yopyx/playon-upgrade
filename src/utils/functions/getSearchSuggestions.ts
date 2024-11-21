@@ -1,7 +1,8 @@
-import { CORS, YT_SEARCH_API } from "../constants";
-
 const getSearchSuggestions = async (searchText: string) => {
-  const url = CORS + encodeURIComponent(YT_SEARCH_API(searchText));
+  const url =
+    import.meta.env.VITE_ENVIRONMENT === "production"
+      ? `https://play0n.vercel.app/api/search-suggest?searchText=${searchText}`
+      : `http://localhost:3000/search-suggest?searchText=${searchText}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("HTTP Error!");
