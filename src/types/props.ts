@@ -12,9 +12,14 @@ export type ButtonProps = {
   title: string;
   clicked: boolean;
   setClicked: (state: string) => void;
+  lightTheme: boolean;
 };
 
-export type VideoCardProps = { info: VideoDetails; imgUrl: string | undefined };
+export type VideoCardProps = {
+  info: VideoDetails;
+  imgUrl: string | undefined;
+  lightTheme: boolean;
+};
 export type CommentsListProps = {
   vidId: string;
   list?: NestedCommentDetails[];
@@ -27,6 +32,14 @@ export type CommentProps = {
 export type DetailedVideoCardProps = {
   info: VideoDetails;
   channelData: ChannelDetails | undefined;
+  lightTheme: boolean;
 };
 export type LiveChatProps = { chatId: string };
 export type LiveCommentProps = { info: LiveChatComment };
+
+export type SideBarProps = {
+  lightTheme: boolean;
+};
+export type HeaderProps = {
+  lightTheme: boolean;
+};
