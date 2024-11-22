@@ -1,13 +1,6 @@
 import { useRef, useState } from "react";
 import { CommentProps } from "../types/props";
-import {
-  BLACK_UNLIKE,
-  BLUE_LIKE,
-  CORS,
-  LIKE_ICON,
-  UNLIKE_ICON,
-  timeDiff,
-} from "../utils/constants";
+import { timeDiff } from "../utils/constants";
 import { Link } from "react-router-dom";
 import { useAppDispatch } from "../types/reduxHooks";
 import { addComment } from "../redux/commentsSlice";
@@ -38,7 +31,7 @@ const Comment = ({ info }: CommentProps) => {
           <img
             alt={authorDisplayName}
             referrerPolicy="no-referrer"
-            src={CORS + encodeURIComponent(authorProfileImageUrl)}
+            src={authorProfileImageUrl}
             className="rounded-full h-8 w-8 object-cover bg-stone-200"
           ></img>
         </Link>
@@ -50,11 +43,13 @@ const Comment = ({ info }: CommentProps) => {
           <h5 className="font-semibold">
             <a href={authorChannelUrl}>{authorDisplayName}</a>
           </h5>
-          <h5 className="text-slate-600">
+          <h5 className="font-thin">
             {timeDiff(new Date().getTime() - new Date(publishedAt).getTime())}
           </h5>
         </div>
-        <h4 className="text-sm w-[750px]">{textOriginal}</h4>
+        <h4 className="text-sm w-[750px] tablet-w2:w-[650px]">
+          {textOriginal}
+        </h4>
         <div className="flex text-xs space-x-2">
           <button
             className="rounded-full p-2 hover:bg-stone-200"
@@ -64,12 +59,12 @@ const Comment = ({ info }: CommentProps) => {
             }}
           >
             {liked ? (
-              <img alt="share" src={BLUE_LIKE} className="h-4" />
+              <img alt="share" src={"/like (1).png"} className="h-4" />
             ) : (
-              <img alt="share" src={LIKE_ICON} className="h-4" />
+              <img alt="share" src={"/like (2).png"} className="h-4" />
             )}
           </button>
-          <h5 className="text-slate-600 py-2">{likeCount + Number(liked)}</h5>
+          <h5 className="py-2">{likeCount + Number(liked)}</h5>
           <button
             className="rounded-full p-2 hover:bg-stone-200"
             onClick={() => {
@@ -78,13 +73,17 @@ const Comment = ({ info }: CommentProps) => {
             }}
           >
             {disliked ? (
-              <img alt="share" src={BLACK_UNLIKE} className="h-4" />
+              <img alt="share" src={"/dislike.png"} className="h-4" />
             ) : (
-              <img alt="share" src={UNLIKE_ICON} className="h-4 scale-x-[-1]" />
+              <img
+                alt="share"
+                src={"/dont-like.png"}
+                className="h-4 scale-x-[-1]"
+              />
             )}
           </button>
           <button
-            className="text-slate-600 font-semibold rounded-full p-2 hover:bg-stone-200"
+            className="font-semibold rounded-full p-2 hover:bg-stone-200"
             onClick={() => setReplySection(true)}
           >
             Reply

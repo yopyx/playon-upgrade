@@ -1,12 +1,6 @@
 import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
-  BLACK_UNLIKE,
-  BLUE_LIKE,
-  LIKE_ICON,
-  timeDiff,
-  UNLIKE_ICON,
-} from "../utils/constants";
+import { timeDiff } from "../utils/constants";
 import { useAppDispatch } from "../types/reduxHooks";
 import { addComment } from "../redux/commentsSlice";
 import { CommentPostVersion } from "../types/fetchedData";
@@ -39,9 +33,9 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
             }}
           >
             {liked ? (
-              <img alt="share" src={BLUE_LIKE} className="h-4" />
+              <img alt="share" src={"/like (1).png"} className="h-4" />
             ) : (
-              <img alt="share" src={LIKE_ICON} className="h-4" />
+              <img alt="share" src={"/like (2).png"} className="h-4" />
             )}
           </button>
           <h5 className="text-slate-600 py-2">{Number(liked)}</h5>
@@ -53,9 +47,13 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
             }}
           >
             {disliked ? (
-              <img alt="share" src={BLACK_UNLIKE} className="h-4" />
+              <img alt="share" src={"/dislike.png"} className="h-4" />
             ) : (
-              <img alt="share" src={UNLIKE_ICON} className="h-4 scale-x-[-1]" />
+              <img
+                alt="share"
+                src={"/dont-like.png"}
+                className="h-4 scale-x-[-1]"
+              />
             )}
           </button>
           <button
