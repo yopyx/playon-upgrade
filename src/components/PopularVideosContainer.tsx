@@ -23,6 +23,7 @@ const PopularVideosContainer = ({
 }: {
   collapsedSideBar: boolean;
 }) => {
+  const { light } = useAppSelector((store) => store.theme);
   const apiKey = useKey();
   const vidCategoryData = useAppSelector(
     (store) => store.videoCategory.categoryDetails
@@ -44,7 +45,7 @@ const PopularVideosContainer = ({
       prevData.videosData.nextPageToken,
     queryFn: ({ pageParam }) => {
       dispatch(updateQuota(100));
-      return getPopularVideos(vidCategoryData.id, pageParam, apiKey);
+      return getPopularVideos(vidCategoryData.id || "0", pageParam, apiKey);
     },
   });
 
@@ -80,9 +81,7 @@ const PopularVideosContainer = ({
   }
   return (
     <div
-      className={`${
-        collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
-      } flex flex-wrap gap-4`}
+      className={`flex flex-wrap gap-4 mobile:video-container-centered 8k-3:video-container-centered 4k:video-container-centered 4k-2:video-container-centered`}
     >
       {videoList!.map((e) => (
         <Link
@@ -108,6 +107,7 @@ const PopularVideosContainer = ({
               channelList?.find?.((c) => e?.snippet?.channelId === c?.id)
                 ?.snippet?.thumbnails?.default?.url
             }
+            lightTheme={light}
           />
         </Link>
       ))}
