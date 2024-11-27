@@ -1,8 +1,8 @@
 import { VideoCardProps } from "../types/props";
 import { useAppSelector } from "../types/reduxHooks";
-import { LIVE_ICON, handleViewsCount, timeDiff } from "../utils/constants";
+import { handleViewsCount, timeDiff } from "../utils/constants";
 
-const VideoCard = ({ info, imgUrl }: VideoCardProps) => {
+const VideoCard = ({ info, imgUrl, lightTheme }: VideoCardProps) => {
   const sidebarCollapsed = useAppSelector(
     (store) => store.responsiveSideBar.collapseSidebar
   );
@@ -22,15 +22,15 @@ const VideoCard = ({ info, imgUrl }: VideoCardProps) => {
     <div className="">
       <div
         className={`${
-          sidebarCollapsed ? "w-[330px] h-[200px]" : "w-[394px] h-[222px]"
-        }`}
+          sidebarCollapsed ? "w-[330px] h-[200px]" : "w-[375px] h-[222px]"
+        } tablet-s:video-card-tablet-s mobile:video-card-mobile`}
       >
         <img
           alt={title}
           src={thumbnails?.maxres?.url || thumbnails?.high?.url}
           className={`${
-            sidebarCollapsed ? "w-[330px] h-[200px]" : "w-[394px] h-[222px]"
-          } object-cover rounded-xl hover:rounded-none border-2 border-yellow-600/75`}
+            sidebarCollapsed ? "w-[330px] h-[200px]" : "w-[375px] h-[222px]"
+          } object-cover rounded-xl hover:rounded-none border-2 border-yellow-600/75 tablet-s:video-card-tablet-s mobile:video-card-mobile`}
         />
         {duration && (
           <div className="bg-black text-white text-xs font-semibold rounded-md w-max px-1 py-0.5 -mt-6 mx-auto mr-1 relative">
@@ -48,8 +48,18 @@ const VideoCard = ({ info, imgUrl }: VideoCardProps) => {
         ) : (
           <div className="rounded-full w-10 h-10 bg-black"></div>
         )}
-        <div className="flex-col space-y-1">
-          <h4 className="font-semibold w-[280px]">{title}</h4>
+        <div
+          className={`flex flex-col space-y-1 ${
+            lightTheme ? "text-stone-600" : "text-yellow-600"
+          }`}
+        >
+          <h4
+            className={`font-semibold w-[280px] ${
+              lightTheme ? "text-black" : "text-slate-200"
+            }`}
+          >
+            {title}
+          </h4>
           <h5 className="text-xs">{channelTitle}</h5>
           {concurrentViewers ? (
             <>
@@ -59,7 +69,7 @@ const VideoCard = ({ info, imgUrl }: VideoCardProps) => {
               <div className="flex space-x-2 bg-red-600 text-white text-xs font-semibold rounded-md w-max px-1 py-0.5">
                 <img
                   alt="home"
-                  src={LIVE_ICON}
+                  src={"/live.png"}
                   className="h-3 mt-0.5 bg-slate-300 mix-blend-plus-lighter rounded-sm"
                 />
                 <span>LIVE</span>
