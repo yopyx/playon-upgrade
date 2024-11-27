@@ -1,10 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  CREATE_VIDEO,
-  HAMBURGER_ICON,
-  NOTIFY_BELL,
-  USER_LOGO,
-} from "../utils/constants";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import { toggleSidebarView } from "../redux/ui_slices/sideBarResponsiveSlice";
 import { useMemo, useRef, useState } from "react";
@@ -13,10 +7,10 @@ import getSearchSuggestions from "../utils/functions/getSearchSuggestions";
 import { addSuggestions } from "../redux/autoCompleteSearchSuggestionsSlice";
 import { addSearchText, addSuggestedCategory } from "../redux/searchTextSlice";
 import { SearchSuggestionsState } from "../types/slicesState";
-import { updateQuota } from "../redux/ui_slices/quotaSlice";
 import { toggleTheme } from "../redux/ui_slices/themeSlice";
+import { HeaderProps } from "../types/props";
 
-const Header = () => {
+const Header = ({ lightTheme }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -34,7 +28,6 @@ const Header = () => {
   const { data } = useQuery({
     queryKey: [text],
     queryFn: () => {
-      dispatch(updateQuota(100));
       return getSearchSuggestions(text || "");
     },
     enabled: text !== "",
@@ -43,13 +36,21 @@ const Header = () => {
     return data?.suggestions || searchState[text];
   }, [searchState, data, text]);
   return (
-    <div className="w-[98vw] grid grid-flow-col p-3 m-2 mt-0 shadow-lg bg-stone-200 fixed z-30">
-      <div className="flex space-x-6 col-span-2">
+    <div
+      className={`w-screen grid grid-flow-col space-x-32 p-3 mx-auto shadow-lg fixed z-40 mobile:header-mobile ${
+        lightTheme ? "bg-stone-200" : "dark-highlight-color"
+      }`}
+    >
+      <div className="w-full flex space-x-6 grid-cols-3 mobile:space-x-0">
         <div
-          className="rounded-icon"
+          className="rounded-icon h-5 mobile:nav-button-mobile"
           onClick={() => dispatch(toggleSidebarView())}
         >
-          <img alt="menu icon" src={HAMBURGER_ICON} className="h-5" />
+          <img
+            alt="menu icon"
+            src={"/Hamburger_icon.svg"}
+            className="object-cover"
+          />
         </div>
         <a
           href="/"
@@ -58,20 +59,19 @@ const Header = () => {
             dispatch(addSearchText(""));
           }}
         >
-          <img alt="logo" src={"/play-on.png"} className="h-6 mt-2" />
+          <div className="w-28 h-6 mt-2 mobile:logo-mobile tablet-s:logo-tablet-s">
+            <img alt="logo" src={"/play-on.png"} className="object-cover" />
+          </div>
         </a>
       </div>
-      <div className="flex col-span-8 place-content-center mr-32 h-[41px]">
-        <div
-          className="flex flex-col w-[70%]"
-          onFocus={() => setShowSuggestions(true)}
-        >
+      <div className="grid-cols-3 flex h-[37.5px]">
+        <div className="flex flex-col" onFocus={() => setShowSuggestions(true)}>
           <input
             type="text"
             ref={searchRef}
             value={index > -1 ? list?.[index] : text}
             placeholder="Search"
-            className="pl-5 border py-2 border-stone-400 rounded-l-full"
+            className="pl-5 border py-1.5 border-stone-400 rounded-l-full w-[45rem] sub1:search-bar-sub1 tablet:search-bar-tablet tablet-s:search-bar-tablet-s laptop-l:search-bar-laptop-l mobile:search-bar-mobile"
             onChange={(e) => {
               if (index === -1) {
                 setText(e.currentTarget.value);
@@ -102,7 +102,7 @@ const Header = () => {
             <>
               <ul
                 className={
-                  "bg-stone-200 py-1.5 font-semibold shadow-2xl rounded-xl border-stone-200 duration-500"
+                  "bg-stone-200 py-1.5 font-semibold shadow-2xl rounded-xl border-stone-200 duration-500 tablet-s:li-suggestions-s mobile:li-suggestions-s"
                 }
               >
                 {list?.map((s, i) => (
@@ -130,7 +130,7 @@ const Header = () => {
                       }
                     }}
                   >
-                    <span className="text-xl font-thin text-gray-500 scale-x-[-1] px-2">
+                    <span className="text-xl font-thin text-gray-500 scale-x-[-1] px-2 mobile:hidden tablet-s:hidden">
                       ⌕‍{" "}
                     </span>
                     {s}
@@ -141,7 +141,7 @@ const Header = () => {
           )}
         </div>
         <button
-          className="bg-stone-100 text-3xl text-stone-400 scale-x-[-1] border border-stone-400 px-5 rounded-l-full hover:bg-stone-200"
+          className="bg-stone-100 text-3xl text-stone-400 scale-x-[-1] border border-stone-400 px-5 rounded-l-full hover:bg-stone-200 mobile:hidden tablet-s:hidden"
           onClick={() => {
             setShowSuggestions(false);
             if (text) {
@@ -157,21 +157,38 @@ const Header = () => {
           ⌕‍
         </button>
       </div>
-      <div className="flex col-span-2 space-x-7 -mr-24">
-        <div className="rounded-icon">
-          <img alt="start video" src={CREATE_VIDEO} className="" />
+      <div className="grid-cols-4 flex space-x-7 tablet-s:space-x-2 mobile:-space-x-1">
+        <div className="rounded-icon sub4:hidden">
+          <img
+            alt="start video"
+            src={"/add-video-icon.png"}
+            className={`object-cover${lightTheme ? "" : " invert"}`}
+          />
         </div>
-        <div className="rounded-icon">
-          <img alt="notification" src={NOTIFY_BELL} />
+        <div className="rounded-icon sub4:hidden">
+          <img
+            alt="notification"
+            src={"/notification.svg"}
+            className={`object-cover${lightTheme ? "" : " invert"}`}
+          />
         </div>
-        <div className="rounded-icon" onClick={() => dispatch(toggleTheme())}>
-          <img alt="theme" src={light ? "./moon.svg" : "./sun.svg"} />
+        <div
+          className="rounded-icon mobile:nav-button-mobile tablet-s:nav-button-tablet-s"
+          onClick={() => dispatch(toggleTheme())}
+        >
+          <img
+            alt="theme"
+            src={light ? "./moon.svg" : "./sun.svg"}
+            className={`object-cover${lightTheme ? "" : " invert"}`}
+          />
         </div>
-        <img
-          alt="profile"
-          src={USER_LOGO}
-          className="h-7 mt-1 cursor-pointer"
-        />
+        <div className="rounded-icon mobile:nav-button-mobile tablet-s:nav-button-tablet-s">
+          <img
+            alt="profile"
+            src={"/profile-user.svg"}
+            className={`object-cover${lightTheme ? "" : " invert"}`}
+          />
+        </div>
       </div>
 
       {showSuggestions && (
