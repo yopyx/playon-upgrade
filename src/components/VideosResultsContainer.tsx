@@ -19,6 +19,7 @@ const VideosResultsContainer = ({
 }: {
   collapsedSideBar: boolean;
 }) => {
+  const { light } = useAppSelector((store) => store.theme);
   const apiKey = useKey();
   const { pathname, search } = useLocation();
   const dispatch = useAppDispatch();
@@ -108,7 +109,7 @@ const VideosResultsContainer = ({
       className={`${
         collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
       } ${
-        pathname === "/watch" ? "my-4" : "my-10 ml-24"
+        pathname === "/watch" ? "my-4" : "my-10"
       } flex flex-col gap-y-4 mx-auto`}
     >
       {(list || []).map((v, i) => (
@@ -134,6 +135,7 @@ const VideosResultsContainer = ({
             channelData={channelsData?.find(
               (c) => v.snippet.channelId === c.id
             )}
+            lightTheme={light}
           />
         </Link>
       ))}
