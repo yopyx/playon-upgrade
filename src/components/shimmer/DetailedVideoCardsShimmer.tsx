@@ -11,25 +11,25 @@ const DetailedVideoCardsShimmer = ({ len }: { len: number }) => {
               pathname === "/watch"
                 ? "h-[115px] w-[205px]"
                 : "h-[210px] w-[375px]"
-            } bg-stone-200 rounded-xl`}
+            } bg-stone-200/30 rounded-xl`}
           ></div>
           <div className="flex flex-col mt-3 gap-3">
             <div
               className={`${
                 pathname === "/watch" ? "w-[200px]" : "w-[560px]"
-              } h-6 bg-stone-200`}
+              } h-6 bg-stone-200/30`}
             ></div>
-            <div className="bg-stone-300 rounded-full w-7 h-7"></div>
+            <div className="bg-stone-300/30 rounded-full w-7 h-7"></div>
             <div className="flex flex-col gap-y-2">
               <div
                 className={`${
                   pathname === "/watch" ? "w-[200px]" : "w-[300px]"
-                } h-4 bg-stone-200`}
+                } h-4 bg-stone-200/30`}
               ></div>
               <div
                 className={`${
                   pathname === "/watch" ? "w-[180px]" : "w-[260px]"
-                } h-4 bg-stone-200`}
+                } h-4 bg-stone-200/30`}
               ></div>
             </div>
           </div>

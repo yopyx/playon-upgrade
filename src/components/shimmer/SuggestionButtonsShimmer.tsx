@@ -7,7 +7,7 @@ const SuggestionButtonsShimmer = () => {
       {[...Array(pathname === "/watch" ? 4 : 11)].map((_, i) => (
         <div
           key={i}
-          className="px-3 py-2 font-semibold text-sm text-stone-200 text-nowrap cursor-pointer rounded-lg bg-stone-200"
+          className="px-3 py-2 font-semibold text-sm text-stone-200/50 text-nowrap cursor-pointer rounded-lg bg-stone-200"
         >
           qwertyuiop
         </div>
