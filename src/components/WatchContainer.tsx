@@ -1,16 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {
-  BLACK_UNLIKE,
-  BLUE_LIKE,
-  DOTS_ICON,
-  DOWNLOAD_ICON,
-  LIKE_ICON,
-  SHARE_ICON,
-  UNLIKE_ICON,
-  handleViewsCount,
-  timeDiff,
-} from "../utils/constants";
+import { handleViewsCount, timeDiff } from "../utils/constants";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import CommentsList from "./CommentsList";
 import LiveChat from "./LiveChat";
@@ -20,6 +10,7 @@ import { addSuggestedCategory } from "../redux/searchTextSlice";
 import NewComment from "./NewComment";
 
 const WatchContainer = () => {
+  const { light } = useAppSelector((store) => store.theme);
   const { search } = useLocation();
   const dispatch = useAppDispatch();
   const videoId = search.slice(3);
@@ -51,20 +42,24 @@ const WatchContainer = () => {
   const profileUrl = channelInfo?.snippet?.thumbnails?.default?.url;
   const subs = channelInfo?.statistics?.subscriberCount;
   return (
-    <div className="flex justify-center space-x-7">
-      <div className="mt-20 ml-20 flex flex-col space-y-3">
+    <div className="flex justify-center gap-x-7 sub3:flex-col sub3:mx-auto sub3:w-[95%]">
+      <div className="mt-20 ml-20 flex flex-col space-y-3 sub3:mx-auto sub3:w-full">
         <iframe
-          width="950"
-          height="535"
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
-          className="rounded-2xl"
+          className="rounded-2xl mx-auto object-cover w-[950px] h-[535px] 8k:video-frame-8k 8k-w:video-frame-8k-w 4k-w:video-frame-4k-w 4k-2:video-frame-4k-2 sub3:w-full tablet-w:h-[55vh] tablet-r:h-[40vh] tablet-s:h-[32vh] mobile:h-[25vh]"
         ></iframe>
-        <h2 className="font-bold text-lg w-[900px]">{title}</h2>
-        <div className="flex justify-between">
+        <h2
+          className={`font-bold text-lg w-[900px]${
+            light ? "" : " text-white"
+          } sub3:w-[90%] sub3:text-sm`}
+        >
+          {title}
+        </h2>
+        <div className="flex flex-wrap justify-between sub3:w-full">
           <div className="flex space-x-3">
             {profileUrl ? (
               <img
@@ -77,10 +72,14 @@ const WatchContainer = () => {
             )}
 
             <div className="pr-5">
-              <h4 className="font-semibold text-sm cursor-pointer">
+              <h4
+                className={`font-semibold text-sm cursor-pointer${
+                  light ? "" : " text-white"
+                }`}
+              >
                 {channelTitle}
               </h4>
-              <h5 className="text-slate-600 text-xs">
+              <h5 className="text-yellow-700 text-xs">
                 {+subs ? `${handleViewsCount(subs)} subscribers` : ""}
               </h5>
             </div>
@@ -88,20 +87,28 @@ const WatchContainer = () => {
               Subscribe
             </button>
           </div>
-          <div className="flex space-x-2">
+          <div className="w-max flex space-x-1 mx-auto mr-0 mobile:overflow-x-scroll">
             <div
-              className="flex bg-stone-100 rounded-s-full px-4 py-2.5 space-x-2 -mr-4 cursor-pointer hover:bg-stone-200"
+              className="flex bg-stone-100 rounded-s-full px-4 py-2.5 mobile:py-1.5 space-x-2 -mr-4 cursor-pointer hover:bg-stone-200"
               onClick={() => {
                 setLiked(!liked);
                 setDisliked(false);
               }}
             >
               {liked ? (
-                <img alt="share" src={BLUE_LIKE} className="h-4" />
+                <img
+                  alt="share"
+                  src={"/like (1).png"}
+                  className="h-5 object-cover"
+                />
               ) : (
-                <img alt="share" src={LIKE_ICON} className="h-4" />
+                <img
+                  alt="share"
+                  src={"/like (2).png"}
+                  className="h-5 object-cover"
+                />
               )}
-              <button className="font-semibold text-sm">
+              <button className="font-semibold text-sm mobile:text-xs">
                 {likeCount && (+likeCount + Number(liked)).toLocaleString()}
               </button>
             </div>
@@ -113,30 +120,46 @@ const WatchContainer = () => {
               }}
             >
               {disliked ? (
-                <img alt="share" src={BLACK_UNLIKE} className="h-4" />
+                <img
+                  alt="share"
+                  src={"/dislike.png"}
+                  className="h-5 object-cover"
+                />
               ) : (
                 <img
                   alt="share"
-                  src={UNLIKE_ICON}
-                  className="h-4 scale-x-[-1]"
+                  src={"/dont-like.png"}
+                  className="h-5 object-cover"
                 />
               )}
             </div>
             <div className="flex bg-stone-200 rounded-3xl px-4 py-2.5 space-x-2 cursor-pointer hover:bg-stone-300">
-              <img alt="share" src={SHARE_ICON} className="h-4" />
-              <button className="font-semibold text-sm">Share</button>
+              <img
+                alt="share"
+                src={"/share.png"}
+                className="h-5 object-cover"
+              />
+              <button className="font-semibold text-sm mobile:hidden">
+                Share
+              </button>
             </div>
             <div className="flex bg-stone-200 rounded-3xl px-4 py-2.5 space-x-2 cursor-pointer hover:bg-stone-300">
-              <img alt="share" src={DOWNLOAD_ICON} className="h-4" />
-              <button className="font-semibold text-sm">Download</button>
+              <img
+                alt="share"
+                src={"/downloads.png"}
+                className="h-4 object-cover"
+              />
+              <button className="font-semibold text-sm mobile:hidden">
+                Download
+              </button>
             </div>
-            <div className="flex bg-stone-200 rounded-full py-3 px-3 hover:bg-stone-300">
-              <img alt="share" src={DOTS_ICON} className="h-1 mt-1.5" />
+            <div className="flex bg-stone-200 rounded-full p-3 hover:bg-stone-300">
+              <img alt="share" src={"/dots.png"} className="h-4 object-cover" />
             </div>
           </div>
         </div>
         <div
-          className="flex flex-col rounded-xl text-sm bg-stone-200 hover:bg-stone-300 p-4 space-y-2 cursor-pointer"
+          className="flex flex-col rounded-xl text-sm bg-stone-200 hover:bg-stone-300 p-4 space-y-2 cursor-pointer sub3:w-full"
           onClick={() => setExpandView(!expandView)}
         >
           <div className="flex space-x-3 font-semibold">
@@ -147,7 +170,8 @@ const WatchContainer = () => {
           </div>
           <h3
             className={
-              "w-[800px]" + (expandView ? "" : " h-10 overflow-y-hidden")
+              "w-[800px] sub3:w-full" +
+              (expandView ? "" : " h-10 overflow-y-hidden")
             }
           >
             {description}
@@ -159,14 +183,15 @@ const WatchContainer = () => {
 
         {liveBroadcastContent === "none" && Boolean(+commentCount) && (
           <>
-            <h3 className="text-xl font-bold">
+            <h3 className="text-xl font-bold text-yellow-700 sub5:text-sm">
               {(+commentCount).toLocaleString() + " Comments"}
             </h3>
-            <div className="bg-stone-200/30 p-1 rounded-lg">
+            <div className="bg-white/30 p-1 rounded-lg sub3:w-full">
               <NewComment />
-            </div>
-            <div className="bg-stone-200/30 p-1 rounded-lg">
-              <CommentsList vidId={videoId} query={true} />
+
+              <div className="sub3:h-72 sub3:overflow-y-scroll">
+                <CommentsList vidId={videoId} query={true} />
+              </div>
             </div>
           </>
         )}
