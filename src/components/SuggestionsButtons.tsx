@@ -1,5 +1,4 @@
 import { useLocation } from "react-router-dom";
-import { LEFT_ARROW, RIGHT_ARROW } from "../utils/constants";
 import Button from "./Button";
 import { useQuery } from "@tanstack/react-query";
 import getCategories from "../utils/functions/getCategories";
@@ -15,6 +14,7 @@ const SuggestionsButtons = ({
 }: {
   collapsedSideBar: boolean;
 }) => {
+  const { light } = useAppSelector((store) => store.theme);
   const apiKey = useKey();
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
@@ -28,7 +28,7 @@ const SuggestionsButtons = ({
     (store) => store.videoCategory.categoryDetails.snippet?.title
   );
   const [clickedBtn, setClickedBtn] = useState(
-    (pathname === "/" ? vidCategory : suggestionCategory) || "All"
+    (pathname === "/" ? "All" : suggestionCategory) || "All"
   );
   const leftScroll = () => {
     if (categoriesScrollRef.current) {
@@ -111,35 +111,46 @@ const SuggestionsButtons = ({
   }
   return (
     <div
-      className={`${pathname === "/watch" ? "relative " : "sticky "}${
+      className={`${
         pathname === "/watch"
-          ? "w-[420px]"
-          : collapsedSideBar
-          ? "dynamic-width"
-          : "dynamic-width-collapsed"
+          ? "relative w-[420px] 8k:suggestions-watch-8k 8k-w:suggestions-watch-8k-w 4k-w:suggestions-watch-4k-w 4k-2:suggestions-watch-4k-2 laptop-r:suggestions-watch-laptop-r sub3:w-full"
+          : `sticky mobile:suggestion-buttons-mobile${
+              pathname === "/" && !collapsedSideBar
+                ? " 4k-3:suggestion-buttons-4k-3"
+                : ""
+            }
+             `
       } top-16 py-5 z-10`}
     >
-      <div className={`w-full flex absolute justify-between`}>
+      <div className={`w-full flex absolute justify-between sub6:hidden`}>
         <button
           className={`bg-stone-100 ${
             translateValue > 0 ? "opacity-100" : "opacity-0"
-          } p-3 px-3.5 rounded-full z-30 hover:bg-stone-400`}
+          } p-3 rounded-full z-30 hover:bg-stone-400`}
           onClick={leftScroll}
         >
-          <img alt="RIGHT_ARROW" src={RIGHT_ARROW} className="w-1.5" />
+          <img
+            alt="RIGHT_ARROW"
+            src={"/arrow-prev-small-svgrepo-com.svg"}
+            className="w-4 h-4"
+          />
         </button>
 
         <button
           className={`bg-stone-100 ${
             maxTranslation ? "opacity-0" : "opacity-100"
-          } p-3 px-3.5 rounded-full z-30 hover:bg-stone-400`}
+          } p-3 rounded-full z-30 hover:bg-stone-400`}
           onClick={rightScroll}
         >
-          <img alt="LEFT_ARROW" src={LEFT_ARROW} className="w-1.5" />
+          <img
+            alt="LEFT_ARROW"
+            src={"/arrow-next-small-svgrepo-com.svg"}
+            className="w-4 h-4"
+          />
         </button>
       </div>
       <div
-        className="w-[95%] mx-auto flex gap-x-2 overflow-x-hidden"
+        className="mx-auto flex gap-x-2 overflow-x-hidden sub6:overflow-x-scroll"
         ref={categoriesScrollRef}
         onScroll={handleScroll}
       >
@@ -149,6 +160,7 @@ const SuggestionsButtons = ({
           title={"All"}
           clicked={clickedBtn === "All"}
           setClicked={setClickedBtn}
+          lightTheme={light}
         />
         {pathname === "/"
           ? popularList!.map((c) => (
@@ -158,6 +170,7 @@ const SuggestionsButtons = ({
                 title={c.snippet.title}
                 clicked={clickedBtn === c.snippet.title}
                 setClicked={setClickedBtn}
+                lightTheme={light}
               />
             ))
           : recommendedList!.map((c, i) => (
@@ -166,6 +179,7 @@ const SuggestionsButtons = ({
                 title={c}
                 clicked={clickedBtn === c}
                 setClicked={setClickedBtn}
+                lightTheme={light}
               />
             ))}
       </div>
