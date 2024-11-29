@@ -25,21 +25,23 @@ const Comment = ({ info }: CommentProps) => {
       ? info!.snippet
       : info!.snippet.topLevelComment.snippet;
   return (
-    <div className="flex space-x-3">
+    <div className="flex space-x-3 mobile:w-[320px]">
       {authorProfileImageUrl ? (
-        <Link to={authorChannelUrl}>
-          <img
-            alt={authorDisplayName}
-            referrerPolicy="no-referrer"
-            src={authorProfileImageUrl}
-            className="rounded-full h-8 w-8 object-cover bg-stone-200"
-          ></img>
-        </Link>
+        <div className="h-[2rem] w-[2rem]">
+          <Link to={authorChannelUrl}>
+            <img
+              alt={authorDisplayName}
+              referrerPolicy="no-referrer"
+              src={authorProfileImageUrl}
+              className="rounded-full h-[2rem] w-[2rem] object-cover"
+            ></img>
+          </Link>
+        </div>
       ) : (
         <div className="rounded-full w-8 h-8 bg-black"></div>
       )}
-      <div className="flex flex-col space-y-1">
-        <div className="flex text-xs space-x-1">
+      <div className="flex flex-col gap-y-1">
+        <div className="flex text-xs gap-x-1">
           <h5 className="font-semibold">
             <a href={authorChannelUrl}>{authorDisplayName}</a>
           </h5>
@@ -47,7 +49,7 @@ const Comment = ({ info }: CommentProps) => {
             {timeDiff(new Date().getTime() - new Date(publishedAt).getTime())}
           </h5>
         </div>
-        <h4 className="text-sm w-[750px] tablet-w2:w-[650px]">
+        <h4 className="text-sm text-wrap w-[700px] tablet-s:w-[450px] mobile:w-[250px]">
           {textOriginal}
         </h4>
         <div className="flex text-xs space-x-2">
@@ -104,7 +106,7 @@ const Comment = ({ info }: CommentProps) => {
             </div>
             <div className="flex space-x-3 justify-end mt-2">
               <button
-                className="font-semibold text-sm py-2 px-3  rounded-full hover:bg-stone-200"
+                className="font-semibold text-sm py-2 px-3 rounded-full hover:bg-stone-200"
                 onClick={() => setReplySection(false)}
               >
                 Cancel

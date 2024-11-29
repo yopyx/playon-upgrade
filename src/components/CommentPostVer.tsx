@@ -14,16 +14,18 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="flex space-x-3">
+    <div className="flex space-x-3 mobile:w-[320px]">
       <div className="rounded-full w-8 h-8 bg-black"></div>
       <div className="flex flex-col space-y-1">
         <div className="flex text-xs space-x-1">
           <h5 className="font-semibold">user</h5>
-          <h5 className="text-slate-600">
+          <h5 className="font-thin">
             {timeDiff(new Date().getTime() - new Date().getTime())}
           </h5>
         </div>
-        <h4 className="text-sm w-[750px]">{text}</h4>
+        <h4 className="text-sm text-wrap w-[700px] tablet-s:w-[450px] mobile:w-[250px]">
+          {text}
+        </h4>
         <div className="flex text-xs space-x-2">
           <button
             className="rounded-full p-2 hover:bg-stone-200"
@@ -38,7 +40,7 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
               <img alt="share" src={"/like (2).png"} className="h-4" />
             )}
           </button>
-          <h5 className="text-slate-600 py-2">{Number(liked)}</h5>
+          <h5 className="py-2">{Number(liked)}</h5>
           <button
             className="rounded-full p-2 hover:bg-stone-200"
             onClick={() => {
@@ -57,7 +59,7 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
             )}
           </button>
           <button
-            className="text-slate-600 font-semibold rounded-full p-2 hover:bg-stone-200"
+            className="font-semibold rounded-full p-2 hover:bg-stone-200"
             onClick={() => setReplySection(true)}
           >
             Reply
@@ -79,7 +81,7 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
             </div>
             <div className="flex space-x-3 justify-end mt-2">
               <button
-                className="font-semibold text-sm py-2 px-3  rounded-full hover:bg-stone-200"
+                className="font-semibold text-sm py-2 px-3 rounded-full hover:bg-stone-200"
                 onClick={() => setReplySection(false)}
               >
                 Cancel
