@@ -15,8 +15,8 @@ const NewComment = () => {
   const [replyInput, setReplyInput] = useState("");
   const etag = uuidv4();
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-col py-5">
+    <div className="flex flex-col pr-5">
+      <div className="flex flex-col pt-5 pb-10">
         <div className="flex space-x-2">
           <div className="rounded-full w-8 h-8 bg-black"></div>
           <input
