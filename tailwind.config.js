@@ -17,6 +17,7 @@ export default {
       tablet: { max: "1200px", min: "823px" },
       "laptop-l": { max: "1535px", min: "1200px" },
       "4k-3": { max: "2027px", min: "1535px" },
+      sub6: { max: "768px" },
       sub5: { max: "735px" },
       sub4: { max: "992px" },
       sub3: { max: "1450px" },
