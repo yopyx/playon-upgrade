@@ -34,8 +34,8 @@ export type DetailedVideoCardProps = {
   channelData: ChannelDetails | undefined;
   lightTheme: boolean;
 };
-export type LiveChatProps = { chatId: string };
-export type LiveCommentProps = { info: LiveChatComment };
+export type LiveChatProps = { chatId: string; lightTheme: boolean };
+export type LiveCommentProps = { info: LiveChatComment; lightTheme: boolean };
 
 export type SideBarProps = {
   lightTheme: boolean;
