@@ -83,13 +83,13 @@ const WatchContainer = () => {
                 {+subs ? `${handleViewsCount(subs)} subscribers` : ""}
               </h5>
             </div>
-            <button className="font-semibold text-sm text-white bg-black rounded-3xl px-4 h-9 hover:opacity-80">
+            <button className="font-semibold text-sm text-white bg-black rounded-3xl px-4 h-9 hover:opacity-80 mobile:text-xs">
               Subscribe
             </button>
           </div>
           <div className="w-max flex space-x-1 mx-auto mr-0 mobile:overflow-x-scroll">
             <div
-              className="flex bg-stone-100 rounded-s-full px-4 py-2.5 mobile:py-1.5 space-x-2 -mr-4 cursor-pointer hover:bg-stone-200"
+              className="flex bg-stone-200 rounded-s-full p-2 mobile:py-1.5 space-x-2 -mr-4 cursor-pointer hover:bg-stone-200"
               onClick={() => {
                 setLiked(!liked);
                 setDisliked(false);
@@ -108,12 +108,12 @@ const WatchContainer = () => {
                   className="h-5 object-cover"
                 />
               )}
-              <button className="font-semibold text-sm mobile:text-xs">
+              <button className="font-semibold text-sm px-1 mobile:text-xs">
                 {likeCount && (+likeCount + Number(liked)).toLocaleString()}
               </button>
             </div>
             <div
-              className="flex bg-stone-100 rounded-e-full px-4 py-2.5 border-stone-200 border-l-2 cursor-pointer hover:bg-stone-200"
+              className="flex bg-stone-200 rounded-e-full p-2 border-stone-200 border-l-2 cursor-pointer hover:bg-stone-200"
               onClick={() => {
                 setDisliked(!disliked);
                 setLiked(false);
@@ -133,7 +133,7 @@ const WatchContainer = () => {
                 />
               )}
             </div>
-            <div className="flex bg-stone-200 rounded-3xl px-4 py-2.5 space-x-2 cursor-pointer hover:bg-stone-300">
+            <div className="flex bg-stone-200 rounded-3xl p-2 space-x-2 cursor-pointer hover:bg-stone-300">
               <img
                 alt="share"
                 src={"/share.png"}
@@ -143,7 +143,7 @@ const WatchContainer = () => {
                 Share
               </button>
             </div>
-            <div className="flex bg-stone-200 rounded-3xl px-4 py-2.5 space-x-2 cursor-pointer hover:bg-stone-300">
+            <div className="flex bg-stone-200 rounded-3xl p-2 space-x-2 cursor-pointer hover:bg-stone-300">
               <img
                 alt="share"
                 src={"/downloads.png"}
@@ -159,7 +159,7 @@ const WatchContainer = () => {
           </div>
         </div>
         <div
-          className="flex flex-col rounded-xl text-sm bg-stone-200 hover:bg-stone-300 p-4 space-y-2 cursor-pointer sub3:w-full"
+          className="flex flex-col rounded-xl text-sm mobile:text-xs bg-stone-200 hover:bg-stone-300 p-4 space-y-2 cursor-pointer sub3:w-full"
           onClick={() => setExpandView(!expandView)}
         >
           <div className="flex space-x-3 font-semibold">
@@ -199,7 +199,8 @@ const WatchContainer = () => {
       <div className="flex flex-col -space-y-7">
         {liveBroadcastContent !== "none" && (
           <LiveChat
-            chatId={videoInfo?.liveStreamingDetails?.activeLiveChatId}
+            chatId={videoInfo.liveStreamingDetails.activeLiveChatId}
+            lightTheme={light}
           />
         )}
         <SearchResultsContainer />

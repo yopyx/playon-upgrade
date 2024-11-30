@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { SEND_ICON } from "../utils/constants";
 import LiveComment from "./LiveComment";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import getLiveChat from "../utils/functions/getLiveChat";
@@ -10,7 +9,7 @@ import { LiveChatState } from "../types/slicesState";
 import { updateQuota } from "../redux/ui_slices/quotaSlice";
 import { useKey } from "./Body";
 
-const LiveChat = ({ chatId }: LiveChatProps) => {
+const LiveChat = ({ chatId, lightTheme }: LiveChatProps) => {
   const apiKey = useKey();
   const [chatView, setChatView] = useState(true);
   const [text, setText] = useState("");
@@ -58,8 +57,14 @@ const LiveChat = ({ chatId }: LiveChatProps) => {
   return (
     <div>
       {chatView && (
-        <div className="flex flex-col mt-20 w-[400px] h-[580px] border-stone-200 border-2 rounded-xl">
-          <h4 className="font-semibold py-3 px-5">Top chat</h4>
+        <div className="flex flex-col mt-20 w-[400px] h-[580px] sub3:w-full border-stone-200 border-2 rounded-xl">
+          <h4
+            className={`font-semibold py-3 px-5${
+              lightTheme ? "" : " text-white"
+            }`}
+          >
+            Top chat
+          </h4>
           <div className="flex flex-col-reverse bg-stone-200/30 overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-200 space-y-2 border-t-2 border-b-2 h-[430px] px-5 py-1.5">
             <>
               {(list || []).reverse().map((m) => (
@@ -69,7 +74,7 @@ const LiveChat = ({ chatId }: LiveChatProps) => {
                   className="duration-500"
                   onScroll={smoothScroll}
                 >
-                  <LiveComment info={m} />
+                  <LiveComment info={m} lightTheme={lightTheme} />
                   <input
                     type="text"
                     ref={commentIdRef}
@@ -80,7 +85,13 @@ const LiveChat = ({ chatId }: LiveChatProps) => {
                     <div className="flex space-x-2 text-xs mt-2">
                       <div className="h-6 w-6 rounded-full bg-black" />
                       <h5 className="">
-                        <span className="text-stone-400">user </span>
+                        <span
+                          className={`${
+                            lightTheme ? "text-stone-600" : "text-stone-400"
+                          }`}
+                        >
+                          user{" "}
+                        </span>
                         {messages[chatId][m.etag]}
                       </h5>
                     </div>
@@ -94,6 +105,15 @@ const LiveChat = ({ chatId }: LiveChatProps) => {
               type="text"
               value={text}
               onChange={(e) => setText(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  dispatch(
+                    addNewMessage([chatId, commentIdRef.current?.value, text])
+                  );
+                  setText("");
+                }
+              }}
               placeholder="Chat..."
               className="w-[320px] py-1.5 px-3 my-2 rounded-full bg-stone-100 outline-none"
             />
@@ -109,13 +129,17 @@ const LiveChat = ({ chatId }: LiveChatProps) => {
             >
               <img
                 alt="share"
-                src={SEND_ICON}
-                className="h-5 w-5 rotate-[45deg]"
+                src={"/send.png"}
+                className={`h-5 w-5 rotate-[45deg]${
+                  lightTheme ? "" : " invert"
+                }`}
               />
             </button>
           </form>
           <button
-            className="text-slate-600 font-semibold rounded-full p-1.5 mx-1 my-auto relative z-10 hover:bg-stone-200"
+            className={`${
+              lightTheme ? "" : "text-white "
+            }text-slate-600 font-semibold rounded-full p-1.5 mx-1 my-auto relative z-10 hover:bg-stone-200`}
             onClick={() => setChatView(false)}
           >
             Hide chat
@@ -124,7 +148,9 @@ const LiveChat = ({ chatId }: LiveChatProps) => {
       )}
       {!chatView && (
         <button
-          className="mt-20 -ml-1 w-[400px] text-slate-600 border font-semibold rounded-full p-1.5 mx-1 my-auto relative z-10 hover:bg-stone-200"
+          className={`mt-20 -ml-1 w-[400px]${
+            lightTheme ? "" : " text-white"
+          } sub3:w-full text-slate-600 border font-semibold rounded-full p-1.5 mx-1 my-auto relative z-10 hover:bg-stone-200`}
           onClick={() => setChatView(true)}
         >
           Show chat

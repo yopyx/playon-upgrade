@@ -1,7 +1,6 @@
 import { LiveCommentProps } from "../types/props";
-import { CORS } from "../utils/constants";
 
-const LiveComment = ({ info }: LiveCommentProps) => {
+const LiveComment = ({ info, lightTheme }: LiveCommentProps) => {
   const { displayMessage } = info.snippet;
   const { displayName, profileImageUrl } = info.authorDetails;
   return (
@@ -9,11 +8,13 @@ const LiveComment = ({ info }: LiveCommentProps) => {
       <img
         alt={displayName}
         referrerPolicy="no-referrer"
-        src={CORS + encodeURIComponent(profileImageUrl)}
+        src={profileImageUrl}
         className="h-6 w-6 rounded-full bg-black"
       />
       <h5 className="">
-        <span className="text-stone-400">{displayName} </span>
+        <span className={`${lightTheme ? "text-stone-600" : "text-stone-400"}`}>
+          {displayName}{" "}
+        </span>
         {displayMessage}
       </h5>
     </div>
