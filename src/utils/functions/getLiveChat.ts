@@ -14,6 +14,6 @@ const getLiveChat = async (
     throw new Error("HTTP Error!");
   }
   const data = await response.json();
-  return JSON.parse(data.contents) as LiveChatData;
+  return data as LiveChatData;
 };
 export default getLiveChat;
