@@ -199,10 +199,13 @@
   }
   //video card
   .video-card-mobile {
-    @apply w-[330px] h-[200px];
+    @apply w-[300px] h-[180px];
   }
   .video-card-tablet-s {
     @apply w-[350px] h-[200px];
+  }
+  .video-card-tablet-r {
+    @apply w-[500px] h-[280px];
   }
   // /results
   //detailed card
@@ -254,7 +257,7 @@
     @apply w-[320px] h-[200px];
   }
   .video-info-mobile {
-    @apply w-[320px];
+    @apply w-[300px];
   }
   .card-channel-icon-mobile {
     @apply w-5 h-5;
@@ -319,11 +322,11 @@
     width: 24rem;
   }
   .video-info-watch-laptop-r {
-    @apply w-[180px];
+    @apply w-[170px];
   }
 
   .watch-tablet-w {
-    @apply w-[900px] mx-auto;
+    @apply w-[900px];
   }
   .video-frame-tablet-w {
     @apply w-[950px] h-[535px];
@@ -340,7 +343,7 @@
   }
 
   .watch-tablet-w2 {
-    @apply w-[700px] mx-auto;
+    @apply w-[700px];
   }
   .video-frame-tablet-w2 {
     @apply w-[700px] h-[395px] mx-auto;
@@ -356,6 +359,9 @@
   //   @apply w-[220px] bg-black;
   // }
   .watch-mobile-w {
-    @apply w-[320px] mx-auto;
+    @apply w-[320px];
+  }
+  .video-info-mobile {
+    @apply w-[320px] h-max text-xs;
   }
 }
