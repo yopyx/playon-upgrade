@@ -9,6 +9,7 @@ import { addSearchText, addSuggestedCategory } from "../redux/searchTextSlice";
 import { SearchSuggestionsState } from "../types/slicesState";
 import { toggleTheme } from "../redux/ui_slices/themeSlice";
 import { HeaderProps } from "../types/props";
+import { addCategoryDetails } from "../redux/videoCategorySlice";
 
 const Header = ({ lightTheme }: HeaderProps) => {
   const dispatch = useAppDispatch();
@@ -22,12 +23,13 @@ const Header = ({ lightTheme }: HeaderProps) => {
   );
   const { light } = useAppSelector((store) => store.theme);
   const searchRef = useRef<HTMLInputElement>(null);
+  const [suggestedText, setSuggestedText] = useState(["", -1]);
   const [text, setText] = useState(pathname === "/watch" ? "" : searchText);
-  const [index, setIndex] = useState(-1);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const { data } = useQuery({
-    queryKey: [text],
+    queryKey: ["search input", text],
     queryFn: () => {
+      setSuggestedText(["", -1]);
       return getSearchSuggestions(text || "");
     },
     enabled: text !== "",
@@ -56,6 +58,9 @@ const Header = ({ lightTheme }: HeaderProps) => {
           href="/"
           onClick={() => {
             dispatch(addSuggestedCategory("All"));
+            dispatch(
+              addCategoryDetails({ id: "0", snippet: { title: "All" } })
+            );
             dispatch(addSearchText(""));
           }}
         >
@@ -69,14 +74,17 @@ const Header = ({ lightTheme }: HeaderProps) => {
           <input
             type="text"
             ref={searchRef}
-            value={index > -1 ? list?.[index] : text}
+            value={suggestedText[0] || text}
             placeholder="Search"
             className="pl-5 border py-1.5 border-stone-400 rounded-l-full w-[45rem] sub1:search-bar-sub1 tablet:search-bar-tablet tablet-s:search-bar-tablet-s laptop-l:search-bar-laptop-l mobile:search-bar-mobile"
             onChange={(e) => {
-              if (index === -1) {
+              if (
+                !suggestedText[0] ||
+                suggestedText[0] !== e.currentTarget.value
+              ) {
                 setText(e.currentTarget.value);
-                data && dispatch(addSuggestions(data));
               }
+              data && dispatch(addSuggestions(data));
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -91,10 +99,18 @@ const Header = ({ lightTheme }: HeaderProps) => {
                 }
               }
               if (e.key === "ArrowUp") {
-                setIndex(index > -1 ? index - 1 : list.length - 1);
+                const index =
+                  +suggestedText[1] > 0
+                    ? +suggestedText[1] - 1
+                    : list.length - 1;
+                setSuggestedText([list[index], index]);
               }
               if (e.key === "ArrowDown") {
-                setIndex(index < list.length - 1 ? index + 1 : -1);
+                const index =
+                  +suggestedText[1] === list.length - 1
+                    ? 0
+                    : +suggestedText[1] + 1;
+                setSuggestedText([list[index], index]);
               }
             }}
           />
@@ -109,7 +125,7 @@ const Header = ({ lightTheme }: HeaderProps) => {
                   <li
                     key={s}
                     className={`px-2 py-1.5 hover:cursor-default hover:bg-stone-100${
-                      index === i ? " bg-stone-100" : ""
+                      +suggestedText[1] === i ? " bg-stone-100" : ""
                     }`}
                     onClick={() => {
                       setShowSuggestions(false);
@@ -130,7 +146,11 @@ const Header = ({ lightTheme }: HeaderProps) => {
                       }
                     }}
                   >
-                    <span className="text-xl font-thin text-gray-500 scale-x-[-1] px-2 mobile:hidden tablet-s:hidden">
+                    <span
+                      className={`${
+                        lightTheme ? "text-gray-500" : "text-yellow-600"
+                      } text-xl font-thin scale-x-[-1] px-2 mobile:hidden tablet-s:hidden`}
+                    >
                       ⌕‍{" "}
                     </span>
                     {s}
@@ -194,7 +214,11 @@ const Header = ({ lightTheme }: HeaderProps) => {
       {showSuggestions && (
         <div
           className="absolute w-screen h-screen -z-10"
-          onClick={() => setShowSuggestions(false)}
+          onClick={() => {
+            setShowSuggestions(false);
+            setText(suggestedText[0]);
+            setSuggestedText(["", -1]);
+          }}
         ></div>
       )}
     </div>
