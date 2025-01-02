@@ -10,27 +10,11 @@ import liveChatReducer from "./liveChatSlice";
 import themeReducer from "./ui_slices/themeSlice";
 import quotaReducer from "./ui_slices/quotaSlice";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 import storageSession from "redux-persist/lib/storage/session";
 
 const sessionPersistConfig = {
   key: "session-root",
   storage: storageSession,
-  whitelist: [
-    "responsiveSideBar",
-    "videoCategory",
-    "videosData",
-    "channelsData",
-    "searchSuggestions",
-    "searchText",
-    "comments",
-    "liveChat",
-    "theme",
-  ],
-};
-const localPersistConfig = {
-  key: "local-root",
-  storage,
 };
 const rootReducer = combineReducers({
   responsiveSideBar: sideBarReducer,
@@ -42,7 +26,7 @@ const rootReducer = combineReducers({
   comments: commentsReducer,
   liveChat: liveChatReducer,
   theme: themeReducer,
-  quota: persistReducer(localPersistConfig, quotaReducer),
+  quota: quotaReducer,
 });
 const persistedReducer = persistReducer(sessionPersistConfig, rootReducer);
 const appStore = configureStore({
