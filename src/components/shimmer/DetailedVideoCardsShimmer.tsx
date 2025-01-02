@@ -3,7 +3,11 @@ import { useLocation } from "react-router-dom";
 const DetailedVideoCardsShimmer = ({ len }: { len: number }) => {
   const { pathname } = useLocation();
   return (
-    <div className="flex flex-wrap gap-4 w-full justify-center">
+    <div
+      className={`${
+        pathname === "/watch" ? "my-4" : "my-10"
+      } flex flex-col gap-y-4 mx-auto justify-center`}
+    >
       {[...Array(len)].map((_, i) => (
         <div
           key={i}
