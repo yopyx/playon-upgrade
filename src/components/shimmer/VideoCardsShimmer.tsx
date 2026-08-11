@@ -1,10 +1,9 @@
 const VideoCardsShimmer = ({
-  len,
   collapsedSideBar,
 }: {
-  len: number;
   collapsedSideBar: boolean;
 }) => {
+  const len = collapsedSideBar ? 8 : 6;
   return (
     <div className="flex flex-wrap gap-4">
       {[...Array(len)].map((_, i) => (
