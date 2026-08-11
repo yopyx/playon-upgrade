@@ -6,12 +6,12 @@ export const YT_API = (vidCategoryId = "0", nextToken = "", apiKey: string) =>
   }&regionCode=US&videoCategoryId=${vidCategoryId}&key=${apiKey}`;
 export const YT_VIDEO_BY_ID_API = (idArray: string[], apiKey: string) =>
   `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=${idArray.join(
-    "%2C"
+    "%2C",
   )}&key=${apiKey}`;
 export const YT_LIVE_CHAT_API = (
   chatId: string,
   nextToken = "",
-  apiKey: string
+  apiKey: string,
 ) =>
   `https://youtube.googleapis.com/youtube/v3/liveChat/messages?liveChatId=${chatId}${
     nextToken ? "&pageToken=" + nextToken : ""
@@ -24,7 +24,7 @@ export const YT_SEARCH_API = (searchText = "") =>
 export const YT_COMMENTS_API = (
   vidId: string,
   nextToken = "",
-  apiKey: string
+  apiKey: string,
 ) =>
   `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies${
     nextToken ? "&pageToken=" + nextToken : ""
@@ -34,7 +34,7 @@ export const YT_VID_CATEG_API = (apiKey: string) =>
 export const YT_SEARCH_RESULTS_API = (
   searchText = "",
   nextToken = "",
-  apiKey: string
+  apiKey: string,
 ) =>
   `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25${
     nextToken ? "&pageToken=" + nextToken : ""
@@ -48,8 +48,8 @@ export const timeDiff = (ms = 0) => {
       return seconds < 1
         ? "just now"
         : seconds === 1
-        ? "a second ago"
-        : `${Math.floor(seconds)} seconds ago`;
+          ? "a second ago"
+          : `${Math.floor(seconds)} seconds ago`;
     case seconds >= 60 && seconds < 3600:
       return Math.floor(seconds / 60) === 1
         ? "a minute ago"
@@ -75,8 +75,8 @@ export const handleViewsCount = (views = "") => {
   return views.length > 9
     ? (+views / 1000000000).toFixed(1) + "B"
     : views.length > 6
-    ? (+views / 1000000).toFixed(1) + "M"
-    : views.length > 3
-    ? (+views / 1000).toFixed(0) + "K"
-    : views;
+      ? (+views / 1000000).toFixed(1) + "M"
+      : views.length > 3
+        ? (+views / 1000).toFixed(0) + "K"
+        : views;
 };
