@@ -1,145 +1,75 @@
-type Snippet = {
-  title: string;
-  assignable?: boolean;
-  channelId?: string;
-};
-
 export type Category = {
-  kind?: string;
-  etag?: string;
   id: string;
-  snippet: Snippet;
+  etag?: string;
+  title: string;
+};
+export type CategoryListWithStatus = {
+  categories: Category[];
+  status: number;
 };
 
-export type VideoDetails = {
-  kind: string;
-  etag: string;
+export type Comment = {
   id: string;
-  snippet: {
-    publishedAt: string;
-    channelId: string;
-    title: string;
-    description: string;
-    thumbnails: ThumbnailSize;
-    channelTitle: string;
-    tags: string[];
-    categoryId: string;
-    liveBroadcastContent: string;
-    defaultLanguage: string;
-    localized: ObjectStr;
-    defaultAudioLanguage: string;
-  };
-  contentDetails: {
-    duration: string;
-    dimension: string;
-    definition: string;
-    caption: string;
-    licensedContent: boolean;
-    contentRating: object;
-    projection: string;
-  };
+  textOriginal: string;
+  authorDisplayName: string;
+  authorProfileImageUrl: string;
+  likeCount: number;
+  totalReplyCount: number;
+  publishedAt: string;
+  listEtag: string;
+};
+export type CommentsListData = {
+  commentsList: Comment[];
+  queryNextPage: boolean;
+};
+
+export type CommentsListWithStatus = {
+  commentsData: CommentsListData;
+  status: number;
+};
+
+export type NestedComment = {
+  id: string;
+  parentId: string;
+  textOriginal: string;
+  authorDisplayName: string;
+  authorProfileImageUrl: string;
+  likeCount: number;
+  totalReplyCount?: number;
+  publishedAt: string;
+};
+
+export type NestedCommentsListWithStatus = {
+  commentsData: NestedComment[];
+  status: number;
+};
+
+export type VideoCardData = {
+  videoId: string;
+  channelId: string;
+  etag: string;
+  listEtag: string;
+  title: string;
+  channelTitle: string;
+  description: string;
+  publishedAt: string;
+  thumbnails: ThumbnailSize;
+  channelThumbnails: ThumbnailSize;
+  tags: string[];
+  liveBroadcastContent: string;
+  duration: string;
+  subscriberCount: string;
   statistics: ObjectStr;
   liveStreamingDetails: ObjectStr;
 };
-export type ChannelDetails = {
-  kind: string;
-  etag: string;
-  id: string;
-  snippet: {
-    title: string;
-    description: string;
-    customUrl: string;
-    publishedAt: string;
-    thumbnails: ThumbnailSize;
-    localized: ObjectStr;
-  };
-  contentDetails: {
-    relatedPlaylists: {
-      likes: string;
-      uploads: string;
-    };
-  };
-  statistics: {
-    viewCount: string;
-    subscriberCount: string;
-    hiddenSubscriberCount: boolean;
-    videoCount: string;
-  };
-};
-export type NestedCommentDetails = {
-  kind: string;
-  etag: string;
-  id: string;
-  replies?: {
-    comments: NestedCommentDetails[];
-  };
-  snippet: {
-    channelId: string;
-    videoId: string;
-    textDisplay: string;
-    textOriginal: string;
-    parentId: string;
-    authorDisplayName: string;
-    authorProfileImageUrl: string;
-    authorChannelUrl: string;
-    authorChannelId: {
-      value: string;
-    };
-    canRate: boolean;
-    viewerRating: string;
-    likeCount: number;
-    publishedAt: string;
-    updatedAt: string;
-    totalReplyCount?: undefined;
-  };
-};
-export type CommentDetails = {
-  kind: string;
-  etag: string;
-  id: string;
-  snippet: {
-    channelId: string;
-    videoId: string;
-    topLevelComment: {
-      kind: string;
-      etag: string;
-      id: string;
-      snippet: {
-        channelId: string;
-        videoId: string;
-        textDisplay: string;
-        textOriginal: string;
-        authorDisplayName: string;
-        authorProfileImageUrl: string;
-        authorChannelUrl: string;
-        authorChannelId: {
-          value: string;
-        };
-        canRate: boolean;
-        viewerRating: string;
-        likeCount: number;
-        publishedAt: string;
-        updatedAt: string;
-      };
-    };
-    canReply: boolean;
-    totalReplyCount: number;
-    isPublic: boolean;
-  };
-  replies?: {
-    comments: NestedCommentDetails[];
-  };
+export type VideoCardListData = {
+  videoCardList: VideoCardData[];
+  queryNextPage: boolean;
 };
 
-export type CommentsListData = {
-  kind: string;
-  etag: string;
-  nextPageToken: string;
-  pageInfo: {
-    totalResults: number;
-    resultsPerPage: number;
-  };
-  items: CommentDetails[];
+export type VideoCardListWithStatus = {
+  videosData: VideoCardListData;
+  status: number;
 };
 
 type ThumbnailDetails = {
@@ -154,105 +84,53 @@ type ThumbnailSize = {
 export type ObjectStr = {
   [name: string]: string;
 };
-export type VideosListData = {
-  kind: string;
-  etag: string;
-  items: VideoDetails[];
-  nextPageToken: string;
-  pageInfo: {
-    totalResults: number;
-    resultsPerPage: number;
-  };
-};
-
-export type FetchedVideoCardData = {
-  videosData: VideosListData;
-  channelsData: ChannelDetails[];
-};
-
-export type SearchResultedVideo = {
-  kind: string;
-  etag: string;
-  id: {
-    kind: string;
-    videoId: string;
-  };
-  snippet: {
-    publishedAt: string;
-    channelId: string;
-    title: string;
-    description: string;
-    thumbnails: {
-      default: {
-        url: string;
-        width: number;
-        height: number;
-      };
-      medium: {
-        url: string;
-        width: number;
-        height: number;
-      };
-      high: {
-        url: string;
-        width: number;
-        height: number;
-      };
-    };
-    channelTitle: string;
-    liveBroadcastContent: string;
-    publishTime: string;
-  };
-};
-export type FetchedSearchResults = {
-  kind: string;
-  etag: string;
-  nextPageToken: string;
-  regionCode: string;
-  pageInfo: {
-    totalResults: number;
-    resultsPerPage: number;
-  };
-  items: SearchResultedVideo[];
+export type ObjectStr2 = {
+  [name: string]: string[];
 };
 export type LiveChatComment = {
-  kind?: string;
-  etag: string;
-  id?: string;
-  snippet: {
-    type?: string;
-    liveChatId?: string;
-    authorChannelId?: string;
-    publishedAt?: string;
-    hasDisplayContent?: boolean;
-    displayMessage: string;
-    textMessageDetails?: {
-      messageText: string;
-    };
-  };
-  authorDetails: {
-    channelId?: string;
-    channelUrl?: string;
-    displayName: string;
-    profileImageUrl: string;
-    isVerified?: boolean;
-    isChatOwner?: boolean;
-    isChatSponsor?: boolean;
-    isChatModerator?: boolean;
-  };
+  id: string;
+  publishedAt: string;
+  displayMessage: string;
+  displayName: string;
+  profileImageUrl: string;
+  listEtag: string;
 };
-export type LiveChatData = {
-  kind: string;
-  etag: string;
-  pollingIntervalMillis: number;
-  pageInfo: {
-    totalResults: number;
-    resultsPerPage: number;
-  };
-  nextPageToken: string;
-  items: LiveChatComment[];
+export type LiveChatList = {
+  liveCommentList: LiveChatComment[];
+  queryNextPage: boolean;
+  pollingIntervalMillis?: number;
 };
+
+export type LiveChatWithStatus = {
+  chatData: LiveChatList;
+  status: number;
+};
+
 export type CommentPostVersion = {
   id: string;
   text: string;
+};
+
+export type SearchSuggestions = {
+  text: string;
+  suggestions: string[];
+};
+
+export type SearchSuggestionsWithStatus = {
+  searchSuggestions: SearchSuggestions;
+  status: number;
+};
+
+export type WatchedVideoWithStatus = {
+  videoData: VideoCardData;
+  status: number;
+};
+
+export interface WatchingHistory {
+  [date: string]: VideoCardData[];
+}
+
+export type HistoryWithStatus = {
+  history: WatchingHistory;
+  status: number;
 };
