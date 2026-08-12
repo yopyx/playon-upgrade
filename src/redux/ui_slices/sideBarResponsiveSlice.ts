@@ -4,14 +4,18 @@ import { SideBarSliceState } from "../../types/slicesState";
 const sideBarResponsiveSlice = createSlice({
   name: "responsive slice",
   initialState: {
-    collapseSidebar: false,
+    mainContainerPage: { collapseSidebar: false },
+    resultsPage: { collapseSidebar: false },
+    watchPage: { collapseSidebar: true },
+    historyPage: { collapseSidebar: false },
   } as SideBarSliceState,
   reducers: {
-    toggleSidebarView: (state: SideBarSliceState) => {
-      state.collapseSidebar = !state.collapseSidebar;
+    toggleSidebarView: (state: SideBarSliceState, action) => {
+      state[action.payload].collapseSidebar =
+        !state[action.payload].collapseSidebar;
     },
     openCloseSidebar: (state: SideBarSliceState, action) => {
-      state.collapseSidebar = action.payload;
+      state[action.payload[0]].collapseSidebar = action.payload[1];
     },
   },
 });
