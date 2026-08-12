@@ -1,9 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import sideBarReducer from "./ui_slices/sideBarResponsiveSlice";
 import categoryReducer from "./videoCategorySlice";
-import videosDataReducer from "./videosDataSlice";
-import channelsDataReducer from "./channelsDataSlice";
-import searchSuggestionsReducer from "./autoCompleteSearchSuggestionsSlice";
 import searchTextReducer from "./searchTextSlice";
 import commentsReducer from "./commentsSlice";
 import liveChatReducer from "./liveChatSlice";
@@ -19,9 +16,6 @@ const sessionPersistConfig = {
 const rootReducer = combineReducers({
   responsiveSideBar: sideBarReducer,
   videoCategory: categoryReducer,
-  videosData: videosDataReducer,
-  channelsData: channelsDataReducer,
-  searchSuggestions: searchSuggestionsReducer,
   searchText: searchTextReducer,
   comments: commentsReducer,
   liveChat: liveChatReducer,
