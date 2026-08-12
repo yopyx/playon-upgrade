@@ -1,21 +1,13 @@
-import {
-  ChannelDetails,
-  CommentPostVersion,
-  LiveChatComment,
-  VideoDetails,
-} from "./fetchedData";
+import { CommentPostVersion } from "./fetchedData";
 
 export type SearchSuggestionsState = {
   [text: string]: string[];
 };
 export type SearchSliceState = {
+  searchTextShown: string;
   searchTextStored: string;
   searchTag: string;
-  suggestionCategory: string;
-};
-
-export type ChannelState = {
-  channels: { [id: string]: ChannelDetails };
+  videoTitle: string;
 };
 
 export type CommentPostState = {
@@ -23,14 +15,9 @@ export type CommentPostState = {
   newComments: { id: string; text: string }[];
 };
 export type LiveChatState = {
-  chat: LiveChatComment[];
-  token: { [id: string]: string };
   messages: { [id: string]: { [id: string]: string } };
 };
-export type VideoState = {
-  [id: string]: VideoDetails;
-};
 
-export type SideBarSliceState = { collapseSidebar: boolean };
+export type SideBarSliceState = { [x: string]: { collapseSidebar: boolean } };
 
 export type QuotaSliceState = { quota: number; keys: string[] };
