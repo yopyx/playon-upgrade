@@ -1,33 +1,21 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
-import getPopularVideos from "../utils/functions/getPopularVideos";
-import { FetchedVideoCardData } from "../types/fetchedData";
+import getPopularVideosAsync from "../utils/functions/getPopularVideosAsync";
 import VideoCard from "./VideoCard";
 import VideoCardsShimmer from "./shimmer/VideoCardsShimmer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCallback, useMemo, useRef } from "react";
-import { addChannel } from "../redux/channelsDataSlice";
 import NotFound from "./errorCatcher/NotFound";
-import {
-  addSearchTag,
-  addSearchText,
-  addSuggestedCategory,
-} from "../redux/searchTextSlice";
-import { openCloseSidebar } from "../redux/ui_slices/sideBarResponsiveSlice";
-import { updateQuota } from "../redux/ui_slices/quotaSlice";
-import { useKey } from "./Body";
-import { addVideo } from "../redux/videosDataSlice";
+import { addVideoTitle } from "../redux/searchTextSlice";
+import { VideoCardListWithStatus } from "../types/fetchedData";
+import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";
 
-const PopularVideosContainer = ({
-  collapsedSideBar,
-}: {
-  collapsedSideBar: boolean;
-}) => {
-  const { light } = useAppSelector((store) => store.theme);
-  const apiKey = useKey();
-  const vidCategoryData = useAppSelector(
-    (store) => store.videoCategory.categoryDetails
+const PopularVideosContainer = () => {
+  const { lightTheme, sidebarState } = useUpdatedUi();
+  const categoryId = useAppSelector(
+    (store) => store.videoCategory.categoryDetails.id,
   );
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const observer = useRef<IntersectionObserver>();
   const {
@@ -39,14 +27,14 @@ const PopularVideosContainer = ({
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["popular videos", vidCategoryData.id],
-    initialPageParam: "",
-    getNextPageParam: (prevData: FetchedVideoCardData) =>
-      prevData.videosData.nextPageToken,
+    queryKey: ["popular videos", categoryId],
+    initialPageParam: 1,
+    getNextPageParam: (prevData: VideoCardListWithStatus, _, lastPage) =>
+      prevData.videosData.queryNextPage ? ++lastPage : undefined,
     queryFn: ({ pageParam }) => {
-      dispatch(updateQuota(100));
-      return getPopularVideos(vidCategoryData.id || "0", pageParam, apiKey);
+      return getPopularVideosAsync(categoryId, pageParam);
     },
+    staleTime: 10 * 60 * 1000,
   });
 
   const lastElement = useCallback(
@@ -60,61 +48,55 @@ const PopularVideosContainer = ({
       });
       if (node) observer.current.observe(node);
     },
-    [fetchNextPage, hasNextPage, isFetching, isLoading]
+    [fetchNextPage, hasNextPage, isFetching, isLoading],
   );
   const videoList = useMemo(() => {
-    return data?.pages.flatMap((page) => page.videosData.items);
+    return data?.pages.flatMap((page) => page.videosData.videoCardList);
   }, [data]);
-  const channelList = useMemo(() => {
-    return data?.pages.flatMap((page) => page.channelsData);
-  }, [data]);
+
+  if (data?.pages.flatMap((page) => page.status)[0] === 401) {
+    navigate("/signin");
+  }
+
   if (status === "pending") {
     return (
       <VideoCardsShimmer
-        len={collapsedSideBar ? 8 : 6}
-        collapsedSideBar={collapsedSideBar}
+        collapsedSideBar={sidebarState.mainContainerPage.collapseSidebar}
       />
     );
   }
-  if (status === "error") {
+  if (
+    status === "error" ||
+    data?.pages.flatMap((page) => page.status)[0] === 404
+  ) {
     return <NotFound />;
   }
+  //console.log(videoList);
   return (
     <div
       className={`flex flex-wrap gap-4 mobile:video-container-centered 8k-3:video-container-centered 4k:video-container-centered 4k-2:video-container-centered`}
     >
-      {videoList!.map((e) => (
+      {videoList!.map((e, i) => (
         <Link
           ref={lastElement}
-          to={`/watch?v=${e.id}`}
-          key={e.etag}
+          to={`/watch?v=${e.videoId}`}
+          key={e.etag + i}
           onClick={() => {
-            dispatch(openCloseSidebar(true));
-            dispatch(addVideo(e));
-            dispatch(
-              addChannel(
-                channelList?.find?.((c) => e?.snippet?.channelId === c?.id)
-              )
-            );
-            dispatch(addSearchText(e.snippet.title));
-            dispatch(addSearchTag(e.snippet.tags[0]));
-            dispatch(addSuggestedCategory("All"));
+            dispatch(addVideoTitle(e.title));
+            // dispatch(
+            //   e.tags.length && e.tags[0].trim()
+            //     ? addSearchTag(e.tags[0])
+            //     : addSearchTag(""),
+            // );
+            window.scrollTo(0, 0);
           }}
         >
-          <VideoCard
-            info={e}
-            imgUrl={
-              channelList?.find?.((c) => e?.snippet?.channelId === c?.id)
-                ?.snippet?.thumbnails?.default?.url
-            }
-            lightTheme={light}
-          />
+          <VideoCard info={e} lightTheme={lightTheme} isPriority={i < 4} />
         </Link>
       ))}
       {isFetchingNextPage && (
         <VideoCardsShimmer
-          len={collapsedSideBar ? 8 : 6}
-          collapsedSideBar={collapsedSideBar}
+          collapsedSideBar={sidebarState.mainContainerPage.collapseSidebar}
         />
       )}
     </div>
