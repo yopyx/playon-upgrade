@@ -1,35 +1,28 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import { useQuery } from "@tanstack/react-query";
-import getCategories from "../utils/functions/getCategories";
+import getCategoriesAsync from "../utils/functions/getCategoriesAsync";
 import { useMemo, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
-import getSearchResultedVideos from "../utils/functions/getSearchResultedVideos";
 import SuggestionButtonsShimmer from "./shimmer/SuggestionButtonsShimmer";
-import { updateQuota } from "../redux/ui_slices/quotaSlice";
-import { useKey } from "./Body";
+import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";
+import { useAppSelector } from "../types/reduxHooks";
 
-const SuggestionsButtons = ({
-  collapsedSideBar,
-}: {
-  collapsedSideBar: boolean;
-}) => {
-  const { light } = useAppSelector((store) => store.theme);
-  const apiKey = useKey();
-  const dispatch = useAppDispatch();
-  const { pathname } = useLocation();
+const SuggestionsButtons = () => {
+  const navigate = useNavigate();
+  const { videoTags, selectedCategory } = useAppSelector(
+    (store) => store.videoCategory,
+  );
+  const { sidebarState } = useUpdatedUi();
+  const { pathname, search } = useLocation();
+  const searchQuery =
+    pathname == "/results"
+      ? search.split("=")[1].replace(/\+/g, " ")
+      : search.split("=")[1];
   const [translateValue, setTranslateValue] = useState(0);
   const [maxTranslation, setMaxTranslation] = useState(false);
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
-  const { searchTextStored, searchTag, suggestionCategory } = useAppSelector(
-    (store) => store.searchText
-  );
-  const vidCategory: string = useAppSelector(
-    (store) => store.videoCategory.categoryDetails.snippet?.title
-  );
-  const [clickedBtn, setClickedBtn] = useState(
-    (pathname === "/" ? "All" : suggestionCategory) || "All"
-  );
+
+  const [clickedBtn, setClickedBtn] = useState(selectedCategory);
   const leftScroll = () => {
     if (categoriesScrollRef.current) {
       categoriesScrollRef.current.scrollBy({
@@ -63,51 +56,30 @@ const SuggestionsButtons = ({
 
   const popularSuggestionsQuery = useQuery({
     queryKey: ["categories"],
-    queryFn: () => {
-      dispatch(updateQuota(100));
-      return getCategories(apiKey);
-    },
+    queryFn: () => getCategoriesAsync(),
     enabled: pathname === "/",
+    staleTime: 10 * 60 * 1000,
   });
-  const searchSuggestionsQuery = useQuery({
-    queryKey: [
-      "suggestion buttons",
-      pathname === "/watch" ? searchTag : searchTextStored,
-    ],
-    queryFn: () => {
-      dispatch(updateQuota(100));
-      return getSearchResultedVideos(
-        pathname === "/watch" ? searchTag : searchTextStored,
-        "",
-        apiKey
-      );
-    },
-    enabled: pathname !== "/",
-  });
-  const popularList = useMemo(() => {
-    return popularSuggestionsQuery.data;
-  }, [popularSuggestionsQuery]);
-  const recommendedList = useMemo(() => {
-    return (
-      searchSuggestionsQuery.data?.data?.videosData?.items.find(
-        (v) => v.snippet.tags
-      )?.snippet.tags || []
-    );
-  }, [searchSuggestionsQuery.data?.data.videosData?.items]);
 
-  if (popularSuggestionsQuery.isLoading || searchSuggestionsQuery.isLoading) {
+  const popularList = useMemo(() => {
+    return popularSuggestionsQuery.data?.categories;
+  }, [popularSuggestionsQuery]);
+
+  if (popularSuggestionsQuery.data?.status === 401) {
+    navigate("/signin");
+  }
+  if (
+    (pathname == "/" && popularSuggestionsQuery.isLoading) ||
+    (pathname !== "/" &&
+      !videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"][
+        searchQuery
+      ])
+  ) {
     return <SuggestionButtonsShimmer />;
   }
-  if (popularSuggestionsQuery.isError || searchSuggestionsQuery.isError) {
-    return (
-      <div>
-        {JSON.stringify(
-          popularSuggestionsQuery.isError
-            ? popularSuggestionsQuery.error
-            : searchSuggestionsQuery.error
-        )}
-      </div>
-    );
+  if (popularSuggestionsQuery.isError) {
+    //return <div>{JSON.stringify(popularSuggestionsQuery.error)}</div>;
+    return <h2>No suggestions available</h2>;
   }
   return (
     <div
@@ -115,7 +87,8 @@ const SuggestionsButtons = ({
         pathname === "/watch"
           ? "relative w-[420px] 8k:suggestions-watch-8k 8k-w:suggestions-watch-8k-w 4k-w:suggestions-watch-4k-w 4k-2:suggestions-watch-4k-2 laptop-r:suggestions-watch-laptop-r sub3:w-full"
           : `sticky mobile:suggestion-buttons-mobile${
-              pathname === "/" && !collapsedSideBar
+              pathname === "/" &&
+              !sidebarState.mainContainerPage.collapseSidebar
                 ? " 4k-3:suggestion-buttons-4k-3"
                 : ""
             }
@@ -154,32 +127,34 @@ const SuggestionsButtons = ({
         ref={categoriesScrollRef}
         onScroll={handleScroll}
       >
-        <Button
+        {/* <Button
           key={"All"}
-          categoryData={{ id: "0", snippet: { title: "All" } }}
+          categoryData={{ id: "0", title: "All" }}
           title={"All"}
           clicked={clickedBtn === "All"}
           setClicked={setClickedBtn}
-          lightTheme={light}
-        />
+        /> */}
         {pathname === "/"
           ? popularList!.map((c) => (
               <Button
-                key={c.etag}
+                key={c.etag || c.id}
                 categoryData={c}
-                title={c.snippet.title}
-                clicked={clickedBtn === c.snippet.title}
+                title={c.title}
+                clicked={clickedBtn === c.title}
                 setClicked={setClickedBtn}
-                lightTheme={light}
               />
             ))
-          : recommendedList!.map((c, i) => (
+          : [
+              "All",
+              ...videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"][
+                searchQuery
+              ],
+            ].map((c: string, i: number) => (
               <Button
                 key={c + i}
                 title={c}
                 clicked={clickedBtn === c}
                 setClicked={setClickedBtn}
-                lightTheme={light}
               />
             ))}
       </div>
