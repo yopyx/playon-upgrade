@@ -1,42 +1,36 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import { toggleSidebarView } from "../redux/ui_slices/sideBarResponsiveSlice";
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import getSearchSuggestions from "../utils/functions/getSearchSuggestions";
-import { addSuggestions } from "../redux/autoCompleteSearchSuggestionsSlice";
-import { addSearchText, addSuggestedCategory } from "../redux/searchTextSlice";
-import { SearchSuggestionsState } from "../types/slicesState";
+import getSearchSuggestionsAsync from "../utils/functions/getSearchSuggestionsAsync";
+import { addSearchTextShown } from "../redux/searchTextSlice";
 import { toggleTheme } from "../redux/ui_slices/themeSlice";
 import { HeaderProps } from "../types/props";
-import { addCategoryDetails } from "../redux/videoCategorySlice";
+import { addSelectedCategory } from "../redux/videoCategorySlice";
 
 const Header = ({ lightTheme }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const searchState: SearchSuggestionsState = useAppSelector(
-    (store) => store.searchSuggestions
-  );
-  const searchText = useAppSelector(
-    (store) => store.searchText.searchTextStored
-  );
+  const { searchTextShown } = useAppSelector((store) => store.searchText);
   const { light } = useAppSelector((store) => store.theme);
+  const { name } = useAppSelector((store) => store.user);
   const searchRef = useRef<HTMLInputElement>(null);
-  const [suggestedText, setSuggestedText] = useState(["", -1]);
-  const [text, setText] = useState(pathname === "/watch" ? "" : searchText);
+  const [focusedSuggestedText, setFocusedSuggestedText] = useState(["", -1]);
+  const [text, setText] = useState(searchTextShown);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const { data } = useQuery({
     queryKey: ["search input", text],
     queryFn: () => {
-      setSuggestedText(["", -1]);
-      return getSearchSuggestions(text || "");
+      setFocusedSuggestedText(["", -1]);
+      return getSearchSuggestionsAsync(text);
     },
-    enabled: text !== "",
+    enabled: pathname !== "/signin" && text.trim() !== "",
   });
   const list = useMemo(() => {
-    return data?.suggestions || searchState[text];
-  }, [searchState, data, text]);
+    return data?.searchSuggestions?.suggestions;
+  }, [data?.searchSuggestions?.suggestions]);
   return (
     <div
       className={`w-screen grid grid-flow-col space-x-32 p-3 mx-auto shadow-lg fixed z-40 mobile:header-mobile ${
@@ -46,7 +40,19 @@ const Header = ({ lightTheme }: HeaderProps) => {
       <div className="w-full flex space-x-6 grid-cols-3 mobile:space-x-0">
         <div
           className="rounded-icon h-5 mobile:nav-button-mobile"
-          onClick={() => dispatch(toggleSidebarView())}
+          onClick={() =>
+            dispatch(
+              toggleSidebarView(
+                pathname == "/"
+                  ? "mainContainerPage"
+                  : pathname == "/results"
+                    ? "resultsPage"
+                    : pathname == "/history"
+                      ? "historyPage"
+                      : "watchPage",
+              ),
+            )
+          }
         >
           <img
             alt="menu icon"
@@ -54,67 +60,57 @@ const Header = ({ lightTheme }: HeaderProps) => {
             className="object-cover"
           />
         </div>
-        <a
-          href="/"
-          onClick={() => {
-            dispatch(addSuggestedCategory("All"));
-            dispatch(
-              addCategoryDetails({ id: "0", snippet: { title: "All" } })
-            );
-            dispatch(addSearchText(""));
-          }}
-        >
+        <Link to="/">
           <div className="w-28 h-6 mt-2 mobile:logo-mobile tablet-s:logo-tablet-s">
             <img alt="logo" src={"/play-on.png"} className="object-cover" />
           </div>
-        </a>
+        </Link>
       </div>
       <div className="grid-cols-3 flex h-[37.5px]">
         <div className="flex flex-col" onFocus={() => setShowSuggestions(true)}>
           <input
             type="text"
             ref={searchRef}
-            value={suggestedText[0] || text}
+            value={focusedSuggestedText[0] || text}
             placeholder="Search"
             className="pl-5 border py-1.5 border-stone-400 rounded-l-full w-[45rem] sub1:search-bar-sub1 tablet:search-bar-tablet tablet-s:search-bar-tablet-s laptop-l:search-bar-laptop-l mobile:search-bar-mobile"
             onChange={(e) => {
               if (
-                !suggestedText[0] ||
-                suggestedText[0] !== e.currentTarget.value
+                !focusedSuggestedText[0] ||
+                focusedSuggestedText[0] !== e.currentTarget.value
               ) {
                 setText(e.currentTarget.value);
               }
-              data && dispatch(addSuggestions(data));
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 setShowSuggestions(false);
                 if (text) {
-                  dispatch(addSearchText(e.currentTarget.value));
-                  dispatch(addSuggestedCategory("All"));
+                  dispatch(addSearchTextShown(e.currentTarget.value));
+                  dispatch(addSelectedCategory("All"));
                   navigate(
                     "/results?search_query=" +
-                      e.currentTarget.value.trim().replace(/ /g, "+")
+                      e.currentTarget.value.trim().replace(/ /g, "+"),
                   );
                 }
               }
-              if (e.key === "ArrowUp") {
+              if (e.key === "ArrowUp" && list) {
                 const index =
-                  +suggestedText[1] > 0
-                    ? +suggestedText[1] - 1
+                  +focusedSuggestedText[1] > 0
+                    ? +focusedSuggestedText[1] - 1
                     : list.length - 1;
-                setSuggestedText([list[index], index]);
+                setFocusedSuggestedText([list[index], index]);
               }
-              if (e.key === "ArrowDown") {
+              if (e.key === "ArrowDown" && list) {
                 const index =
-                  +suggestedText[1] === list.length - 1
+                  +focusedSuggestedText[1] === list.length - 1
                     ? 0
-                    : +suggestedText[1] + 1;
-                setSuggestedText([list[index], index]);
+                    : +focusedSuggestedText[1] + 1;
+                setFocusedSuggestedText([list[index], index]);
               }
             }}
           />
-          {showSuggestions && data?.suggestions && (
+          {showSuggestions && list && (
             <>
               <ul
                 className={
@@ -125,24 +121,26 @@ const Header = ({ lightTheme }: HeaderProps) => {
                   <li
                     key={s}
                     className={`px-2 py-1.5 hover:cursor-default hover:bg-stone-100${
-                      +suggestedText[1] === i ? " bg-stone-100" : ""
+                      +focusedSuggestedText[1] === i ? " bg-stone-100" : ""
                     }`}
                     onClick={() => {
                       setShowSuggestions(false);
                       setText(s);
-                      dispatch(addSearchText(s));
-                      dispatch(addSuggestedCategory("All"));
+                      dispatch(addSearchTextShown(s));
+                      dispatch(addSelectedCategory("All"));
                       navigate("/results?search_query=" + s.replace(/ /g, "+"));
+                      window.scrollTo(0, 0);
                     }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         setShowSuggestions(false);
                         setText(s);
-                        dispatch(addSearchText(s));
-                        dispatch(addSuggestedCategory("All"));
+                        dispatch(addSearchTextShown(s));
+                        dispatch(addSelectedCategory("All"));
                         navigate(
-                          "/results?search_query=" + s.replace(/ /g, "+")
+                          "/results?search_query=" + s.replace(/ /g, "+"),
                         );
+                        window.scrollTo(0, 0);
                       }
                     }}
                   >
@@ -165,12 +163,14 @@ const Header = ({ lightTheme }: HeaderProps) => {
           onClick={() => {
             setShowSuggestions(false);
             if (text) {
-              dispatch(addSearchText(searchRef.current?.value));
-              dispatch(addSuggestedCategory("All"));
+              dispatch(addSearchTextShown(searchRef.current?.value));
+              dispatch(addSelectedCategory("All"));
+
               navigate(
                 "/results?search_query=" +
-                  searchRef.current!.value.replace(/ /g, "+")
+                  searchRef.current!.value.replace(/ /g, "+"),
               );
+              window.scrollTo(0, 0);
             }
           }}
         >
@@ -209,6 +209,17 @@ const Header = ({ lightTheme }: HeaderProps) => {
             className={`object-cover${lightTheme ? "" : " invert"}`}
           />
         </div>
+        {name && <h5>{name}</h5>}
+        <div className="border-2 border-violet-800 hover:bg-white">
+          <button
+            className="px-1 py-1 font-bold text-yellow-600"
+            onClick={() => {
+              window.open("http://localhost:7117/logout", "_self");
+            }}
+          >
+            Sign out
+          </button>
+        </div>
       </div>
 
       {showSuggestions && (
@@ -216,8 +227,8 @@ const Header = ({ lightTheme }: HeaderProps) => {
           className="absolute w-screen h-screen -z-10"
           onClick={() => {
             setShowSuggestions(false);
-            setText(suggestedText[0]);
-            setSuggestedText(["", -1]);
+            setText(focusedSuggestedText[0] as string);
+            setFocusedSuggestedText(["", -1]);
           }}
         ></div>
       )}
