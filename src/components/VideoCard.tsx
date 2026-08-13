@@ -1,25 +1,31 @@
 import { VideoCardProps } from "../types/props";
 import { useAppSelector } from "../types/reduxHooks";
 import { handleViewsCount, timeDiff } from "../utils/constants";
+declare module "react" {
+  interface ImgHTMLAttributes<T> extends HTMLAttributes<T> {
+    fetchpriority?: "high" | "low" | "auto";
+  }
+}
 
-const VideoCard = ({ info, imgUrl, lightTheme }: VideoCardProps) => {
+const VideoCard = ({ info, lightTheme, isPriority }: VideoCardProps) => {
   const sidebarCollapsed = useAppSelector(
-    (store) => store.responsiveSideBar.collapseSidebar
+    (store) => store.responsiveSideBar.mainContainerPage.collapseSidebar,
   );
-  const { channelTitle, title, publishedAt, thumbnails } = info!.snippet;
-  const { viewCount } = info!.statistics;
+  const { channelTitle, channelThumbnails, title, publishedAt, thumbnails } =
+    info;
+  const { viewCount } = info.statistics;
   const duration =
-    info?.contentDetails?.duration === "P0D"
+    info.duration === "P0D"
       ? ""
-      : info?.contentDetails?.duration
+      : info.duration
           ?.slice(2, -1)
           ?.split(/[HMS]/g)
           .map((e) => e.padStart(2, "0"))
           .join(":");
-  const concurrentViewers = info?.liveStreamingDetails?.concurrentViewers;
+  const concurrentViewers = info.liveStreamingDetails?.concurrentViewers;
   if (!info) return;
   return (
-    <div className="">
+    <div>
       <div
         className={`${
           sidebarCollapsed ? "w-[330px] h-[200px]" : "w-[375px] h-[222px]"
@@ -27,7 +33,13 @@ const VideoCard = ({ info, imgUrl, lightTheme }: VideoCardProps) => {
       >
         <img
           alt={title}
-          src={thumbnails?.maxres?.url || thumbnails?.high?.url}
+          src={
+            thumbnails?.medium?.url ||
+            thumbnails?.high?.url ||
+            thumbnails?.default?.url
+          }
+          fetchpriority={isPriority ? "high" : "auto"}
+          loading={isPriority ? "eager" : "lazy"}
           className={`${
             sidebarCollapsed ? "w-[330px] h-[200px]" : "w-[375px] h-[222px]"
           } object-cover rounded-xl hover:rounded-none border-2 border-yellow-600/75 tablet-s:video-card-tablet-s mobile:video-card-mobile`}
@@ -39,10 +51,10 @@ const VideoCard = ({ info, imgUrl, lightTheme }: VideoCardProps) => {
         )}
       </div>
       <div className="flex mt-3 space-x-3">
-        {imgUrl ? (
+        {channelThumbnails?.default?.url ? (
           <img
             alt={title}
-            src={imgUrl}
+            src={channelThumbnails.default.url}
             className="rounded-full h-10 w-10"
           ></img>
         ) : (
@@ -80,7 +92,7 @@ const VideoCard = ({ info, imgUrl, lightTheme }: VideoCardProps) => {
               {handleViewsCount(viewCount) +
                 " Views • " +
                 timeDiff(
-                  new Date().getTime() - new Date(publishedAt).getTime()
+                  new Date().getTime() - new Date(publishedAt).getTime(),
                 )}
             </h5>
           )}
