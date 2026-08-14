@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { CommentProps } from "../types/props";
 import { timeDiff } from "../utils/constants";
-import { Link } from "react-router-dom";
 import { useAppDispatch } from "../types/reduxHooks";
 import { addComment } from "../redux/commentsSlice";
 import { v4 as uuidv4 } from "uuid";
@@ -17,39 +16,31 @@ const Comment = ({ info }: CommentProps) => {
     textOriginal,
     authorDisplayName,
     authorProfileImageUrl,
-    authorChannelUrl,
     publishedAt,
     likeCount,
-  } =
-    info.snippet.totalReplyCount === undefined
-      ? info!.snippet
-      : info!.snippet.topLevelComment.snippet;
+  } = info;
   return (
     <div className="flex space-x-3 mobile:w-[320px]">
       {authorProfileImageUrl ? (
         <div className="h-[2rem] w-[2rem]">
-          <Link to={authorChannelUrl}>
-            <img
-              alt={authorDisplayName}
-              referrerPolicy="no-referrer"
-              src={authorProfileImageUrl}
-              className="rounded-full h-[2rem] w-[2rem] object-cover"
-            ></img>
-          </Link>
+          <img
+            alt={authorDisplayName}
+            referrerPolicy="no-referrer"
+            src={authorProfileImageUrl}
+            className="rounded-full h-[2rem] w-[2rem] object-cover"
+          ></img>
         </div>
       ) : (
         <div className="rounded-full w-8 h-8 bg-black"></div>
       )}
-      <div className="flex flex-col gap-y-1">
+      <div className="flex flex-col gap-y-1 w-[700px]">
         <div className="flex text-xs gap-x-1">
-          <h5 className="font-semibold">
-            <a href={authorChannelUrl}>{authorDisplayName}</a>
-          </h5>
+          <h5 className="font-semibold">{authorDisplayName}</h5>
           <h5 className="font-thin">
             {timeDiff(new Date().getTime() - new Date(publishedAt).getTime())}
           </h5>
         </div>
-        <h4 className="text-sm text-wrap w-[700px] tablet-s:w-[450px] mobile:w-[250px]">
+        <h4 className="text-sm text-wrap overflow-x-hidden tablet-s:w-[450px] mobile:w-[250px]">
           {textOriginal}
         </h4>
         <div className="flex text-xs space-x-2">
@@ -118,12 +109,12 @@ const Comment = ({ info }: CommentProps) => {
                   replyInputRef.current?.value &&
                     dispatch(
                       addComment({
-                        id: info.etag,
+                        id: info.id,
                         comment: {
                           id: uuidv4(),
                           text: replyInputRef.current.value,
                         },
-                      })
+                      }),
                     );
                   setReplySection(false);
                 }}
