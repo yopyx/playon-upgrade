@@ -1,22 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import LiveComment from "./LiveComment";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import getLiveChat from "../utils/functions/getLiveChat";
+import getLiveChat from "../utils/functions/getLiveChatAsync";
 import { LiveChatProps } from "../types/props";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
-import { addLiveChatToken, addNewMessage } from "../redux/liveChatSlice";
+import { addNewMessage } from "../redux/liveChatSlice";
 import { LiveChatState } from "../types/slicesState";
-import { updateQuota } from "../redux/ui_slices/quotaSlice";
-import { useKey } from "./Body";
+import SpinShimmer from "./shimmer/SpinShimmer";
+import { useNavigate } from "react-router-dom";
 
-const LiveChat = ({ chatId, lightTheme }: LiveChatProps) => {
-  const apiKey = useKey();
+const LiveChat = ({ videoId, lightTheme }: LiveChatProps) => {
   const [chatView, setChatView] = useState(true);
   const [text, setText] = useState("");
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { token, messages } = useAppSelector(
-    (store) => store.liveChat
+  const { messages } = useAppSelector(
+    (store) => store.liveChat,
   ) as LiveChatState;
+  const { name } = useAppSelector((store) => store.user);
   const commentIdRef = useRef<HTMLInputElement>(null);
   const commentScrollRef = useRef<HTMLDivElement>(null);
   const smoothScroll = () => {
@@ -26,34 +27,53 @@ const LiveChat = ({ chatId, lightTheme }: LiveChatProps) => {
       });
     }
   };
-  const { data, isFetching, hasNextPage, fetchNextPage } = useInfiniteQuery({
-    queryKey: ["live", chatId],
-    initialPageParam: token[chatId] || "",
-    queryFn: ({ pageParam }) => {
-      dispatch(updateQuota(100));
-      return getLiveChat(chatId, pageParam, apiKey);
-    },
-    getNextPageParam: (prevData) => prevData.nextPageToken,
-  });
+  const { data, isFetching, hasNextPage, fetchNextPage, isLoading, isError } =
+    useInfiniteQuery({
+      queryKey: ["live", videoId],
+      initialPageParam: 1,
+      queryFn: ({ pageParam }) => {
+        return getLiveChat(videoId, pageParam);
+      },
+      getNextPageParam: (prevData, _, lastPage) =>
+        prevData.chatData.queryNextPage ? ++lastPage : undefined,
+    });
   const list = useMemo(() => {
-    return data?.pages.flatMap((e) => e.items).slice(-200);
+    return data?.pages.flatMap((e) => e.chatData.liveCommentList)?.reverse();
+  }, [data]);
+  const pollingInterval = useMemo(() => {
+    return data?.pages.flatMap((e) => e.chatData.pollingIntervalMillis)[0];
   }, [data]);
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (hasNextPage && !isFetching) {
-        fetchNextPage();
-      }
-    }, 2500);
-    return () => {
-      clearInterval(interval);
-      dispatch(
-        addLiveChatToken([
-          chatId,
-          data?.pages.flatMap((e) => e.nextPageToken)[0],
-        ])
-      );
-    };
-  }, [hasNextPage, fetchNextPage, isFetching, dispatch, data, chatId]);
+    if (pollingInterval && pollingInterval > 0) {
+      const interval = setInterval(() => {
+        if (hasNextPage && !isFetching) {
+          fetchNextPage();
+        }
+      }, pollingInterval);
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [hasNextPage, fetchNextPage, isFetching, pollingInterval]);
+
+  useEffect(() => {
+    if (data?.pages.flatMap((page) => page.status)[0] === 401) {
+      navigate("/signin");
+    }
+  });
+  if (isLoading) {
+    return <SpinShimmer />;
+  }
+  if (isError) {
+    return (
+      <h4
+        className={`mt-20 text-center font-semibold ${lightTheme ? "" : "text-white"}`}
+      >
+        Error loading live chat
+      </h4>
+    );
+  }
+
   return (
     <div>
       {chatView && (
@@ -67,37 +87,41 @@ const LiveChat = ({ chatId, lightTheme }: LiveChatProps) => {
           </h4>
           <div className="flex flex-col-reverse bg-stone-200/30 overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-200 space-y-2 border-t-2 border-b-2 h-[430px] px-5 py-1.5">
             <>
-              {(list || []).reverse().map((m) => (
-                <div
-                  ref={commentScrollRef}
-                  key={m?.etag}
-                  className="duration-500"
-                  onScroll={smoothScroll}
-                >
-                  <LiveComment info={m} lightTheme={lightTheme} />
-                  <input
-                    type="text"
-                    ref={commentIdRef}
-                    defaultValue={m.etag}
-                    className="hidden"
-                  />
-                  {messages[chatId]?.[m.etag] && (
-                    <div className="flex space-x-2 text-xs mt-2">
-                      <div className="h-6 w-6 rounded-full bg-black" />
-                      <h5 className="">
-                        <span
-                          className={`${
-                            lightTheme ? "text-stone-600" : "text-stone-400"
-                          }`}
-                        >
-                          user{" "}
-                        </span>
-                        {messages[chatId][m.etag]}
-                      </h5>
-                    </div>
-                  )}
-                </div>
-              ))}
+              {isLoading || isError ? (
+                <SpinShimmer />
+              ) : (
+                list!.map((m) => (
+                  <div
+                    ref={commentScrollRef}
+                    key={m.id}
+                    className="duration-500"
+                    onScroll={smoothScroll}
+                  >
+                    <LiveComment info={m} lightTheme={lightTheme} />
+                    <input
+                      type="text"
+                      ref={commentIdRef}
+                      defaultValue={m.id}
+                      className="hidden"
+                    />
+                    {messages[videoId]?.[m.id] && (
+                      <div className="flex space-x-2 text-xs mt-2">
+                        <div className="h-6 w-6 rounded-full bg-black" />
+                        <h5 className="">
+                          <span
+                            className={`${
+                              lightTheme ? "text-stone-600" : "text-stone-400"
+                            }`}
+                          >
+                            {(name || "user") + " "}
+                          </span>
+                          {messages[videoId][m.id]}
+                        </h5>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
             </>
           </div>
           <form className="w-full border-b-2 flex justify-center">
@@ -109,7 +133,7 @@ const LiveChat = ({ chatId, lightTheme }: LiveChatProps) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
                   dispatch(
-                    addNewMessage([chatId, commentIdRef.current?.value, text])
+                    addNewMessage([videoId, commentIdRef.current?.value, text]),
                   );
                   setText("");
                 }
@@ -122,7 +146,7 @@ const LiveChat = ({ chatId, lightTheme }: LiveChatProps) => {
               className="px-4 rounded-full scale-90 hover:bg-stone-200"
               onClick={() => {
                 dispatch(
-                  addNewMessage([chatId, commentIdRef.current?.value, text])
+                  addNewMessage([videoId, commentIdRef.current?.value, text]),
                 );
                 setText("");
               }}
