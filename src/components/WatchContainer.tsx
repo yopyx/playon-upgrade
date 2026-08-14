@@ -1,46 +1,68 @@
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import { handleViewsCount, timeDiff } from "../utils/constants";
-import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
+import { useAppDispatch } from "../types/reduxHooks";
 import CommentsList from "./CommentsList";
 import LiveChat from "./LiveChat";
 import SearchResultsContainer from "./SearchResultsContainer";
-import { ChannelDetails, VideoDetails } from "../types/fetchedData";
-import { addSuggestedCategory } from "../redux/searchTextSlice";
+import { addVideoTitle } from "../redux/searchTextSlice";
 import NewComment from "./NewComment";
+import getVideoByIdAsync from "../utils/functions/getVideoByIdAsync";
+import { useQuery } from "@tanstack/react-query";
+import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";
+import { openCloseSidebar } from "../redux/ui_slices/sideBarResponsiveSlice";
+import SpinShimmer from "./shimmer/SpinShimmer";
+import { addSelectedCategory } from "../redux/videoCategorySlice";
+import NotFound from "./errorCatcher/NotFound";
 
 const WatchContainer = () => {
-  const { light } = useAppSelector((store) => store.theme);
-  const { search } = useLocation();
+  const { lightTheme } = useUpdatedUi();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { search } = useLocation();
   const videoId = search.slice(3);
-  const videoInfo = useAppSelector(
-    (store) => store.videosData[videoId]
-  ) as VideoDetails;
-  const channelInfo: ChannelDetails = useAppSelector(
-    (store) => store.channelsData.channels[videoInfo.snippet.channelId]
-  );
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [expandView, setExpandView] = useState(false);
+
+  const videoQuery = useQuery({
+    queryKey: ["videoWatched", videoId],
+    queryFn: () => getVideoByIdAsync(videoId),
+  });
+  const videoInfo = useMemo(() => {
+    return videoQuery.data?.videoData;
+  }, [videoQuery.data]);
   useEffect(() => {
     return () => {
-      dispatch(addSuggestedCategory("All"));
+      dispatch(addSelectedCategory("All"));
+      dispatch(openCloseSidebar(["watchPage", true]));
     };
-  }, [dispatch]);
-  if (!videoInfo) {
-    return <div>Loading...</div>;
+  }, []);
+  useEffect(() => {
+    if (videoQuery.data?.status === 401) {
+      navigate("/signin");
+    }
+  }, [videoQuery.data?.status, navigate]);
+
+  if (videoQuery.isLoading) {
+    return <SpinShimmer />;
   }
+  if (videoQuery.isError) {
+    return <NotFound />;
+  }
+  if (!videoInfo) return null;
+  dispatch(addVideoTitle(videoInfo.title));
   const {
     channelTitle,
+    channelThumbnails,
     title,
     publishedAt,
     description,
     liveBroadcastContent,
-  } = videoInfo.snippet;
-  const { viewCount, likeCount, commentCount } = videoInfo.statistics;
-  const profileUrl = channelInfo?.snippet?.thumbnails?.default?.url;
-  const subs = channelInfo?.statistics?.subscriberCount;
+    subscriberCount,
+  } = videoInfo;
+  const { viewCount, likeCount, commentCount } = videoInfo?.statistics || {};
+  const profileUrl = channelThumbnails?.default?.url;
   return (
     <div className="flex justify-center gap-x-7 sub3:flex-col sub3:mx-auto sub3:w-[95%]">
       <div className="mt-20 ml-20 flex flex-col space-y-3 sub3:mx-auto sub3:w-full">
@@ -54,7 +76,7 @@ const WatchContainer = () => {
         ></iframe>
         <h2
           className={`font-bold text-lg w-[900px]${
-            light ? "" : " text-white"
+            lightTheme ? "" : " text-white"
           } sub3:w-[90%] sub3:text-sm`}
         >
           {title}
@@ -74,13 +96,15 @@ const WatchContainer = () => {
             <div className="pr-5">
               <h4
                 className={`font-semibold text-sm cursor-pointer${
-                  light ? "" : " text-white"
+                  lightTheme ? "" : " text-white"
                 }`}
               >
                 {channelTitle}
               </h4>
               <h5 className="text-yellow-700 text-xs">
-                {+subs ? `${handleViewsCount(subs)} subscribers` : ""}
+                {+subscriberCount
+                  ? `${handleViewsCount(subscriberCount)} subscribers`
+                  : ""}
               </h5>
             </div>
             <button className="font-semibold text-sm text-white bg-black rounded-3xl px-4 h-9 hover:opacity-80 mobile:text-xs">
@@ -163,7 +187,9 @@ const WatchContainer = () => {
           onClick={() => setExpandView(!expandView)}
         >
           <div className="flex space-x-3 font-semibold">
-            <h3 className="">{(+viewCount).toLocaleString() + " views"}</h3>
+            <h3 className="">
+              {(viewCount ? +viewCount : 0).toLocaleString() + " views"}
+            </h3>
             <h3>
               {timeDiff(new Date().getTime() - new Date(publishedAt).getTime())}
             </h3>
@@ -181,27 +207,26 @@ const WatchContainer = () => {
           </span>
         </div>
 
-        {liveBroadcastContent === "none" && Boolean(+commentCount) && (
+        {liveBroadcastContent === "none" && Boolean(+commentCount) ? (
           <>
             <h3 className="text-xl font-bold text-yellow-700 sub5:text-sm">
               {(+commentCount).toLocaleString() + " Comments"}
             </h3>
-            <div className="bg-white/30 p-1 rounded-lg sub3:w-full">
+            <div className="bg-white/35 p-1 rounded-lg sub3:w-full">
               <NewComment />
 
               <div className="sub3:h-72 sub3:overflow-y-scroll">
-                <CommentsList vidId={videoId} query={true} />
+                <CommentsList vidId={videoId} isNested={false} />
               </div>
             </div>
           </>
+        ) : (
+          <p className="font-semibold mx-auto">Comments are turned off.</p>
         )}
       </div>
       <div className="flex flex-col -space-y-7">
         {liveBroadcastContent !== "none" && (
-          <LiveChat
-            chatId={videoInfo.liveStreamingDetails.activeLiveChatId}
-            lightTheme={light}
-          />
+          <LiveChat videoId={videoId} lightTheme={lightTheme} />
         )}
         <SearchResultsContainer />
       </div>
