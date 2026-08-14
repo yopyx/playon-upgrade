@@ -1,31 +1,31 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DetailedVideoCard from "./DetailedVideoCard";
-import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
+import { useAppDispatch } from "../types/reduxHooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import getSearchResultedVideos from "../utils/functions/getSearchResultedVideos";
-import { useCallback, useMemo, useRef } from "react";
-import { addVideo } from "../redux/videosDataSlice";
-import { addChannel } from "../redux/channelsDataSlice";
+import getSearchResultedVideos from "../utils/functions/getSearchResultedVideosAsync";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import NotFound from "./errorCatcher/NotFound";
 import DetailedVideoCardsShimmer from "./shimmer/DetailedVideoCardsShimmer";
-import { addSearchTag, addSuggestedCategory } from "../redux/searchTextSlice";
-import { SearchSliceState } from "../types/slicesState";
-import { openCloseSidebar } from "../redux/ui_slices/sideBarResponsiveSlice";
-import { updateQuota } from "../redux/ui_slices/quotaSlice";
-import { useKey } from "./Body";
+import { addSearchTag, addVideoTitle } from "../redux/searchTextSlice";
+import { VideoCardData, VideoCardListWithStatus } from "../types/fetchedData";
+import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";
 
 const VideosResultsContainer = ({
-  collapsedSideBar,
+  cards,
+  pathname,
+  searchQuery,
+  selectedCategory,
+  videoTitle,
 }: {
-  collapsedSideBar: boolean;
+  cards: VideoCardData[];
+  pathname: string;
+  searchQuery: string;
+  selectedCategory: string;
+  videoTitle: string;
 }) => {
-  const { light } = useAppSelector((store) => store.theme);
-  const apiKey = useKey();
-  const { pathname, search } = useLocation();
+  const { lightTheme, sidebarState } = useUpdatedUi();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { searchTextStored, searchTag, suggestionCategory } = useAppSelector(
-    (store) => store.searchText
-  ) as SearchSliceState;
   const observer = useRef<IntersectionObserver>();
   const {
     data,
@@ -38,25 +38,22 @@ const VideosResultsContainer = ({
   } = useInfiniteQuery({
     queryKey: [
       "search resulted videos",
-      (pathname === "/watch"
-        ? "/watch" + searchTag
-        : search.split("=")[1].replace(/\+/g, " ") || searchTextStored) +
-        suggestionCategory,
+      selectedCategory == "All" ? searchQuery : selectedCategory,
     ],
     queryFn: ({ pageParam }) => {
-      dispatch(updateQuota(200));
       return getSearchResultedVideos(
-        suggestionCategory === "All"
-          ? pathname === "/watch"
-            ? searchTag
-            : search.split("=")[1].replace(/\+/g, " ") || searchTextStored
-          : suggestionCategory,
+        selectedCategory == "All"
+          ? pathname === "/results"
+            ? searchQuery
+            : videoTitle
+          : selectedCategory,
         pageParam,
-        apiKey
       );
     },
-    initialPageParam: "",
-    getNextPageParam: (prevData) => prevData.nextToken,
+    initialPageParam: 2,
+    getNextPageParam: (prevData: VideoCardListWithStatus, _y, lastPage) =>
+      prevData.videosData.queryNextPage ? ++lastPage : undefined,
+    enabled: cards !== undefined,
   });
   const lastElementRef = useCallback(
     (node: HTMLAnchorElement) => {
@@ -69,79 +66,76 @@ const VideosResultsContainer = ({
       });
       if (node) observer.current.observe(node);
     },
-    [isLoading, isFetching, hasNextPage, fetchNextPage]
+    [isLoading, isFetching, hasNextPage, fetchNextPage],
   );
   const list = useMemo(() => {
-    return data?.pages.flatMap((page) => page.data.videosData.items);
+    return data?.pages.flatMap((page) => page.videosData.videoCardList);
   }, [data]);
-  const channelsData = useMemo(() => {
-    return data?.pages.flatMap((page) => page.data.channelsData);
-  }, [data]);
-  if (status === "pending") {
-    return (
-      <div
-        className={`${
-          collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
-        } ${
-          pathname === "/watch" ? "my-4" : "my-10 ml-24"
-        } flex flex-col gap-y-4 mx-auto`}
-      >
-        <DetailedVideoCardsShimmer len={6} />
-      </div>
-    );
-  }
-  if (status === "error") {
-    return (
-      <div
-        className={`${
-          collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
-        } ${
-          pathname === "/watch" ? "my-4" : "my-10 ml-44"
-        } flex flex-col gap-y-4 mx-auto`}
-      >
-        <NotFound />
-      </div>
-    );
-  }
 
+  useEffect(() => {
+    if (data?.pages.flatMap((page) => page.status)[0] === 401) {
+      navigate("/signin");
+    }
+  }, [data?.pages, navigate]);
+
+  // if (status === "pending") {
+  //   return <DetailedVideoCardsShimmer len={6} />;
+  // }
   return (
     <div
       className={`${
-        collapsedSideBar ? "dynamic-width" : "dynamic-width-collapsed"
-      } ${
-        pathname === "/watch" ? "my-4" : "my-10"
-      } flex flex-col gap-y-4 mx-auto`}
+        sidebarState.resultsPage.collapseSidebar
+          ? "dynamic-width"
+          : "dynamic-width-collapsed"
+      }${pathname === "/watch" ? "" : " ml-24"} flex flex-col mx-auto mt-20`}
     >
-      {(list || []).map((v, i) => (
+      {cards.map((v, i) => (
         <Link
-          to={"/watch?v=" + v?.id}
+          to={"/watch?v=" + v.videoId}
           ref={lastElementRef}
           key={v.etag + i}
-          onClick={() => {
-            console.log(v.snippet?.tags);
-            dispatch(openCloseSidebar(true));
-            dispatch(addVideo(v));
-            dispatch(
-              addChannel(
-                (channelsData || []).find?.((c) => v.snippet.channelId === c.id)
-              )
-            );
-            dispatch(addSearchTag(v.snippet?.tags?.[0] || v.snippet.title));
-            dispatch(addSuggestedCategory("All"));
-          }}
-        >
-          <DetailedVideoCard
-            info={v}
-            channelData={channelsData?.find(
-              (c) => v.snippet.channelId === c.id
-            )}
-            lightTheme={light}
-          />
-        </Link>
+          // onClick={() => {
+          //   dispatch(
+          //     v.tags.length && v.tags[0].trim()
+          //       ? addSearchTag(v.tags[0])
+          //       : addSearchTag(""),
+          //   );
+          //   dispatch(addSuggestedCategory("All"));
+          //   window.scrollTo(0, 0);
+          // }}
+        ></Link>
       ))}
+      {status === "pending" ? (
+        <DetailedVideoCardsShimmer len={6} />
+      ) : status === "error" ? (
+        <NotFound />
+      ) : (
+        (list || []).map((v, i) => (
+          <Link
+            to={"/watch?v=" + v.videoId}
+            ref={lastElementRef}
+            key={v.etag + i}
+            onClick={() => {
+              dispatch(
+                v.tags.length && v.tags[0].trim()
+                  ? addSearchTag(v.tags[0])
+                  : addSearchTag(""),
+              );
+              dispatch(addVideoTitle(v.title));
+              //dispatch(addSuggestedCategory("All"));
+              window.scrollTo(0, 0);
+            }}
+          >
+            <DetailedVideoCard
+              info={v}
+              lightTheme={lightTheme}
+              isPriority={i < 4}
+            />
+          </Link>
+        ))
+      )}
       {isFetchingNextPage && <DetailedVideoCardsShimmer len={6} />}
     </div>
   );
 };
-
 export default VideosResultsContainer;
