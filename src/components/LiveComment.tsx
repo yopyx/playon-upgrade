@@ -1,8 +1,7 @@
 import { LiveCommentProps } from "../types/props";
 
 const LiveComment = ({ info, lightTheme }: LiveCommentProps) => {
-  const { displayMessage } = info.snippet;
-  const { displayName, profileImageUrl } = info.authorDetails;
+  const { displayMessage, displayName, profileImageUrl } = info;
   return (
     <div className="flex space-x-2 text-xs mt-2">
       <img
