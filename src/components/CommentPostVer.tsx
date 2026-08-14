@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { timeDiff } from "../utils/constants";
-import { useAppDispatch } from "../types/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import { addComment } from "../redux/commentsSlice";
 import { CommentPostVersion } from "../types/fetchedData";
 import { CommentsListPostVer } from "./CommentsListPostVer";
@@ -12,13 +12,14 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const dispatch = useAppDispatch();
+  const { name } = useAppSelector((store) => store.user);
 
   return (
     <div className="flex space-x-3 mobile:w-[320px]">
       <div className="rounded-full w-8 h-8 bg-black"></div>
       <div className="flex flex-col space-y-1">
         <div className="flex text-xs space-x-1">
-          <h5 className="font-semibold">user</h5>
+          <h5 className="font-semibold">{name || "user"}</h5>
           <h5 className="font-thin">
             {timeDiff(new Date().getTime() - new Date().getTime())}
           </h5>
@@ -96,7 +97,7 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
                       addComment({
                         id: id,
                         comment: { id: key, text: replyInputRef.current.value },
-                      })
+                      }),
                     );
                   setReplySection(false);
                 }}
