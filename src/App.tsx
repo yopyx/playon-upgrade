@@ -4,14 +4,15 @@ import { Provider } from "react-redux";
 import { appStore, persistor } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { lazy, Suspense } from "react";
-import CommentsShimmer from "./components/shimmer/CommentsShimmer";
+import SpinShimmer from "./components/shimmer/SpinShimmer";
 
+const LandingPage = lazy(() => import("./components/LandingPage"));
 const MainContainer = lazy(() => import("./components/MainContainer"));
 const SearchResultsContainer = lazy(
-  () => import("./components/SearchResultsContainer")
+  () => import("./components/SearchResultsContainer"),
 );
 const WatchContainer = lazy(() => import("./components/WatchContainer"));
-
+const History = lazy(() => import("./components/History"));
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -20,8 +21,17 @@ const appRouter = createBrowserRouter([
       {
         path: "/",
         element: (
-          <Suspense fallback={<CommentsShimmer />}>
+          <Suspense fallback={<SpinShimmer />}>
             <MainContainer />
+          </Suspense>
+        ),
+        children: [],
+      },
+      {
+        path: "/signin",
+        element: (
+          <Suspense fallback={<SpinShimmer />}>
+            <LandingPage />
           </Suspense>
         ),
         children: [],
@@ -29,7 +39,7 @@ const appRouter = createBrowserRouter([
       {
         path: "/results",
         element: (
-          <Suspense fallback={<CommentsShimmer />}>
+          <Suspense fallback={<SpinShimmer />}>
             <SearchResultsContainer />
           </Suspense>
         ),
@@ -38,8 +48,17 @@ const appRouter = createBrowserRouter([
       {
         path: "/watch",
         element: (
-          <Suspense fallback={<CommentsShimmer />}>
+          <Suspense fallback={<SpinShimmer />}>
             <WatchContainer />
+          </Suspense>
+        ),
+        children: [],
+      },
+      {
+        path: "/history",
+        element: (
+          <Suspense fallback={<SpinShimmer />}>
+            <History />
           </Suspense>
         ),
         children: [],
