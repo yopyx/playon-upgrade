@@ -1,31 +1,39 @@
 import { useLocation } from "react-router-dom";
 import { handleViewsCount, timeDiff } from "../utils/constants";
-import { DetailedVideoCardProps } from "../types/props";
+import { VideoCardProps } from "../types/props";
 
 const DetailedVideoCard = ({
   info,
-  channelData,
   lightTheme,
-}: DetailedVideoCardProps) => {
-  const { publishedAt, title, description, thumbnails, channelTitle } =
-    info!.snippet;
-  const { viewCount } = info.statistics;
-  const profileUrl = channelData?.snippet?.thumbnails?.default?.url;
+  isPriority,
+}: VideoCardProps) => {
+  const {
+    publishedAt,
+    title,
+    description,
+    thumbnails,
+    channelThumbnails,
+    channelTitle,
+    statistics,
+    liveBroadcastContent,
+    liveStreamingDetails,
+  } = info;
+  const profileUrl = channelThumbnails?.default?.url;
   const { pathname } = useLocation();
   const duration =
-    info.contentDetails.duration === "P0D"
+    info.duration === "P0D"
       ? ""
-      : (info.contentDetails.duration || "")
+      : (info.duration || "")
           .slice(2, -1)
           .replace("DT", "24H")
           .split(/[HMS]/g)
           .map((e) => e.padStart(2, "0"))
           .join(":");
-  const concurrentViewers = info?.liveStreamingDetails?.concurrentViewers;
+  const concurrentViewers = liveStreamingDetails?.concurrentViewers;
   return (
     <div
       className={
-        (pathname === "/watch" ? "-gap-x-4 w-full" : "gap-x-4") +
+        (pathname === "/watch" ? "-gap-x-4 w-full" : "gap-x-4 py-2") +
         " flex mx-auto mobile:flex-col tablet-w2:flex-col mobile-w:flex-col mobile:w-[320px]"
       }
     >
@@ -37,8 +45,10 @@ const DetailedVideoCard = ({
         }
       >
         <img
-          src={thumbnails.high.url}
-          alt={thumbnails.high.url}
+          src={thumbnails?.high?.url}
+          alt={thumbnails?.high?.url}
+          fetchPriority={isPriority ? "high" : "auto"}
+          loading={isPriority ? "eager" : "lazy"}
           className={
             (pathname === "/watch"
               ? "h-[130px] w-[215px] 8k:results-card-watch-8k 8k-w:results-card-watch-8k-w 4k-w:results-card-watch-4k-w 4k-2:results-card-watch-4k-2 laptop-r:results-card-watch-laptop-r tablet-w:video-card-tablet-r tablet-r:video-card-tablet-r mobile:video-card-mobile"
@@ -46,7 +56,7 @@ const DetailedVideoCard = ({
             " object-cover duration-200 rounded-xl hover:rounded-none border-2 border-yellow-600/75"
           }
         />
-        {duration && info.snippet.liveBroadcastContent !== "live" && (
+        {duration && liveBroadcastContent !== "live" && (
           <div className="bg-black text-white text-xs font-semibold rounded-md w-max h-max px-1 py-0.5 relative -mt-6 mx-auto mr-1 8k-r:text-base 8k-r:-mt-8">
             {(duration.length === 2 ? "00:" : "") + duration}
           </div>
@@ -97,7 +107,7 @@ const DetailedVideoCard = ({
               ...
             </span> */}
           </h2>
-          {info.snippet.liveBroadcastContent === "live" && concurrentViewers ? (
+          {liveBroadcastContent === "live" && concurrentViewers ? (
             <>
               <div className="flex gap-x-1">
                 <h5 className="text-xs my-auto 8k-r:text-lg 4k-2:text-lg">
@@ -122,11 +132,11 @@ const DetailedVideoCard = ({
                 {channelTitle + " • "}
               </h5>
               <h5 className="text-nowrap">
-                {handleViewsCount(viewCount) + " Views • "}
+                {handleViewsCount(statistics?.viewCount) + " Views • "}
               </h5>
               <h5 className="text-nowrap">
                 {timeDiff(
-                  new Date().getTime() - new Date(publishedAt).getTime()
+                  new Date().getTime() - new Date(publishedAt).getTime(),
                 )}
               </h5>
             </div>
