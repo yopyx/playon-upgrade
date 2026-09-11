@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { VideoCardProps } from "../types/props";
 import { useAppSelector } from "../types/reduxHooks";
 import { handleViewsCount, timeDiff } from "../utils/constants";
@@ -8,6 +9,7 @@ declare module "react" {
 }
 
 const VideoCard = ({ info, lightTheme, isPriority }: VideoCardProps) => {
+  const [imageLoaded, setImageLoaded] = useState(true);
   const sidebarCollapsed = useAppSelector(
     (store) => store.responsiveSideBar.mainContainerPage.collapseSidebar,
   );
@@ -51,22 +53,22 @@ const VideoCard = ({ info, lightTheme, isPriority }: VideoCardProps) => {
         )}
       </div>
       <div className="flex mt-3 space-x-3">
-        {channelThumbnails?.default?.url ? (
+        <div className="flex">
           <img
+            onError={() => setImageLoaded(false)}
             alt={title}
             src={channelThumbnails.default.url}
-            className="rounded-full h-10 w-10"
+            className={`absolute rounded-full h-10 w-10${imageLoaded ? "" : " hidden"}`}
           ></img>
-        ) : (
           <div className="rounded-full w-10 h-10 bg-black"></div>
-        )}
+        </div>
         <div
           className={`flex flex-col space-y-1 ${
             lightTheme ? "text-stone-600" : "text-yellow-600"
           }`}
         >
           <h4
-            className={`font-semibold w-[280px] ${
+            className={`font-semibold w-[280px] overflow-hidden ${
               lightTheme ? "text-black" : "text-slate-200"
             }`}
           >
