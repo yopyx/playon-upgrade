@@ -28,7 +28,10 @@ export type CommentProps = {
   info: Comment | NestedComment;
 };
 export type LiveChatProps = { videoId: string; lightTheme: boolean };
-export type LiveCommentProps = { info: LiveChatComment; lightTheme: boolean };
+export type LiveCommentProps = {
+  info: LiveChatComment;
+  lightTheme: boolean;
+};
 
 export type HeaderProps = {
   lightTheme: boolean;
