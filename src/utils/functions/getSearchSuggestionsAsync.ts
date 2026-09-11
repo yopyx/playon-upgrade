@@ -3,8 +3,8 @@ import { SearchSuggestionsWithStatus } from "../../types/fetchedData";
 const getSearchSuggestionsAsync = async (searchText: string) => {
   const url =
     import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/resources_api/search_suggestions?q=${searchText}`
-      : `/resources_api/search_suggestions?q=${searchText}`;
+      ? `/api/search_suggestions?q=${searchText}`
+      : `/api/search_suggestions?q=${searchText}`;
   const response = await fetch(url, {
     credentials: "include",
   });

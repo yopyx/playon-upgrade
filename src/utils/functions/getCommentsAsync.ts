@@ -6,8 +6,8 @@ import {
 const getCommentsAsync = async (videoId: string, pageNum: number) => {
   const url =
     import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/resources_api/comments?videoId=${videoId}&pageNum=${pageNum}`
-      : `/resources_api/comments?videoId=${videoId}&pageNum=${pageNum}`;
+      ? `/api/comments?videoId=${videoId}&pageNum=${pageNum}`
+      : `/api/comments?videoId=${videoId}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });

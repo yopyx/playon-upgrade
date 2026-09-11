@@ -8,8 +8,8 @@ const getSearchResultedVideosAsync = async (
 ) => {
   const url =
     import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/resources_api/search_results?q=${searchText}&pageNum=${pageNum}`
-      : `/resources_api/search_results?q=${searchText}&pageNum=${pageNum}`;
+      ? `/api/search_results?q=${searchText}&pageNum=${pageNum}`
+      : `/api/search_results?q=${searchText}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });

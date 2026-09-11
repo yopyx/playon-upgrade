@@ -4,8 +4,8 @@ import { Category, CategoryListWithStatus } from "../../types/fetchedData";
 const getCategoriesAsync = async () => {
   const url =
     import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/resources_api/video_categories`
-      : `/resources_api/video_categories`;
+      ? `/api/video_categories`
+      : `/api/video_categories`;
   const response = await fetch(url, {
     credentials: "include",
   });
