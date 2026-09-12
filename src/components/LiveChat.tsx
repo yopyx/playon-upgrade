@@ -3,30 +3,36 @@ import LiveComment from "./LiveComment";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import getLiveChat from "../utils/functions/getLiveChatAsync";
 import { LiveChatProps } from "../types/props";
-import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
-import { addNewMessage } from "../redux/liveChatSlice";
-import { LiveChatState } from "../types/slicesState";
 import SpinShimmer from "./shimmer/SpinShimmer";
 import { useNavigate } from "react-router-dom";
+// import { LiveChatState } from "../types/slicesState";
 
 const LiveChat = ({ videoId, lightTheme }: LiveChatProps) => {
   const [chatView, setChatView] = useState(true);
-  const [text, setText] = useState("");
+  //const [text, setText] = useState("");
+  // const [replied,setReplied] = useState(false);
+  // const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { messages } = useAppSelector(
-    (store) => store.liveChat,
-  ) as LiveChatState;
-  const { name } = useAppSelector((store) => store.user);
-  const commentIdRef = useRef<HTMLInputElement>(null);
+  // const dispatch = useAppDispatch();
+  // const commentIdRef = useRef<HTMLInputElement>(null);
   const commentScrollRef = useRef<HTMLDivElement>(null);
+  // const messages = useAppSelector(
+  //   (store) => store.liveChat.messages[videoId],
+  // ) as LiveChatState["messages"][string];
+  //const { name } = useAppSelector((store) => store.user);
+
   const smoothScroll = () => {
     if (commentScrollRef.current) {
-      commentScrollRef.current.scrollBy({
+      commentScrollRef.current.scrollTo({
+        top: commentScrollRef.current.scrollHeight,
         behavior: "smooth",
       });
     }
+    // commentScrollRef.current.scrollBy({
+    //   behavior: "smooth",
+    // });
   };
+
   const { data, isFetching, hasNextPage, fetchNextPage, isLoading, isError } =
     useInfiniteQuery({
       queryKey: ["live", videoId],
@@ -35,10 +41,14 @@ const LiveChat = ({ videoId, lightTheme }: LiveChatProps) => {
         return getLiveChat(videoId, pageParam);
       },
       getNextPageParam: (prevData, _, lastPage) =>
-        prevData.chatData.queryNextPage ? ++lastPage : undefined,
+        prevData.chatData.queryNextPage
+          ? prevData.chatData.liveCommentList.length === 0
+            ? lastPage
+            : ++lastPage
+          : undefined,
     });
   const list = useMemo(() => {
-    return data?.pages.flatMap((e) => e.chatData.liveCommentList)?.reverse();
+    return data?.pages.flatMap((e) => e.chatData.liveCommentList).reverse();
   }, [data]);
   const pollingInterval = useMemo(() => {
     return data?.pages.flatMap((e) => e.chatData.pollingIntervalMillis)[0];
@@ -90,41 +100,40 @@ const LiveChat = ({ videoId, lightTheme }: LiveChatProps) => {
               {isLoading || isError ? (
                 <SpinShimmer />
               ) : (
-                list!.map((m) => (
-                  <div
-                    ref={commentScrollRef}
-                    key={m.id}
-                    className="duration-500"
-                    onScroll={smoothScroll}
-                  >
-                    <LiveComment info={m} lightTheme={lightTheme} />
-                    <input
-                      type="text"
-                      ref={commentIdRef}
-                      defaultValue={m.id}
-                      className="hidden"
-                    />
-                    {messages[videoId]?.[m.id] && (
-                      <div className="flex space-x-2 text-xs mt-2">
-                        <div className="h-6 w-6 rounded-full bg-black" />
-                        <h5 className="">
-                          <span
-                            className={`${
-                              lightTheme ? "text-stone-600" : "text-stone-400"
-                            }`}
-                          >
-                            {(name || "user") + " "}
-                          </span>
-                          {messages[videoId][m.id]}
-                        </h5>
-                      </div>
-                    )}
-                  </div>
-                ))
+                list!.map((m) => {
+                  return (
+                    <div
+                      ref={commentScrollRef}
+                      key={m.id}
+                      className="duration-500"
+                      onScroll={smoothScroll}
+                    >
+                      <LiveComment info={m} lightTheme={lightTheme} />
+                      {/* <input
+                        type="text"
+                        // ref={commentIdRef}
+                        className="hidden"
+                      />
+                      {replied&&messages?.[m.id] && (
+                        <div className="flex space-x-2 text-xs mt-2">
+                          <div className="h-6 w-6 rounded-full bg-black" />
+                          <h5 className="">
+                            <span
+                              className={`${lightTheme ? "text-stone-600" : "text-stone-400"}`}
+                            >
+                              {"@" + name + " "}
+                            </span>
+                            {messages?.[m.id]}
+                          </h5>
+                        </div>
+                      )} */}
+                    </div>
+                  );
+                })
               )}
             </>
           </div>
-          <form className="w-full border-b-2 flex justify-center">
+          {/* <form className="w-full border-b-2 flex justify-center">
             <input
               type="text"
               value={text}
@@ -132,9 +141,9 @@ const LiveChat = ({ videoId, lightTheme }: LiveChatProps) => {
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  dispatch(
-                    addNewMessage([videoId, commentIdRef.current?.value, text]),
-                  );
+                  // dispatch(
+                  //   addNewMessage([videoId, commentIdRef.current?.value, text]),
+                  // );
                   setText("");
                 }
               }}
@@ -145,9 +154,10 @@ const LiveChat = ({ videoId, lightTheme }: LiveChatProps) => {
               type="button"
               className="px-4 rounded-full scale-90 hover:bg-stone-200"
               onClick={() => {
-                dispatch(
-                  addNewMessage([videoId, commentIdRef.current?.value, text]),
-                );
+                //setReplied(true);
+                // dispatch(
+                //   addNewMessage([videoId, commentIdRef.current?.value, text]),
+                // );
                 setText("");
               }}
             >
@@ -159,7 +169,7 @@ const LiveChat = ({ videoId, lightTheme }: LiveChatProps) => {
                 }`}
               />
             </button>
-          </form>
+          </form> */}
           <button
             className={`${
               lightTheme ? "" : "text-white "
