@@ -1,24 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import getUserInfoAsync from "../utils/functions/getUserInfoAsync";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { useAppDispatch } from "../types/reduxHooks";
-import { setUser } from "../redux/userSlice";
-
 const LandingPage = () => {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { data } = useQuery({
-    queryKey: ["user"],
-    queryFn: () => getUserInfoAsync(),
-  });
-  useEffect(() => {
-    dispatch(setUser(data?.username));
-    if (data?.status === 200) {
-      navigate("/", { replace: true });
-    }
-  }, [data, dispatch, navigate]);
-
   return (
     <div className="w-screen justify-center items-left bg-black">
       <div className="w-full flex justify-center absolute mt-14 -z-10">
