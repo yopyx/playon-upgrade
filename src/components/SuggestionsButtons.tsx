@@ -42,10 +42,14 @@ const SuggestionsButtons = () => {
   const handleScroll = () => {
     if (categoriesScrollRef.current) {
       setTranslateValue(categoriesScrollRef.current.scrollLeft);
+      //const x = categoriesScrollRef.current?.scrollLeft;
       if (
-        categoriesScrollRef.current?.scrollLeft >=
-        categoriesScrollRef.current?.scrollWidth -
-          categoriesScrollRef.current?.clientWidth
+        translateValue >=
+          categoriesScrollRef.current?.scrollWidth -
+            categoriesScrollRef.current?.clientWidth ||
+        translateValue + 5 >=
+          categoriesScrollRef.current?.scrollWidth -
+            categoriesScrollRef.current?.clientWidth
       ) {
         setMaxTranslation(true);
       } else {
@@ -58,7 +62,7 @@ const SuggestionsButtons = () => {
     queryKey: ["categories"],
     queryFn: () => getCategoriesAsync(),
     enabled: pathname === "/",
-    staleTime: 10 * 60 * 1000,
+    // staleTime: 10 * 60 * 1000,
   });
 
   const popularList = useMemo(() => {
@@ -97,28 +101,28 @@ const SuggestionsButtons = () => {
     >
       <div className={`w-full flex absolute justify-between sub6:hidden`}>
         <button
-          className={`bg-stone-100 ${
-            translateValue > 0 ? "opacity-100" : "opacity-0"
-          } p-3 rounded-full z-30 hover:bg-stone-400`}
+          className={`bg-stone-100${
+            translateValue > 0 ? " z-30" : " -z-10"
+          } p-3 rounded-full hover:bg-stone-400`}
           onClick={leftScroll}
         >
           <img
             alt="RIGHT_ARROW"
             src={"/arrow-prev-small-svgrepo-com.svg"}
-            className="w-4 h-4"
+            className="w-3.5 h-3.5"
           />
         </button>
 
         <button
-          className={`bg-stone-100 ${
-            maxTranslation ? "opacity-0" : "opacity-100"
-          } p-3 rounded-full z-30 hover:bg-stone-400`}
+          className={`bg-stone-100${
+            maxTranslation ? " -z-10" : " z-30"
+          } p-3 rounded-full hover:bg-stone-400`}
           onClick={rightScroll}
         >
           <img
             alt="LEFT_ARROW"
             src={"/arrow-next-small-svgrepo-com.svg"}
-            className="w-4 h-4"
+            className="w-3.5 h-3.5"
           />
         </button>
       </div>
