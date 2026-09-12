@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+body {
+  @apply bg-black;
+}
+
 .light-theme {
   background: #d5c8bd;
 }
