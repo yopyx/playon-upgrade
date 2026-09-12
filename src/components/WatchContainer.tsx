@@ -24,6 +24,7 @@ const WatchContainer = () => {
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [expandView, setExpandView] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(true);
 
   const videoQuery = useQuery({
     queryKey: ["videoWatched", videoId],
@@ -36,6 +37,7 @@ const WatchContainer = () => {
     return () => {
       dispatch(addSelectedCategory("All"));
       dispatch(openCloseSidebar(["watchPage", true]));
+      setExpandView(false);
     };
   }, []);
   useEffect(() => {
@@ -83,16 +85,15 @@ const WatchContainer = () => {
         </h2>
         <div className="flex flex-wrap justify-between sub3:w-full">
           <div className="flex space-x-3">
-            {profileUrl ? (
+            <div className="flex">
               <img
                 alt={title}
                 src={profileUrl}
-                className="rounded-full h-10"
+                onError={() => setImageLoaded(false)}
+                className={`absolute rounded-full h-10${imageLoaded ? "" : " hidden"}`}
               ></img>
-            ) : (
               <div className="rounded-full w-10 h-10 bg-black"></div>
-            )}
-
+            </div>
             <div className="pr-5">
               <h4
                 className={`font-semibold text-sm cursor-pointer${
