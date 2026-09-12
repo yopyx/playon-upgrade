@@ -19,7 +19,7 @@ const CommentPostVer = ({ id, text }: CommentPostVersion) => {
       <div className="rounded-full w-8 h-8 bg-black"></div>
       <div className="flex flex-col space-y-1">
         <div className="flex text-xs space-x-1">
-          <h5 className="font-semibold">{name || "user"}</h5>
+          <h5 className="font-semibold">{"@" + name}</h5>
           <h5 className="font-thin">
             {timeDiff(new Date().getTime() - new Date().getTime())}
           </h5>
