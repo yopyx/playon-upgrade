@@ -1,13 +1,15 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import { toggleSidebarView } from "../redux/ui_slices/sideBarResponsiveSlice";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import getSearchSuggestionsAsync from "../utils/functions/getSearchSuggestionsAsync";
 import { addSearchTextShown } from "../redux/searchTextSlice";
 import { toggleTheme } from "../redux/ui_slices/themeSlice";
 import { HeaderProps } from "../types/props";
 import { addSelectedCategory } from "../redux/videoCategorySlice";
+import getUserInfoAsync from "../utils/functions/getUserInfoAsync";
+import { setUser } from "../redux/userSlice";
 
 const Header = ({ lightTheme }: HeaderProps) => {
   const dispatch = useAppDispatch();
@@ -15,12 +17,17 @@ const Header = ({ lightTheme }: HeaderProps) => {
   const { pathname } = useLocation();
   const { searchTextShown } = useAppSelector((store) => store.searchText);
   const { light } = useAppSelector((store) => store.theme);
-  const { name } = useAppSelector((store) => store.user);
   const searchRef = useRef<HTMLInputElement>(null);
   const [focusedSuggestedText, setFocusedSuggestedText] = useState(["", -1]);
   const [text, setText] = useState(searchTextShown);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const { data } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => getUserInfoAsync(),
+    enabled: pathname !== "/signin",
+    refetchOnWindowFocus: false,
+  });
+  const searchSuggestionsQuery = useQuery({
     queryKey: ["search input", text],
     queryFn: () => {
       setFocusedSuggestedText(["", -1]);
@@ -29,8 +36,11 @@ const Header = ({ lightTheme }: HeaderProps) => {
     enabled: pathname !== "/signin" && text.trim() !== "",
   });
   const list = useMemo(() => {
-    return data?.searchSuggestions?.suggestions;
-  }, [data?.searchSuggestions?.suggestions]);
+    return searchSuggestionsQuery.data?.searchSuggestions?.suggestions;
+  }, [searchSuggestionsQuery.data?.searchSuggestions?.suggestions]);
+  useEffect(() => {
+    dispatch(setUser(data?.username));
+  }, [data?.username, dispatch]);
   return (
     <div
       className={`w-screen grid grid-flow-col space-x-32 p-3 mx-auto shadow-lg fixed z-40 mobile:header-mobile ${
@@ -202,14 +212,22 @@ const Header = ({ lightTheme }: HeaderProps) => {
             className={`object-cover${lightTheme ? "" : " invert"}`}
           />
         </div>
-        <div className="rounded-icon mobile:nav-button-mobile tablet-s:nav-button-tablet-s">
-          <img
-            alt="profile"
-            src={"/profile-user.svg"}
-            className={`object-cover${lightTheme ? "" : " invert"}`}
-          />
+        <div className="flex">
+          <div className="hidden rounded-icon mobile:nav-button-mobile tablet-s:nav-button-tablet-s">
+            <img
+              alt="profile"
+              src={"/profile-user.svg"}
+              className={`object-cover${lightTheme ? "" : " invert"}`}
+            />
+          </div>
+          {data?.username && (
+            <h5
+              className={`${light ? "" : "text-yellow-600 "}font-semibold align-middle my-auto mobile:hidden tablet-s:hidden`}
+            >
+              {data.username}
+            </h5>
+          )}
         </div>
-        {name && <h5>{name}</h5>}
         <div className="border-2 border-violet-800 hover:bg-white">
           <button
             className="px-1 py-1 font-bold text-yellow-600"
