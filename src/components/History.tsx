@@ -19,7 +19,6 @@ const History = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["watching history"],
     queryFn: () => getHistoryAsync(),
-    refetchOnMount: "always",
   });
   const list = useMemo(() => {
     return data?.history;
@@ -37,7 +36,7 @@ const History = () => {
   }
   return (
     <div
-      className={`h-fit mt-20 flex flex-col gap-y-14 ${
+      className={`mt-20 flex flex-col gap-y-14 ${list && Object.keys(list).length > 2 ? "h-fit " : "h-screen "}${
         sidebarState.resultsPage.collapseSidebar
           ? "dynamic-width"
           : "dynamic-width-collapsed"
@@ -46,32 +45,40 @@ const History = () => {
       <h2 className="font-extrabold text-3xl text-white w-min text-nowrap shadow-md shadow-yellow-500">
         Watch History
       </h2>
-      {Object.keys(list!).map((date: string) => (
-        <div key={date} className="flex flex-col gap-y-4">
-          <h3 className="font-bold text-xl text-yellow-700 border-b-2 border-yellow-700 p-1 w-min text-nowrap">
-            {new Date(date).toDateString().slice(4)}
-          </h3>
-          {list![date].map((v, i) => (
-            <Link
-              to={"/watch?v=" + v.videoId}
-              //ref={lastElementRef}
-              key={v.etag + i}
-              onClick={() => {
-                v.tags.length &&
-                  v.tags[0].trim() &&
-                  dispatch(addSearchTag(v.tags[0]));
-                dispatch(addSelectedCategory("All"));
-              }}
-            >
-              <DetailedVideoCard
-                info={v}
-                lightTheme={lightTheme}
-                isPriority={i < 4}
-              />
-            </Link>
-          ))}{" "}
-        </div>
-      ))}
+      {!list || Object.keys(list).length === 0 ? (
+        <h4
+          className={`mt-20 text-center font-semibold ${lightTheme ? "" : "text-white"}`}
+        >
+          No watch history yet.
+        </h4>
+      ) : (
+        Object.keys(list!).map((date: string) => (
+          <div key={date} className="flex flex-col gap-y-4">
+            <h3 className="font-bold text-xl text-yellow-700 border-b-2 border-yellow-700 p-1 w-min text-nowrap">
+              {new Date(date).toDateString().slice(4)}
+            </h3>
+            {list![date].map((v, i) => (
+              <Link
+                to={"/watch?v=" + v.videoId}
+                //ref={lastElementRef}
+                key={v.etag + i}
+                onClick={() => {
+                  v.tags.length &&
+                    v.tags[0].trim() &&
+                    dispatch(addSearchTag(v.tags[0]));
+                  dispatch(addSelectedCategory("All"));
+                }}
+              >
+                <DetailedVideoCard
+                  info={v}
+                  lightTheme={lightTheme}
+                  isPriority={i < 4}
+                />
+              </Link>
+            ))}{" "}
+          </div>
+        ))
+      )}
     </div>
   );
 };
