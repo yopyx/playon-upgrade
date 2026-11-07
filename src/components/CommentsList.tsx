@@ -7,7 +7,7 @@ import { CommentsListPostVer } from "./CommentsListPostVer";
 import { CommentsListWithStatus } from "../types/fetchedData";
 import getNestedCommentsAsync from "../utils/functions/getNestedCommentsAsync";
 import SpinShimmer from "./shimmer/SpinShimmer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const CommentsList = ({ vidId, commentId, isNested }: CommentsListProps) => {
   const navigate = useNavigate();

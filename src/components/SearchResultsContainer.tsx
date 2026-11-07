@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import SuggestionsButtons from "./SuggestionsButtons";
 import VideosResultsContainer from "./VideosResultsContainer";
 import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";

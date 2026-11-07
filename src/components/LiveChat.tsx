@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import getLiveChat from "../utils/functions/getLiveChatAsync";
 import { LiveChatProps } from "../types/props";
 import SpinShimmer from "./shimmer/SpinShimmer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 // import { LiveChatState } from "../types/slicesState";
 
 const LiveChat = ({ videoId, lightTheme }: LiveChatProps) => {

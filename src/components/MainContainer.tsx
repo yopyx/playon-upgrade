@@ -8,7 +8,7 @@ import {
   addCategoryDetails,
   addSelectedCategory,
 } from "../redux/videoCategorySlice";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 const MainContainer = () => {
   const dispatch = useAppDispatch();

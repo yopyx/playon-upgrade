@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import getHistoryAsync from "../utils/functions/getHistoryAsync";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";
 import { useAppDispatch } from "../types/reduxHooks";
 import { useEffect, useMemo } from "react";

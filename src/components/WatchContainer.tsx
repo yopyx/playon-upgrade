@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { handleViewsCount, timeDiff } from "../utils/constants";
 import { useAppDispatch } from "../types/reduxHooks";

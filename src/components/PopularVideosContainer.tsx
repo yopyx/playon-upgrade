@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
 import getPopularVideosAsync from "../utils/functions/getPopularVideosAsync";
 import VideoCard from "./VideoCard";
 import VideoCardsShimmer from "./shimmer/VideoCardsShimmer";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { useCallback, useMemo, useRef } from "react";
 import NotFound from "./errorCatcher/NotFound";
 import { addVideoTitle } from "../redux/searchTextSlice";
@@ -67,7 +67,8 @@ const PopularVideosContainer = () => {
   }
   if (
     status === "error" ||
-    data?.pages.flatMap((page) => page.status)[0] === 404
+    data?.pages.flatMap((page) => page.status)[0] === 404 ||
+    videoList?.length == 0
   ) {
     return <NotFound />;
   }

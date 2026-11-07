@@ -1,5 +1,5 @@
 import Footer from "./Footer";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { SidebarProps } from "../types/props";
 
 const Sidebar = ({ uiStates }: SidebarProps) => {
