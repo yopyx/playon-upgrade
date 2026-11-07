@@ -29,7 +29,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
               <li className="collapsed-sidebar-nav-btn">
                 <img
                   alt="home"
-                  src={"/home-225.png"}
+                  src={"/home.png"}
                   className={`${lightTheme ? "" : "invert"}`}
                 />
                 <p>Home</p>
@@ -92,7 +92,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                   <li className="sidebar-nav-btn">
                     <img
                       alt="home"
-                      src={"/home-225.png"}
+                      src={"/home.png"}
                       className={`${lightTheme ? "" : "invert"}`}
                     />
                     <p>Home</p>
@@ -101,7 +101,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 <li className="sidebar-nav-btn">
                   <img
                     alt="Shorts"
-                    src={"/shorts.png"}
+                    src={"/youtube-shorts.png"}
                     className={`${
                       lightTheme
                         ? "mix-blend-multiply"
@@ -124,7 +124,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 <li className="sidebar-nav-btn font-semibold">{"You >"}</li>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Your channel"
                     src={"/yourChannel.png"}
                     className={`${lightTheme ? "" : "invert"}`}
                   />
@@ -133,7 +133,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 <Link to={"/history"}>
                   <li className="sidebar-nav-btn bg-[#62496a] hover:bg-yellow-200/80 border-2 border-yellow-600 shadow-md shadow-yellow-400">
                     <img
-                      alt="home"
+                      alt="History"
                       src={"/history.png"}
                       className={`${lightTheme ? "" : "invert"}`}
                     />
@@ -142,7 +142,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 </Link>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Your videos"
                     src={"/yourVideo.png"}
                     className={`${lightTheme ? "" : "invert"}`}
                   />
@@ -150,7 +150,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 </li>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Watch Later"
                     src={"/watchLater.png"}
                     className={`${lightTheme ? "" : "invert"}`}
                   />
@@ -158,7 +158,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 </li>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Your clips"
                     src={"/clips.svg"}
                     className={`${lightTheme ? "" : "invert"}`}
                   />
@@ -177,7 +177,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 <li className="font-semibold text-[16px] mb-3">Explore</li>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Trending"
                     src={"/fire.png"}
                     className={`${lightTheme ? "" : "invert"}`}
                   />
@@ -185,7 +185,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 </li>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Music"
                     src={"/music.png"}
                     className={`${lightTheme ? "" : "invert"}`}
                   />
@@ -193,7 +193,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 </li>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Live"
                     src={"/live.png"}
                     className={`${lightTheme ? "" : "invert"}`}
                   />
@@ -201,7 +201,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 </li>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Gaming"
                     src={"/gaming.png"}
                     className={`${
                       lightTheme
@@ -213,7 +213,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 </li>
                 <li className="sidebar-nav-btn">
                   <img
-                    alt="home"
+                    alt="Sport"
                     src={
                       "/trophy-icon-design-template-in-white-background-free-vector.png"
                     }
