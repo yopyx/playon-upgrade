@@ -4,10 +4,7 @@ import {
 } from "../../types/fetchedData";
 
 const getPopularVideosAsync = async (categoryId: string, pageNum: number) => {
-  const url =
-    import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/api/recommended_videos?VideoCategoryId=${categoryId}&pageNum=${pageNum}`
-      : `/api/recommended_videos?VideoCategoryId=${categoryId}&pageNum=${pageNum}`;
+  const url = `/api/recommended_videos?VideoCategoryId=${categoryId}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });

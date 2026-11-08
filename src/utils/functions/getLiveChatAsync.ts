@@ -1,10 +1,7 @@
 import { LiveChatList, LiveChatWithStatus } from "../../types/fetchedData";
 
 const getLiveChatAsync = async (vidId: string, pageNum: number) => {
-  const url =
-    import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/api/liveChat?videoId=${vidId}&pageNum=${pageNum}`
-      : `/api/liveChat?videoId=${vidId}&pageNum=${pageNum}`;
+  const url = `/api/liveChat?videoId=${vidId}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });

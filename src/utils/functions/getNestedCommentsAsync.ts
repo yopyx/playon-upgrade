@@ -4,10 +4,7 @@ import {
 } from "../../types/fetchedData";
 
 const getNestedCommentsAsync = async (commentId: string) => {
-  const url =
-    import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/api/replies?commentId=${commentId}`
-      : `/api/replies?commentId=${commentId}`;
+  const url = `/api/replies?commentId=${commentId}`;
   const response = await fetch(url, {
     credentials: "include",
   });

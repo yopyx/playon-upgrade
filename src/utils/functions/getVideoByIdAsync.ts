@@ -1,9 +1,6 @@
 import { VideoCardData, WatchedVideoWithStatus } from "../../types/fetchedData";
 const getVideoByIdAsync = async (vidId: string) => {
-  const url =
-    import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/api/watch_video?videoId=${vidId}`
-      : `/api/watch_video?videoId=${vidId}`;
+  const url = `/api/watch_video?videoId=${vidId}`;
   const response = await fetch(url, {
     credentials: "include",
   });

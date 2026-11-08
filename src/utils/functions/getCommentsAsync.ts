@@ -4,10 +4,7 @@ import {
 } from "../../types/fetchedData";
 
 const getCommentsAsync = async (videoId: string, pageNum: number) => {
-  const url =
-    import.meta.env.VITE_ENVIRONMENT === "production"
-      ? `/api/comments?videoId=${videoId}&pageNum=${pageNum}`
-      : `/api/comments?videoId=${videoId}&pageNum=${pageNum}`;
+  const url = `/api/comments?videoId=${videoId}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });
