@@ -63,14 +63,14 @@ export default defineConfig(({ mode }) => {
         "/api": {
           target:
             env.VITE_ENVIRONMENT === "production"
-              ? "https://playonauth.runasp.net"
+              ? "https://playon-auth.runasp.net"
               : "http://localhost:7117",
           changeOrigin: true,
         },
         "/user_profile": {
           target:
             env.VITE_ENVIRONMENT === "production"
-              ? "https://playonauth.runasp.net"
+              ? "https://playon-auth.runasp.net"
               : "http://localhost:7117",
           changeOrigin: true,
         },
