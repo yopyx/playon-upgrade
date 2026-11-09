@@ -232,7 +232,12 @@ const Header = ({ lightTheme }: HeaderProps) => {
           <button
             className="px-1 py-1 font-bold text-yellow-600"
             onClick={() => {
-              window.open("http://localhost:7117/logout", "_self");
+              window.open(
+                import.meta.env.VITE_ENVIRONMENT
+                  ? "http://localhost:7117/logout"
+                  : "https://playon-auth.runasp.net/logout",
+                "_self",
+              );
             }}
           >
             Sign out

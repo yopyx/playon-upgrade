@@ -26,7 +26,12 @@ const LandingPage = () => {
         <button
           className="px-5 py-2 my-auto mt-[500px] font-bold bg-yellow-600 border-2 border-indigo-800 text-white hover:bg-[#6F2BBB] mobile:text-sm"
           onClick={() => {
-            window.open("http://localhost:7117/login", "_self");
+            window.open(
+              import.meta.env.VITE_ENVIRONMENT == "development"
+                ? "http://localhost:7117/login"
+                : "https://playon-auth.runasp.net/login",
+              "_self",
+            );
           }}
         >
           Signin
