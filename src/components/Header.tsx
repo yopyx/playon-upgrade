@@ -233,7 +233,7 @@ const Header = ({ lightTheme }: HeaderProps) => {
             className="px-1 py-1 font-bold text-yellow-600"
             onClick={() => {
               window.open(
-                import.meta.env.VITE_ENVIRONMENT
+                import.meta.env.VITE_ENVIRONMENT == "development"
                   ? "http://localhost:7117/logout"
                   : "https://playon-auth.runasp.net/logout",
                 "_self",
