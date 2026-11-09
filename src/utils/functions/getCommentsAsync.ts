@@ -4,7 +4,10 @@ import {
 } from "../../types/fetchedData";
 
 const getCommentsAsync = async (videoId: string, pageNum: number) => {
-  const url = `/api/comments?videoId=${videoId}&pageNum=${pageNum}`;
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/api/comments?videoId=${videoId}&pageNum=${pageNum}`
+      : `https://playon-auth.runasp.net/api/comments?videoId=${videoId}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });

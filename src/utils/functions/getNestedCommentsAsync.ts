@@ -4,7 +4,10 @@ import {
 } from "../../types/fetchedData";
 
 const getNestedCommentsAsync = async (commentId: string) => {
-  const url = `/api/replies?commentId=${commentId}`;
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/api/replies?commentId=${commentId}`
+      : `https://playon-auth.runasp.net/api/replies?commentId=${commentId}`;
   const response = await fetch(url, {
     credentials: "include",
   });

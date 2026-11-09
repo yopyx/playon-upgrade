@@ -1,7 +1,10 @@
 import { HistoryWithStatus, WatchingHistory } from "../../types/fetchedData";
 
 const getHistoryAsync = async () => {
-  const url = `/api/feed_history`;
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/api/feed_history`
+      : `https://playon-auth.runasp.net/api/feed_history`;
   const response = await fetch(url, {
     credentials: "include",
   });

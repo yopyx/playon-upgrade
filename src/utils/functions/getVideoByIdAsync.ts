@@ -1,6 +1,9 @@
 import { VideoCardData, WatchedVideoWithStatus } from "../../types/fetchedData";
 const getVideoByIdAsync = async (vidId: string) => {
-  const url = `/api/watch_video?videoId=${vidId}`;
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/api/watch_video?videoId=${vidId}`
+      : `https://playon-auth.runasp.net/api/watch_video?videoId=${vidId}`;
   const response = await fetch(url, {
     credentials: "include",
   });

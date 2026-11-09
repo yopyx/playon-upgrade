@@ -1,7 +1,10 @@
 import { SearchSuggestionsWithStatus } from "../../types/fetchedData";
 
 const getSearchSuggestionsAsync = async (searchText: string) => {
-  const url = `/api/search_suggestions?q=${searchText}`;
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/api/search_suggestions?q=${searchText}`
+      : `https://playon-auth.runasp.net/api/search_suggestions?q=${searchText}`;
   const response = await fetch(url, {
     credentials: "include",
   });

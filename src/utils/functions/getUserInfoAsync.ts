@@ -1,5 +1,9 @@
 const getUserInfoAsync = async () => {
-  const response = await fetch("/user_profile/userinfo", {
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/user_profile/userinfo`
+      : `https://playon-auth.runasp.net/user_profile/userinfo`;
+  const response = await fetch(url, {
     credentials: "include",
   });
   if (response.status !== 200) {

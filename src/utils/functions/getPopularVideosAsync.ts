@@ -4,7 +4,10 @@ import {
 } from "../../types/fetchedData";
 
 const getPopularVideosAsync = async (categoryId: string, pageNum: number) => {
-  const url = `/api/recommended_videos?VideoCategoryId=${categoryId}&pageNum=${pageNum}`;
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/api/recommended_videos?VideoCategoryId=${categoryId}&pageNum=${pageNum}`
+      : `https://playon-auth.runasp.net/api/recommended_videos?VideoCategoryId=${categoryId}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });

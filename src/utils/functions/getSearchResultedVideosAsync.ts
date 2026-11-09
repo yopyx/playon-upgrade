@@ -6,7 +6,10 @@ const getSearchResultedVideosAsync = async (
   searchText: string,
   pageNum: number = 1,
 ) => {
-  const url = `/api/search_results?q=${searchText}&pageNum=${pageNum}`;
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/api/search_results?q=${searchText}&pageNum=${pageNum}`
+      : `https://playon-auth.runasp.net/api/search_results?q=${searchText}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });

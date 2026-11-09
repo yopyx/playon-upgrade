@@ -1,7 +1,10 @@
 import { LiveChatList, LiveChatWithStatus } from "../../types/fetchedData";
 
 const getLiveChatAsync = async (vidId: string, pageNum: number) => {
-  const url = `/api/liveChat?videoId=${vidId}&pageNum=${pageNum}`;
+  const url =
+    import.meta.env.VITE_ENVIRONMENT == "development"
+      ? `/api/liveChat?videoId=${vidId}&pageNum=${pageNum}`
+      : `https://playon-auth.runasp.net/api/liveChat?videoId=${vidId}&pageNum=${pageNum}`;
   const response = await fetch(url, {
     credentials: "include",
   });
