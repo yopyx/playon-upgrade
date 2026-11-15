@@ -10,6 +10,7 @@ import { HeaderProps } from "../types/props";
 import { addSelectedCategory } from "../redux/videoCategorySlice";
 import getUserInfoAsync from "../utils/functions/getUserInfoAsync";
 import { setUser } from "../redux/userSlice";
+import { setTranslatingValue } from "../redux/ui_slices/tagsResponsiveScrollSlice";
 
 const Header = ({ lightTheme }: HeaderProps) => {
   const dispatch = useAppDispatch();
@@ -26,6 +27,8 @@ const Header = ({ lightTheme }: HeaderProps) => {
     queryFn: () => getUserInfoAsync(),
     enabled: pathname !== "/signin",
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
   const searchSuggestionsQuery = useQuery({
     queryKey: ["search input", text],
@@ -39,8 +42,10 @@ const Header = ({ lightTheme }: HeaderProps) => {
     return searchSuggestionsQuery.data?.searchSuggestions?.suggestions;
   }, [searchSuggestionsQuery.data?.searchSuggestions?.suggestions]);
   useEffect(() => {
-    dispatch(setUser(data?.username));
-  }, [data?.username, dispatch]);
+    if (pathname == "/") {
+      dispatch(setUser(data?.username));
+    }
+  }, [pathname, data?.username, dispatch]);
   return (
     <div
       className={`w-screen grid grid-flow-col space-x-32 p-3 mx-auto shadow-lg fixed z-40 mobile:header-mobile ${
@@ -70,7 +75,14 @@ const Header = ({ lightTheme }: HeaderProps) => {
             className="object-cover"
           />
         </div>
-        <Link to="/">
+        <Link
+          to="/"
+          state={{ prevPath: location.pathname }}
+          onClick={() => {
+            dispatch(addSelectedCategory("All"));
+            dispatch(setTranslatingValue(["/", 0]));
+          }}
+        >
           <div className="w-28 h-6 mt-2 mobile:logo-mobile tablet-s:logo-tablet-s">
             <img alt="logo" src={"/play-on.png"} className="object-cover" />
           </div>
@@ -98,9 +110,11 @@ const Header = ({ lightTheme }: HeaderProps) => {
                 if (text) {
                   dispatch(addSearchTextShown(e.currentTarget.value));
                   dispatch(addSelectedCategory("All"));
+                  dispatch(setTranslatingValue(["/results", 0]));
                   navigate(
                     "/results?search_query=" +
                       e.currentTarget.value.trim().replace(/ /g, "+"),
+                    { state: { prevPath: location.pathname } },
                   );
                 }
               }
@@ -138,7 +152,11 @@ const Header = ({ lightTheme }: HeaderProps) => {
                       setText(s);
                       dispatch(addSearchTextShown(s));
                       dispatch(addSelectedCategory("All"));
-                      navigate("/results?search_query=" + s.replace(/ /g, "+"));
+                      dispatch(setTranslatingValue(["/results", 0]));
+                      navigate(
+                        "/results?search_query=" + s.replace(/ /g, "+"),
+                        { state: { prevPath: location.pathname } },
+                      );
                       window.scrollTo(0, 0);
                     }}
                     onKeyDown={(e) => {
@@ -147,8 +165,10 @@ const Header = ({ lightTheme }: HeaderProps) => {
                         setText(s);
                         dispatch(addSearchTextShown(s));
                         dispatch(addSelectedCategory("All"));
+                        dispatch(setTranslatingValue(["/results", 0]));
                         navigate(
                           "/results?search_query=" + s.replace(/ /g, "+"),
+                          { state: { prevPath: location.pathname } },
                         );
                         window.scrollTo(0, 0);
                       }
@@ -175,10 +195,11 @@ const Header = ({ lightTheme }: HeaderProps) => {
             if (text) {
               dispatch(addSearchTextShown(searchRef.current?.value));
               dispatch(addSelectedCategory("All"));
-
+              dispatch(setTranslatingValue(["/results", 0]));
               navigate(
                 "/results?search_query=" +
                   searchRef.current!.value.replace(/ /g, "+"),
+                { state: { prevPath: location.pathname } },
               );
               window.scrollTo(0, 0);
             }
@@ -187,7 +208,7 @@ const Header = ({ lightTheme }: HeaderProps) => {
           ⌕‍
         </button>
       </div>
-      <div className="grid-cols-4 flex space-x-7 tablet-s:space-x-2 mobile:-space-x-1">
+      <div className="grid-cols-4 flex space-x-7 tablet-s:space-x-2 mobile:space-x-0.5">
         <div className="rounded-icon sub4:hidden">
           <img
             alt="start video"
@@ -228,9 +249,9 @@ const Header = ({ lightTheme }: HeaderProps) => {
             </h5>
           )}
         </div>
-        <div className="border-2 border-violet-800 hover:bg-white">
+        <div className="border-2 border-violet-800 hover:bg-white mobile-m:mx-2">
           <button
-            className="px-1 py-1 font-bold text-yellow-600"
+            className="px-1 py-1 font-bold text-yellow-600 mobile-m:text-[12px] mobile-m:font-medium mobile-m:p-0"
             onClick={() => {
               window.open(
                 import.meta.env.VITE_ENVIRONMENT == "development"
@@ -240,7 +261,7 @@ const Header = ({ lightTheme }: HeaderProps) => {
               );
             }}
           >
-            Sign out
+            Signout
           </button>
         </div>
       </div>
@@ -250,8 +271,8 @@ const Header = ({ lightTheme }: HeaderProps) => {
           className="absolute w-screen h-screen -z-10"
           onClick={() => {
             setShowSuggestions(false);
-            setText(focusedSuggestedText[0] as string);
-            setFocusedSuggestedText(["", -1]);
+            //setText(focusedSuggestedText[0] as string);
+            //setFocusedSuggestedText(["", -1]);
           }}
         ></div>
       )}
