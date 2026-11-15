@@ -22,12 +22,11 @@ const Button = ({ categoryData, title, clicked, setClicked }: ButtonProps) => {
       } px-3 py-2 font-semibold text-sm text-nowrap cursor-pointer rounded-lg z-20 border-2 border-yellow-600/75 mobile:button-mobile tablet-s:button-mobile 8k-r:text-lg`}
       onClick={() => {
         setClicked(title);
+        dispatch(addSelectedCategory(title));
         if (pathname === "/") {
           dispatch(
             addCategoryDetails(categoryData || { id: "0", title: "All" }),
           );
-        } else {
-          dispatch(addSelectedCategory(title));
         }
         pathname !== "/watch" && window.scrollTo(0, 0);
       }}
