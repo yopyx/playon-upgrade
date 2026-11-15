@@ -9,6 +9,7 @@ import NotFound from "./errorCatcher/NotFound";
 import { addVideoTitle } from "../redux/searchTextSlice";
 import { VideoCardListWithStatus } from "../types/fetchedData";
 import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";
+import { setTranslatingValue } from "../redux/ui_slices/tagsResponsiveScrollSlice";
 
 const PopularVideosContainer = () => {
   const { lightTheme, sidebarState } = useUpdatedUi();
@@ -75,20 +76,17 @@ const PopularVideosContainer = () => {
   //console.log(videoList);
   return (
     <div
-      className={`flex flex-wrap gap-4 mobile:video-container-centered 8k-3:video-container-centered 4k:video-container-centered 4k-2:video-container-centered`}
+      className={`flex flex-wrap mobile:flex-col gap-4 mobile:video-container-centered 8k-3:video-container-centered 4k:video-container-centered 4k-2:video-container-centered`}
     >
       {videoList!.map((e, i) => (
         <Link
           ref={lastElement}
           to={`/watch?v=${e.videoId}`}
           key={e.etag + i}
+          state={{ prevPath: location.pathname }}
           onClick={() => {
             dispatch(addVideoTitle(e.title));
-            // dispatch(
-            //   e.tags.length && e.tags[0].trim()
-            //     ? addSearchTag(e.tags[0])
-            //     : addSearchTag(""),
-            // );
+            dispatch(setTranslatingValue(["/watch", 0]));
             window.scrollTo(0, 0);
           }}
         >
