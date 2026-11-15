@@ -1,8 +1,12 @@
 import Footer from "./Footer";
 import { Link, useLocation } from "react-router";
 import { SidebarProps } from "../types/props";
+import { useAppDispatch } from "../types/reduxHooks";
+import { addSelectedCategory } from "../redux/videoCategorySlice";
+import { setTranslatingValue } from "../redux/ui_slices/tagsResponsiveScrollSlice";
 
 const Sidebar = ({ uiStates }: SidebarProps) => {
+  const dispatch = useAppDispatch();
   const { lightTheme, sidebarState } = uiStates;
   const { mainContainerPage, resultsPage, historyPage, watchPage } =
     sidebarState;
@@ -14,18 +18,25 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
       (pathname == "/history" && historyPage.collapseSidebar) ||
       (pathname == "/results" && resultsPage.collapseSidebar) ? (
         <div
-          className={`w-20 h-72 sticky top-24 shadow-md shadow-yellow-600 text-xs p-3 m-3 gap-y-5 mobile:hidden${
+          className={`w-20 h-72 sticky top-24 shadow-md shadow-yellow-600 text-xs p-3 m-3 gap-y-5 mobile:absolute mobile:z-30${
             pathname === "/results" || pathname === "/history"
               ? " tablet-r:hidden"
               : ""
-          } tablet:hidden laptop-l:hidden 8k:text-base ${
+          } laptop-l:hidden 8k:text-base ${
             lightTheme
               ? "text-black bg-stone-200"
               : "text-stone-200 dark-highlight-color"
           }`}
         >
           <ul className="container-ver">
-            <Link to={"/"}>
+            <Link
+              to={"/"}
+              state={{ prevPath: location.pathname }}
+              onClick={() => {
+                dispatch(addSelectedCategory("All"));
+                dispatch(setTranslatingValue(["/", 0]));
+              }}
+            >
               <li className="collapsed-sidebar-nav-btn">
                 <img
                   alt="home"
@@ -35,7 +46,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 <p>Home</p>
               </li>
             </Link>
-            <Link to={"/history"}>
+            <Link to={"/history"} state={{ prevPath: location.pathname }}>
               <li className="collapsed-sidebar-nav-btn 8k:-ml-0.5 bg-[#62496a] hover:bg-yellow-200/80 border-2 border-yellow-600 shadow-md shadow-yellow-400">
                 <img
                   alt="History"
@@ -80,7 +91,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                 pathname === "/watch"
                   ? "fixed top-12 z-20 h-[640px] duration-500 ease-in-out" +
                     (watchPage.collapseSidebar ? " -translate-x-60" : "")
-                  : "sticky top-24 h-[610px]"
+                  : "sticky top-24 h-[610px] mobile:hidden"
               } ${
                 lightTheme
                   ? "text-black bg-stone-200"
@@ -88,7 +99,14 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
               } w-56 overflow-y-scroll shadow-md shadow-yellow-600 scrollbar-thin scrollbar-thumb-zinc-200 hover:scrollbar-thumb-zinc-300 scrollbar-thumb-rounded-lg text-sm p-3 m-2 mt-3 space-y-5 8k:text-lg`}
             >
               <ul className="container-ver">
-                <Link to={"/"}>
+                <Link
+                  to={"/"}
+                  state={{ prevPath: location.pathname }}
+                  onClick={() => {
+                    dispatch(addSelectedCategory("All"));
+                    dispatch(setTranslatingValue(["/", 0]));
+                  }}
+                >
                   <li className="sidebar-nav-btn">
                     <img
                       alt="home"
@@ -130,7 +148,7 @@ const Sidebar = ({ uiStates }: SidebarProps) => {
                   />
                   <p>Your channel</p>
                 </li>
-                <Link to={"/history"}>
+                <Link to={"/history"} state={{ prevPath: location.pathname }}>
                   <li className="sidebar-nav-btn bg-[#62496a] hover:bg-yellow-200/80 border-2 border-yellow-600 shadow-md shadow-yellow-400">
                     <img
                       alt="History"
