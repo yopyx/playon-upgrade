@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import SuggestionsButtons from "./SuggestionsButtons";
 import VideosResultsContainer from "./VideosResultsContainer";
 import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";
@@ -9,63 +9,57 @@ import { useEffect, useMemo } from "react";
 import SuggestionButtonsShimmer from "./shimmer/SuggestionButtonsShimmer";
 import DetailedVideoCardsShimmer from "./shimmer/DetailedVideoCardsShimmer";
 import { openCloseSidebar } from "../redux/ui_slices/sideBarResponsiveSlice";
-import { addSelectedCategory, addVideoTags } from "../redux/videoCategorySlice";
+import { addSelectedCategory } from "../redux/videoCategorySlice";
 import NotFound from "./errorCatcher/NotFound";
 
 const SearchResultsContainer = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { videoTags, selectedCategory } = useAppSelector(
-    (store) => store.videoCategory,
-  );
+  const { selectedCategory } = useAppSelector((store) => store.videoCategory);
   const { videoTitle } = useAppSelector((store) => store.searchText);
-  const { pathname, search } = useLocation();
-  const searchQuery =
-    pathname === "/results"
-      ? search.split("=")[1].replace(/\+/g, " ")
-      : search.split("=")[1];
+  const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
   const { sidebarState } = useUpdatedUi();
+  const [effectiveQuery, searchQuery] = useMemo(() => {
+    const searchQuery =
+      pathname === "/results"
+        ? searchParams.get("search_query")?.replace(/\+/g, " ")
+        : videoTitle;
+    return [
+      (selectedCategory == "All" ? searchQuery : selectedCategory)?.trim(),
+      searchQuery,
+    ];
+  }, [pathname, searchParams, videoTitle, selectedCategory]);
   const { data, status, isLoading } = useQuery({
-    queryKey: [
-      "search results",
-      selectedCategory == "All" ? searchQuery : selectedCategory,
-    ],
+    queryKey: ["search results", effectiveQuery],
     queryFn: () => {
-      return getSearchResultedVideosAsync(
-        selectedCategory == "All"
-          ? pathname === "/results"
-            ? searchQuery
-            : videoTitle
-          : selectedCategory,
-        1,
-      );
+      return getSearchResultedVideosAsync(effectiveQuery!, 1);
     },
+    enabled: !!effectiveQuery,
   });
-  const list = useMemo(() => {
-    return data?.videosData.videoCardList;
-  }, [data?.videosData.videoCardList]);
+  const [list, firstAvailableTags] = useMemo(() => {
+    const tags = data?.videosData?.videoCardList.find((v) => v.tags)?.tags;
+    return [
+      data?.videosData?.videoCardList ?? [],
+      tags ? ["All", ...tags] : ["All"],
+    ];
+  }, [data?.videosData?.videoCardList]);
 
-  // const tags = useMemo(() => {
-  //   const arr = list?.find((v) => v?.tags)?.tags || [];
-  //   !videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"][
-  //     searchQuery
-  //   ] && dispatch(addVideoTags([pathname, searchQuery, arr]));
-  //   return arr;
-  // }, [dispatch, list, pathname, searchQuery, videoTags]);
-  useEffect(() => {
-    if (list) {
-      !videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"][
-        searchQuery
-      ] &&
-        dispatch(
-          addVideoTags([
-            pathname,
-            searchQuery,
-            list.find((v) => v?.tags.length > 0)?.tags || [],
-          ]),
-        );
-    }
-  }, [dispatch, list, searchQuery, videoTags, pathname]);
+  // useEffect(() => {
+  //   if (list) {
+  //     searchQuery &&
+  //       !videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"][
+  //         searchQuery
+  //       ] &&
+  //       dispatch(
+  //         addVideoTags([
+  //           pathname,
+  //           searchQuery,
+  //           list.find((v) => v?.tags.length > 0)?.tags || [],
+  //         ]),
+  //       );
+  //   }
+  // }, [dispatch, list, searchQuery, videoTags, pathname]);
 
   useEffect(() => {
     if (data?.status === 401) {
@@ -78,14 +72,14 @@ const SearchResultsContainer = () => {
       dispatch(openCloseSidebar(["resultsPage", false]));
       dispatch(addSelectedCategory("All"));
     };
-  }, []);
+  }, [dispatch]);
 
   if (status === "error" || data?.status === 404) {
     return <NotFound />;
   }
   return (
     <div
-      className={`flex flex-col ${
+      className={`flex flex-col gap-y-16 ${
         sidebarState.resultsPage.collapseSidebar
           ? "dynamic-width"
           : "dynamic-width-collapsed"
@@ -102,13 +96,14 @@ const SearchResultsContainer = () => {
         </>
       ) : (
         <>
-          {list?.find((v) => v?.tags.length > 0) && <SuggestionsButtons />}
+          <SuggestionsButtons
+            suggestedTags={firstAvailableTags}
+            searchQuery={searchQuery}
+          />
           <VideosResultsContainer
             cards={list || []}
-            pathname={pathname}
-            searchQuery={searchQuery}
-            selectedCategory={selectedCategory}
-            videoTitle={videoTitle}
+            effectiveQuery={effectiveQuery}
+            hasSecondPage={data?.videosData.queryNextPage}
           />
         </>
       )}
