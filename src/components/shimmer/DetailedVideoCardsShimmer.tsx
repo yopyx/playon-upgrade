@@ -5,16 +5,11 @@ const DetailedVideoCardsShimmer = ({ len }: { len: number }) => {
   return (
     <div
       className={`${
-        pathname === "/watch" ? "my-4" : "my-10"
+        pathname === "/watch" ? "my-4" : "my-5"
       } flex flex-col gap-y-4 mx-auto justify-center`}
     >
       {[...Array(len)].map((_, i) => (
-        <div
-          key={i}
-          className={`flex gap-x-4${
-            pathname === "/results" ? " sub4:-ml-20" : ""
-          }`}
-        >
+        <div key={i} className={`flex gap-x-4`}>
           <div
             className={`${
               pathname === "/watch"

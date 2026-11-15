@@ -22,12 +22,12 @@ const Comment = ({ info }: CommentProps) => {
   return (
     <div className="flex space-x-3 mobile:w-[320px]">
       {authorProfileImageUrl ? (
-        <div className="h-[2rem] w-[2rem]">
+        <div className="h-8 w-8">
           <img
             alt={authorDisplayName}
             referrerPolicy="no-referrer"
             src={authorProfileImageUrl}
-            className="rounded-full h-[2rem] w-[2rem] object-cover"
+            className="rounded-full h-4 w-4 object-cover"
           ></img>
         </div>
       ) : (
