@@ -4,7 +4,7 @@ import {
 } from "../../types/fetchedData";
 const getSearchResultedVideosAsync = async (
   searchText: string,
-  pageNum: number = 1,
+  pageNum: number,
 ) => {
   const url =
     import.meta.env.VITE_ENVIRONMENT == "development"
