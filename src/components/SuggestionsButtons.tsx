@@ -2,26 +2,32 @@ import { useLocation, useNavigate } from "react-router";
 import Button from "./Button";
 import { useQuery } from "@tanstack/react-query";
 import getCategoriesAsync from "../utils/functions/getCategoriesAsync";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import SuggestionButtonsShimmer from "./shimmer/SuggestionButtonsShimmer";
 import { useUpdatedUi } from "../utils/custom hooks/useUpdatedUi";
-import { useAppSelector } from "../types/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../types/reduxHooks";
+import { addVideoTags } from "../redux/videoCategorySlice";
+import { setTranslatingValue } from "../redux/ui_slices/tagsResponsiveScrollSlice";
 
-const SuggestionsButtons = () => {
+const SuggestionsButtons = ({
+  suggestedTags,
+  searchQuery,
+}: {
+  suggestedTags: string[] | undefined;
+  searchQuery: string | undefined;
+}) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { videoTags, selectedCategory } = useAppSelector(
     (store) => store.videoCategory,
   );
+  const tagstransverseValue = useAppSelector((store) => store.tagsUi);
   const { sidebarState } = useUpdatedUi();
-  const { pathname, search } = useLocation();
-  const searchQuery =
-    pathname == "/results"
-      ? search.split("=")[1].replace(/\+/g, " ")
-      : search.split("=")[1];
+  const { pathname } = useLocation();
+  //const previousPathname = location.state?.prevPath || "/";
   const [translateValue, setTranslateValue] = useState(0);
   const [maxTranslation, setMaxTranslation] = useState(false);
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
-
   const [clickedBtn, setClickedBtn] = useState(selectedCategory);
   const leftScroll = () => {
     if (categoriesScrollRef.current) {
@@ -42,6 +48,9 @@ const SuggestionsButtons = () => {
   const handleScroll = () => {
     if (categoriesScrollRef.current) {
       setTranslateValue(categoriesScrollRef.current.scrollLeft);
+      dispatch(
+        setTranslatingValue([pathname, categoriesScrollRef.current.scrollLeft]),
+      );
       //const x = categoriesScrollRef.current?.scrollLeft;
       if (
         translateValue >=
@@ -69,16 +78,44 @@ const SuggestionsButtons = () => {
     return popularSuggestionsQuery.data?.categories;
   }, [popularSuggestionsQuery]);
 
+  useEffect(() => {
+    const translatedByValue =
+      tagstransverseValue[
+        pathname == "/"
+          ? "mainPage"
+          : pathname == "/watch"
+            ? "watchPage"
+            : "resultsPage"
+      ].translatedByValue;
+    if (categoriesScrollRef.current && translatedByValue) {
+      categoriesScrollRef.current.scrollLeft = translatedByValue;
+    }
+  }, []);
+  useEffect(() => {
+    if (
+      pathname !== "/" &&
+      selectedCategory == "All" &&
+      videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"]?.[
+        searchQuery!
+      ] +
+        "" !==
+        suggestedTags + ""
+    ) {
+      dispatch(addVideoTags([pathname, searchQuery, suggestedTags]));
+    }
+  }, [
+    pathname,
+    selectedCategory,
+    dispatch,
+    suggestedTags,
+    searchQuery,
+    videoTags,
+  ]);
+
   if (popularSuggestionsQuery.data?.status === 401) {
     navigate("/signin");
   }
-  if (
-    (pathname == "/" && popularSuggestionsQuery.isLoading) ||
-    (pathname !== "/" &&
-      !videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"][
-        searchQuery
-      ])
-  ) {
+  if (pathname == "/" && popularSuggestionsQuery.isLoading) {
     return <SuggestionButtonsShimmer />;
   }
   if (popularSuggestionsQuery.isError) {
@@ -148,12 +185,12 @@ const SuggestionsButtons = () => {
                 setClicked={setClickedBtn}
               />
             ))
-          : [
-              "All",
-              ...videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"][
-                searchQuery
-              ],
-            ].map((c: string, i: number) => (
+          : (selectedCategory !== "All" && searchQuery
+              ? videoTags[pathname == "/watch" ? "watchPage" : "resultsPage"][
+                  searchQuery
+                ]
+              : suggestedTags
+            )?.map((c: string, i: number) => (
               <Button
                 key={c + i}
                 title={c}
