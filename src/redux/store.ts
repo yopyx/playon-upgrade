@@ -7,6 +7,7 @@ import liveChatReducer from "./liveChatSlice";
 import themeReducer from "./ui_slices/themeSlice";
 import quotaReducer from "./ui_slices/quotaSlice";
 import userReducer from "./userSlice";
+import tagsUiReducer from "./ui_slices/tagsResponsiveScrollSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storageSession from "redux-persist/lib/storage/session";
 
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   liveChat: liveChatReducer,
   theme: themeReducer,
   quota: quotaReducer,
-    user: userReducer,
+  tagsUi: tagsUiReducer,
+  user: userReducer,
 });
 const persistedReducer = persistReducer(sessionPersistConfig, rootReducer);
 const appStore = configureStore({
